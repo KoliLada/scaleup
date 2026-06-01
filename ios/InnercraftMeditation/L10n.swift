@@ -77,6 +77,11 @@ enum L10n {
         ],
 
         // Phasen
+        "phaseBegin": [
+            "de": "Beginn",
+            "en": "Beginning",
+            "fr": "Début",
+        ],
         "phaseIntroLabel": [
             "de": "Eingangs-Meditation",
             "en": "Opening meditation",

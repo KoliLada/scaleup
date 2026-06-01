@@ -58,8 +58,8 @@ demselben Ablauf und Design:
 eigene Sprachaufnahmen) — alle Nutzer erleben denselben Ablauf in einem
 ungestörten Durchlauf:
 
-> Geführte Eingangs-Meditation (Willigis Jäger) → Iterationen
-> (Anweisung · Stille · Gong) → tieferer Gong → Outro → ganz tiefer Gong
+> Gong → Eingangs-Meditation → Gong → Iterationen
+> (Anweisung · Gong · Stille · Gong) → tieferer Gong → Outro → ganz tiefer Gong
 
 **Autoren-Modus** (`app/autor.html`): Hier nimmt der Autor seine Anweisungen
 auf, legt Anzahl und Dauer der Iterationen fest und veröffentlicht die Journey

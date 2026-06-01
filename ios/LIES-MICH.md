@@ -7,14 +7,14 @@ Native iPhone-App (SwiftUI) für die tägliche Innercraft-Meditation.
 Der **Autor** (Innercraft) legt die Journey zentral fest — die App lädt sie von
 innercraft.com und spielt sie in einem ungestörten Durchlauf ab:
 
-1. **Geführte Eingangs-Meditation** (Willigis Jäger)
-2. **Iterationen** (Anzahl & Dauer bestimmt der Autor), jeweils:
-   - Anweisung in der Stimme des Autors
-   - **Stille**
-   - **Gong**
-3. **Tieferer Gong** leitet das Outro ein
-4. **Outro-Ansprache** des Autors
-5. **Ganz tiefer Gong** zum Abschluss
+1. Kurze Stille → **Gong** zum Beginn
+2. **Geführte Eingangs-Meditation**, danach ein **Gong**
+3. **Iterationen** (Anzahl & Dauer bestimmt der Autor), jeweils:
+   - Anweisung in der Stimme des Autors → **Gong**
+   - **Stille** → **Gong**
+4. **Tieferer Gong** leitet das Outro ein
+5. **Outro-Ansprache** des Autors
+6. **Ganz tiefer Gong** zum Abschluss
 
 Die Nutzer müssen nichts einstellen und nichts aufnehmen — App öffnen,
 „Meditation beginnen“, im Fluss bleiben.

@@ -29,6 +29,9 @@ function showScreen(id) {
   window.scrollTo(0, 0);
 }
 
+/** Kurze Stille nach dem Start, bevor der erste Gong ertönt (Sekunden) */
+const START_DELAY_SECONDS = 3;
+
 /* ---------- Journey laden & anzeigen ---------- */
 
 let journey = null;
@@ -111,7 +114,10 @@ const Session = {
   audioContext: null,
   keepAliveSource: null,
 
-  /* ----- Aufbau aus der zentralen Journey ----- */
+  /* ----- Aufbau aus der zentralen Journey -----
+     Der Gong begleitet die ganze Meditation:
+     Start → kurze Stille → Gong → Eingangs-Meditation → Gong
+     → Anweisung → Gong → Stille → Gong → … → tieferer Gong → Outro → ganz tiefer Gong */
 
   async build() {
     const phases = [];
@@ -123,7 +129,24 @@ const Session = {
       return audio;
     };
 
-    // 1) Eingangs-Meditation
+    const gongPhase = (label) => ({
+      type: "audio",
+      label,
+      title: t("phaseGong"),
+      audio: makeAudio(GONG_FILE),
+      durationSeconds: null,
+    });
+
+    // 0) Kurze Stille zum Ankommen, dann der Eröffnungs-Gong
+    phases.push({
+      type: "silence",
+      label: t("phaseBegin"),
+      title: t("phaseSilence"),
+      durationSeconds: START_DELAY_SECONDS,
+    });
+    phases.push(gongPhase(t("phaseBegin")));
+
+    // 1) Eingangs-Meditation, danach ein Gong
     if (journey.intro && introAvailable) {
       phases.push({
         type: "audio",
@@ -132,9 +155,10 @@ const Session = {
         audio: makeAudio(journey.intro.file),
         durationSeconds: introDuration || null,
       });
+      phases.push(gongPhase(t("phaseIntroLabel")));
     }
 
-    // 2) Iterationen: Anweisung → Stille → Gong
+    // 2) Iterationen: Anweisung → Gong → Stille → Gong
     const total = journey.iterations.length;
     for (let i = 0; i < total; i++) {
       const iteration = journey.iterations[i];
@@ -148,6 +172,8 @@ const Session = {
           audio: makeAudio(iteration.instructionFile),
           durationSeconds: null,
         });
+        // Gong nach der Anweisung — er eröffnet die Stille
+        phases.push(gongPhase(label));
       }
 
       phases.push({
@@ -157,13 +183,8 @@ const Session = {
         durationSeconds: iteration.silenceMinutes * 60,
       });
 
-      phases.push({
-        type: "audio",
-        label,
-        title: t("phaseGong"),
-        audio: makeAudio(GONG_FILE),
-        durationSeconds: null,
-      });
+      // Gong beendet die Stille
+      phases.push(gongPhase(label));
     }
 
     // 3) Optionale Stille vor dem Outro

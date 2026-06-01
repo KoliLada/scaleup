@@ -31,6 +31,7 @@ const I18N = {
     durationSec: (s) => `${s} Sek.`,
 
     // Session
+    phaseBegin: "Beginn",
     phaseIntroLabel: "Eingangs-Meditation",
     phaseIntroTitle: "Geführte Meditation",
     phaseIterationLabel: (n, total) => `Iteration ${n} von ${total}`,
@@ -86,6 +87,7 @@ const I18N = {
     durationSec: (s) => `${s} sec`,
 
     // Session
+    phaseBegin: "Beginning",
     phaseIntroLabel: "Opening meditation",
     phaseIntroTitle: "Guided meditation",
     phaseIterationLabel: (n, total) => `Iteration ${n} of ${total}`,
@@ -141,6 +143,7 @@ const I18N = {
     durationSec: (s) => `${s} s`,
 
     // Séance
+    phaseBegin: "Début",
     phaseIntroLabel: "Méditation d'ouverture",
     phaseIntroTitle: "Méditation guidée",
     phaseIterationLabel: (n, total) => `Itération ${n} sur ${total}`,

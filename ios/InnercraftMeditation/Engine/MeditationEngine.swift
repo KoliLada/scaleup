@@ -58,12 +58,35 @@ final class MeditationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate 
     private var silenceAccumulated: TimeInterval = 0
 
     // MARK: Aufbau des Ablaufs aus der zentralen Journey
+    //
+    // Der Gong begleitet die ganze Meditation:
+    // Start → kurze Stille → Gong → Eingangs-Meditation → Gong
+    // → Anweisung → Gong → Stille → Gong → … → tieferer Gong → Outro → ganz tiefer Gong
+
+    /// Kurze Stille nach dem Start, bevor der erste Gong ertönt
+    private static let startDelaySeconds: TimeInterval = 3
 
     func buildPhases(provider: JourneyProvider) {
         let journey = provider.journey
         var result: [MeditationPhase] = []
 
-        // 1) Eingangs-Meditation
+        let gongURL = Self.bundleAudioURL(MeditationConfig.gongFilename)
+
+        func appendGong(label: String) {
+            if let gongURL {
+                result.append(MeditationPhase(kind: .audio(gongURL), label: label, title: L10n.t("phaseGong")))
+            }
+        }
+
+        // 0) Kurze Stille zum Ankommen, dann der Eröffnungs-Gong
+        result.append(MeditationPhase(
+            kind: .silence(Self.startDelaySeconds),
+            label: L10n.t("phaseBegin"),
+            title: L10n.t("phaseSilence")
+        ))
+        appendGong(label: L10n.t("phaseBegin"))
+
+        // 1) Eingangs-Meditation, danach ein Gong
         if let intro = journey.intro,
            let localURL = provider.localAudioURL(for: intro.file) {
             result.append(MeditationPhase(
@@ -71,15 +94,18 @@ final class MeditationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate 
                 label: L10n.t("phaseIntroLabel"),
                 title: L10n.t("phaseIntroTitle")
             ))
+            appendGong(label: L10n.t("phaseIntroLabel"))
         }
 
-        // 2) Iterationen: Anweisung → Stille → Gong
+        // 2) Iterationen: Anweisung → Gong → Stille → Gong
         let total = journey.iterations.count
         for (index, iteration) in journey.iterations.enumerated() {
             let label = L10n.iterationPhaseLabel(index + 1, of: total)
 
             if let instructionURL = provider.localAudioURL(for: iteration.instructionFile) {
                 result.append(MeditationPhase(kind: .audio(instructionURL), label: label, title: L10n.t("phaseInstruction")))
+                // Gong nach der Anweisung — er eröffnet die Stille
+                appendGong(label: label)
             }
 
             result.append(MeditationPhase(
@@ -88,9 +114,8 @@ final class MeditationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate 
                 title: L10n.t("phaseSilence")
             ))
 
-            if let gongURL = Self.bundleAudioURL(MeditationConfig.gongFilename) {
-                result.append(MeditationPhase(kind: .audio(gongURL), label: label, title: L10n.t("phaseGong")))
-            }
+            // Gong beendet die Stille
+            appendGong(label: label)
         }
 
         // 3) Optionale Stille vor dem Outro
