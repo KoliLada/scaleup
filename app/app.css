@@ -237,6 +237,67 @@ code {
   text-align: right;
 }
 
+/* ---------- Anleitung: als App installieren (Home, unten) ---------- */
+.install-card {
+  margin-top: 28px;
+  padding: 20px;
+  background: rgba(47, 59, 48, .05);
+  border: 1px dashed rgba(47, 59, 48, .25);
+  border-radius: var(--radius);
+}
+
+/* Läuft die Seite bereits als installierte App, ist die Anleitung überflüssig */
+@media (display-mode: standalone) {
+  .install-card { display: none; }
+}
+
+.install-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: .8rem;
+}
+
+.install-head h2 {
+  font-size: 1.3rem;
+  margin-bottom: 0;
+}
+
+.install-icon {
+  border-radius: 10px;
+  box-shadow: var(--shadow-soft);
+}
+
+.install-intro,
+.install-note {
+  font-family: var(--sans);
+  font-size: .88rem;
+  font-weight: 300;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.install-steps {
+  margin: 14px 0 14px 1.3em;
+  display: grid;
+  gap: 9px;
+  font-family: var(--sans);
+  font-size: .9rem;
+  font-weight: 300;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.install-steps strong { font-weight: 500; }
+
+.share-glyph {
+  display: inline-block;
+  vertical-align: -3px;
+  color: var(--clay);
+}
+
+.install-note { color: var(--clay); font-weight: 400; }
+
 /* ---------- Hinweise ---------- */
 .notice {
   font-family: var(--sans);
