@@ -347,6 +347,18 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
 .offer-featured .offer-facts span { color: var(--gold); }
 .offer .btn { margin-top: auto; align-self: flex-start; }
 
+/* ---------- Meditations-App ---------- */
+.meditation-mark { display: flex; justify-content: center; margin-bottom: 1.6rem; color: var(--gold); }
+.meditation-actions { margin-top: 2.4rem; }
+.meditation-actions .btn { padding: 1.05rem 2.8rem; font-size: 1rem; }
+.meditation-hint {
+  margin-top: 1.8rem;
+  font-family: var(--sans);
+  font-size: .85rem;
+  font-weight: 300;
+  color: rgba(245, 239, 226, .6);
+}
+
 /* ---------- Team ---------- */
 .team { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); }
 .person { text-align: center; }
