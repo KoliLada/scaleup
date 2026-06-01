@@ -58,10 +58,28 @@
         gespeichert, bis du sie veröffentlichst.
       </div>
 
-      <!-- Eingangs-Meditation -->
+      <!-- Eingangs-Meditation (optional, pro Sprache) -->
       <div class="card">
-        <h2>Eingangs-Meditation</h2>
-        <p class="hint" id="intro-info">Geführte Meditation (Willigis Jäger) — zentral hinterlegt.</p>
+        <div class="card-head">
+          <h2>Eingangs-Meditation</h2>
+          <label class="check-toggle">
+            <input type="checkbox" id="intro-enabled" />
+            <span>abspielen</span>
+          </label>
+        </div>
+        <div id="intro-body">
+          <p class="hint" id="intro-info"></p>
+          <div class="author-recording">
+            <p class="recording-hint">
+              Deine eigene geführte Eingangs-Meditation (ca. 10–15 Minuten).
+              Sie ersetzt die bisher hinterlegte Aufnahme dieser Sprache.
+            </p>
+            <div class="recording-controls" data-slot="intro"><!-- wird von autor.js befüllt --></div>
+          </div>
+        </div>
+        <p class="hint intro-disabled-hint hidden" id="intro-disabled-hint">
+          Die Journey beginnt direkt mit Iteration 1 — ohne Eingangs-Meditation.
+        </p>
       </div>
 
       <!-- Iterationen -->

@@ -387,6 +387,48 @@ code {
 }
 .card-head h2 { margin-bottom: 0; }
 
+/* Checkbox-Schalter (z. B. Eingangs-Meditation an/aus) */
+.check-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--sans);
+  font-size: .85rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  user-select: none;
+}
+
+.check-toggle input {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid rgba(47, 59, 48, .4);
+  border-radius: 6px;
+  background: var(--paper);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all .2s var(--ease);
+}
+
+.check-toggle input:checked {
+  background: var(--forest);
+  border-color: var(--forest);
+}
+
+.check-toggle input:checked::after {
+  content: "✓";
+  color: var(--cream);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.check-toggle:has(input:checked) { color: var(--ink); }
+
+.intro-disabled-hint { padding-top: 4px; }
+
 .card-remove { color: var(--ink-soft); }
 .card-remove:disabled { opacity: .3; pointer-events: none; }
 

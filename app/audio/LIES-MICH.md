@@ -30,6 +30,8 @@ Aufbau einer Journey-Datei:
 **Autoren-Modus** der Web-App: `https://innercraft.com/app/autor.html`
 
 Dort kann der Autor (über die Sprach-Tabs Deutsch / English / Français):
+- die **Eingangs-Meditation** pro Sprache an-/abschalten (Checkbox) und
+  durch eine eigene Aufnahme ersetzen bzw. neu aufnehmen
 - Iterationen hinzufügen / entfernen und ihre Stille-Dauer festlegen
 - Anweisungen und Outro mit eigener Stimme aufnehmen — pro Sprache
 - alles mit einem Klick **veröffentlichen** (committet über die GitHub-API,
@@ -61,6 +63,8 @@ im Namen, z. B. `journey-en-iteration-1-….m4a`). Der Zeitstempel im Namen
 sorgt dafür, dass Nutzer-Geräte immer die aktuelle Version laden.
 Alte, nicht mehr referenzierte Dateien können gelegentlich gelöscht werden.
 
-Die **Eingangs-Meditation** (Willigis Jäger, deutsch) ist nur Teil der
-deutschen Journey. Für Englisch und Französisch beginnt die Journey direkt
-mit Iteration 1, bis ggf. eine eigene Eingangs-Meditation hinterlegt wird.
+Die **Eingangs-Meditation** ist pro Sprache optional (Checkbox im
+Autoren-Modus). Die deutsche Journey nutzt standardmäßig die Aufnahme von
+Willigis Jäger (`intro-meditation.m4a`); für Englisch und Französisch kann
+der Autor seine eigene Eingangs-Meditation aufnehmen — sie wird dann als
+`journey-{sprache}-intro-….m4a` hochgeladen.
