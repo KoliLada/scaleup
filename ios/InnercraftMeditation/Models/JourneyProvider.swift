@@ -30,18 +30,24 @@ struct Journey: Codable, Equatable {
     let outroPauseMinutes: Double
     let outroFile: String?
 
-    /// Standard-Journey, falls die zentrale Definition (noch) nicht erreichbar ist
-    static let fallback = Journey(
-        version: 1,
-        updatedAt: nil,
-        intro: Intro(file: "intro-meditation.m4a", title: "Geführte Meditation (Willigis Jäger)"),
-        iterations: [
-            Iteration(instructionFile: nil, silenceMinutes: 5),
-            Iteration(instructionFile: nil, silenceMinutes: 6),
-        ],
-        outroPauseMinutes: 0,
-        outroFile: nil
-    )
+    /// Standard-Journey, falls die zentrale Definition (noch) nicht erreichbar ist.
+    /// Die deutsche Journey enthält die Eingangs-Meditation von Willigis Jäger;
+    /// für andere Sprachen beginnt die Journey direkt mit den Iterationen.
+    static var fallback: Journey {
+        Journey(
+            version: 1,
+            updatedAt: nil,
+            intro: L10n.lang == "de"
+                ? Intro(file: "intro-meditation.m4a", title: "Geführte Meditation (Willigis Jäger)")
+                : nil,
+            iterations: [
+                Iteration(instructionFile: nil, silenceMinutes: 5),
+                Iteration(instructionFile: nil, silenceMinutes: 6),
+            ],
+            outroPauseMinutes: 0,
+            outroFile: nil
+        )
+    }
 }
 
 // MARK: - Provider

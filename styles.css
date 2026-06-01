@@ -176,6 +176,21 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
   opacity: 1;
 }
 
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: .45em;
+  font-family: var(--sans);
+  font-size: .78rem;
+  letter-spacing: .1em;
+  color: var(--cream);
+  opacity: .85;
+}
+.scrolled .lang-switch { color: var(--ink); }
+.lang-switch a { opacity: .65; }
+.lang-switch a.is-current { opacity: 1; border-bottom: 1px solid currentColor; }
+.lang-switch span { opacity: .4; }
+
 .nav-toggle { display: none; background: none; border: 0; cursor: pointer; width: 40px; height: 34px; padding: 6px; }
 .nav-toggle span { display: block; height: 2px; background: var(--cream); margin: 5px 0; transition: .3s var(--ease); }
 .scrolled .nav-toggle span { background: var(--ink); }

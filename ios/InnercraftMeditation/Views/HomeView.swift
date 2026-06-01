@@ -24,7 +24,7 @@ struct HomeView: View {
                     flowCard
 
                     if provider.state == .offline {
-                        notice("Keine Verbindung — es wird die zuletzt geladene Journey verwendet. Sobald du wieder online bist, wird die aktuelle Journey automatisch geladen.")
+                        notice(L10n.t("offlineNotice"))
                     }
 
                     startButton
@@ -59,17 +59,17 @@ struct HomeView: View {
             }
             .padding(.bottom, 18)
 
-            Text("DEINE TÄGLICHE PRAXIS")
+            Text(L10n.t("eyebrowHome"))
                 .font(.system(size: 12, weight: .medium))
                 .tracking(4)
                 .foregroundStyle(Color.icClay)
 
-            Text("Komm zur Ruhe.\nWerde präsent.")
+            Text(L10n.t("homeTitle"))
                 .font(.custom("Cormorant Garamond", size: 38).weight(.medium))
                 .foregroundStyle(Color.icInk)
                 .lineSpacing(2)
 
-            Text("Lass dich führen: eine Meditation in einem Fluss — von der geführten Eingangs-Meditation über Impulse und Stille bis zum Gong, der dich in deinen Tag entlässt.")
+            Text(L10n.t("homeLead"))
                 .font(.system(size: 15, weight: .light))
                 .foregroundStyle(Color.icInkSoft)
                 .padding(.top, 6)
@@ -78,14 +78,14 @@ struct HomeView: View {
 
     private var flowCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Die Reise heute")
+            Text(L10n.t("flowTitle"))
                 .font(.custom("Cormorant Garamond", size: 22).weight(.semibold))
                 .foregroundStyle(Color.icInk)
 
             if provider.state == .loading {
                 HStack(spacing: 10) {
                     ProgressView()
-                    Text("Lade die Journey …")
+                    Text(L10n.t("flowLoading"))
                         .font(.system(size: 14, weight: .light))
                         .foregroundStyle(Color.icInkSoft)
                 }
@@ -95,29 +95,29 @@ struct HomeView: View {
                     if let intro = provider.journey.intro,
                        provider.localAudioURL(for: intro.file) != nil {
                         flowRow(icon: "◉", label: intro.title,
-                                duration: provider.introDuration.map { "\(Int(($0 / 60).rounded())) Min." })
+                                duration: provider.introDuration.map { L10n.minutesShort(Int(($0 / 60).rounded())) })
                         Divider()
                     }
 
                     ForEach(Array(provider.journey.iterations.enumerated()), id: \.offset) { index, iteration in
                         flowRow(
                             icon: "\(index + 1)",
-                            label: "Iteration \(index + 1): \(iteration.instructionFile != nil ? "Anweisung · " : "")Stille · Gong",
-                            duration: "\(Int(iteration.silenceMinutes)) Min."
+                            label: L10n.iterationFlowLabel(index + 1, hasInstruction: iteration.instructionFile != nil),
+                            duration: L10n.minutesShort(Int(iteration.silenceMinutes))
                         )
                         Divider()
                     }
 
                     flowRow(icon: "◎",
-                            label: provider.journey.outroFile != nil ? "Tieferer Gong · Outro" : "Tieferer Gong",
+                            label: provider.journey.outroFile != nil ? L10n.t("flowDeepGongOutro") : L10n.t("flowDeepGong"),
                             duration: nil)
                     Divider()
-                    flowRow(icon: "●", label: "Ganz tiefer Gong — Abschluss", duration: nil)
+                    flowRow(icon: "●", label: L10n.t("flowFinalGong"), duration: nil)
                 }
 
                 HStack {
                     Spacer()
-                    Text("Gesamt ca. \(Int((provider.estimatedTotalSeconds / 60).rounded())) Minuten")
+                    Text(L10n.totalMinutes(Int((provider.estimatedTotalSeconds / 60).rounded())))
                         .font(.system(size: 13, weight: .regular))
                         .foregroundStyle(Color.icClay)
                 }
@@ -164,7 +164,7 @@ struct HomeView: View {
             engine.start(provider: provider)
             showSession = true
         } label: {
-            Text("Meditation beginnen")
+            Text(L10n.t("btnStart"))
                 .font(.system(size: 17, weight: .medium))
                 .tracking(1)
                 .foregroundStyle(Color.icCream)

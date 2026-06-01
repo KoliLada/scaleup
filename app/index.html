@@ -28,8 +28,11 @@
       <svg viewBox="0 0 48 48" width="30" height="30" aria-hidden="true"><use href="#gong-mark"></use></svg>
       <div class="brand-text">
         <span class="brand-name">Innercraft</span>
-        <span class="brand-tag">Meditation</span>
+        <span class="brand-tag" data-i18n="brandTag">Meditation</span>
       </div>
+    </div>
+    <div class="app-lang-switch" aria-label="Sprache / Language / Langue">
+      <a href="#" data-set-lang="de" lang="de">DE</a><span aria-hidden="true">·</span><a href="#" data-set-lang="en" lang="en">EN</a><span aria-hidden="true">·</span><a href="#" data-set-lang="fr" lang="fr">FR</a>
     </div>
   </header>
 
@@ -37,48 +40,48 @@
 
     <!-- ============ HOME ============ -->
     <section class="screen screen-home is-active" id="screen-home">
-      <p class="eyebrow">Deine tägliche Praxis</p>
-      <h1>Komm zur Ruhe.<br />Werde präsent.</h1>
+      <p class="eyebrow" data-i18n="eyebrowHome">Deine tägliche Praxis</p>
+      <h1 data-i18n="homeTitle">Komm zur Ruhe.<br />Werde präsent.</h1>
 
-      <p class="lead">
+      <p class="lead" data-i18n="homeLead">
         Lass dich führen: eine Meditation in einem Fluss — von der geführten
         Eingangs-Meditation über Impulse und Stille bis zum Gong, der dich in
         deinen Tag entlässt.
       </p>
 
       <div class="flow-card">
-        <h2>Die Reise heute</h2>
+        <h2 data-i18n="flowTitle">Die Reise heute</h2>
         <ol class="flow-list" id="flow-list">
-          <li><span class="flow-icon">…</span><span>Lade die Journey …</span></li>
+          <li><span class="flow-icon">…</span><span data-i18n="flowLoading">Lade die Journey …</span></li>
         </ol>
         <p class="flow-total" id="flow-total"></p>
       </div>
 
-      <button class="btn btn-primary btn-big" id="btn-start" disabled>Meditation beginnen</button>
+      <button class="btn btn-primary btn-big" id="btn-start" disabled data-i18n="btnStart">Meditation beginnen</button>
 
       <!-- Anleitung: als App auf dem iPhone installieren -->
       <div class="install-card" id="install-card">
         <div class="install-head">
           <img src="icons/icon-192.png" alt="" class="install-icon" width="44" height="44" />
-          <h2>Als App auf dein iPhone</h2>
+          <h2 data-i18n="installTitle">Als App auf dein iPhone</h2>
         </div>
-        <p class="install-intro">
+        <p class="install-intro" data-i18n="installIntro">
           Du kannst diese Seite wie eine echte App auf deinem iPhone installieren —
           mit dem Innercraft-Symbol auf dem Home-Bildschirm:
         </p>
         <ol class="install-steps">
-          <li>Öffne diese Seite in <strong>Safari</strong></li>
-          <li>Tippe unten auf das <strong>Teilen-Symbol</strong>
+          <li data-i18n="installStep1">Öffne diese Seite in <strong>Safari</strong></li>
+          <li><span data-i18n="installStep2Pre">Tippe unten auf das <strong>Teilen-Symbol</strong></span>
             <svg class="share-glyph" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 15 L12 3" />
               <path d="M8 6.5 L12 2.5 L16 6.5" />
               <path d="M7 9 H5.5 A1.5 1.5 0 0 0 4 10.5 V19.5 A1.5 1.5 0 0 0 5.5 21 H18.5 A1.5 1.5 0 0 0 20 19.5 V10.5 A1.5 1.5 0 0 0 18.5 9 H17" />
             </svg>
-            (Quadrat mit Pfeil nach oben)</li>
-          <li>Wähle <strong>„Zum Home-Bildschirm“</strong></li>
-          <li>Tippe oben rechts auf <strong>„Hinzufügen“</strong></li>
+            <span data-i18n="installStep2Post">(Quadrat mit Pfeil nach oben)</span></li>
+          <li data-i18n="installStep3">Wähle <strong>„Zum Home-Bildschirm“</strong></li>
+          <li data-i18n="installStep4">Tippe oben rechts auf <strong>„Hinzufügen“</strong></li>
         </ol>
-        <p class="install-note">
+        <p class="install-note" data-i18n="installNote">
           Ab jetzt startest du deine Meditation direkt vom Home-Bildschirm —
           im Vollbild, ohne Browser-Leisten.
         </p>
@@ -93,8 +96,8 @@
         </div>
       </div>
 
-      <p class="eyebrow" id="session-phase-label">Eingangs-Meditation</p>
-      <h1 class="session-title" id="session-phase-title">Geführte Meditation</h1>
+      <p class="eyebrow" id="session-phase-label"></p>
+      <h1 class="session-title" id="session-phase-title"></h1>
 
       <div class="session-timer">
         <svg class="progress-ring" viewBox="0 0 200 200" aria-hidden="true">
@@ -107,8 +110,8 @@
       <p class="session-step" id="session-step"></p>
 
       <div class="session-actions">
-        <button class="btn btn-ghost" id="btn-pause">Pause</button>
-        <button class="btn btn-ghost btn-danger" id="btn-stop">Beenden</button>
+        <button class="btn btn-ghost" id="btn-pause" data-i18n="btnPause">Pause</button>
+        <button class="btn btn-ghost btn-danger" id="btn-stop" data-i18n="btnStop">Beenden</button>
       </div>
     </section>
 
@@ -117,10 +120,10 @@
       <div class="done-mark" aria-hidden="true">
         <svg viewBox="0 0 48 48" width="72" height="72"><use href="#gong-mark"></use></svg>
       </div>
-      <p class="eyebrow">Meditation abgeschlossen</p>
-      <h1>Jetzt bist du präsent<br />und gerüstet für deinen Tag.</h1>
-      <p class="lead">Wir wünschen dir einen schönen Tag.</p>
-      <button class="btn btn-primary" data-goto="screen-home">Zurück zum Start</button>
+      <p class="eyebrow" data-i18n="eyebrowDone">Meditation abgeschlossen</p>
+      <h1 data-i18n="doneTitle">Jetzt bist du präsent<br />und gerüstet für deinen Tag.</h1>
+      <p class="lead" data-i18n="doneLead">Wir wünschen dir einen schönen Tag.</p>
+      <button class="btn btn-primary" data-goto="screen-home" data-i18n="btnBackHome">Zurück zum Start</button>
     </section>
 
   </main>
@@ -137,6 +140,7 @@
     </defs>
   </svg>
 
+  <script src="i18n.js"></script>
   <script src="journey.js"></script>
   <script src="app.js"></script>
 </body>

@@ -1,9 +1,18 @@
 # Audio & Journey der Meditations-App
 
-## Die zentrale Journey (`journey.json`)
+## Die zentralen Journeys (eine pro Sprache)
 
 Der **Autor** legt hier fest, was **alle Nutzer** der App erleben — Anzahl und
-Länge der Iterationen, welche Anweisungen gespielt werden und das Outro:
+Länge der Iterationen, welche Anweisungen gespielt werden und das Outro.
+**Jede Sprache hat ihre eigene Journey:**
+
+| Sprache | Journey-Datei |
+|---|---|
+| 🇩🇪 Deutsch | `journey.json` |
+| 🇬🇧 Englisch | `journey-en.json` |
+| 🇫🇷 Französisch | `journey-fr.json` |
+
+Aufbau einer Journey-Datei:
 
 ```json
 {
@@ -20,9 +29,9 @@ Länge der Iterationen, welche Anweisungen gespielt werden und das Outro:
 **Bearbeitet wird die Journey normalerweise nicht von Hand**, sondern über den
 **Autoren-Modus** der Web-App: `https://innercraft.com/app/autor.html`
 
-Dort kann der Autor:
+Dort kann der Autor (über die Sprach-Tabs Deutsch / English / Français):
 - Iterationen hinzufügen / entfernen und ihre Stille-Dauer festlegen
-- Anweisungen und Outro mit eigener Stimme aufnehmen
+- Anweisungen und Outro mit eigener Stimme aufnehmen — pro Sprache
 - alles mit einem Klick **veröffentlichen** (committet über die GitHub-API,
   Cloudflare Pages deployt automatisch — nach 1–2 Minuten live für alle)
 
@@ -46,7 +55,12 @@ Die drei Gong-Klänge wurden mit `tools/generate_gongs.py` erzeugt:
 
 ## Aufnahmen des Autors
 
-Dateien mit dem Muster `journey-iteration-*.m4a` und `journey-outro-*.m4a`
-werden vom Autoren-Modus beim Veröffentlichen hochgeladen. Der Zeitstempel im
-Namen sorgt dafür, dass Nutzer-Geräte immer die aktuelle Version laden.
+Dateien mit dem Muster `journey-*-iteration-*.m4a` und `journey-*-outro-*.m4a`
+werden vom Autoren-Modus beim Veröffentlichen hochgeladen (mit Sprach-Kürzel
+im Namen, z. B. `journey-en-iteration-1-….m4a`). Der Zeitstempel im Namen
+sorgt dafür, dass Nutzer-Geräte immer die aktuelle Version laden.
 Alte, nicht mehr referenzierte Dateien können gelegentlich gelöscht werden.
+
+Die **Eingangs-Meditation** (Willigis Jäger, deutsch) ist nur Teil der
+deutschen Journey. Für Englisch und Französisch beginnt die Journey direkt
+mit Iteration 1, bis ggf. eine eigene Eingangs-Meditation hinterlegt wird.

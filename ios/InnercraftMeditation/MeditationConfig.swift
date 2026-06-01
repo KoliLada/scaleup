@@ -9,12 +9,13 @@ import SwiftUI
 
 enum MeditationConfig {
     /// Basis-URL der zentral gehosteten Journey (Audio-Ordner der Web-App).
-    /// Der Autor steuert dort über journey.json den kompletten Ablauf —
-    /// alle Nutzer auf allen Geräten erleben dieselbe Journey.
+    /// Der Autor steuert dort über die Journey-Dateien den kompletten Ablauf —
+    /// alle Nutzer einer Sprache erleben dieselbe Journey.
     static let audioBaseURL = URL(string: "https://innercraft.com/app/audio/")!
 
-    /// Dateiname der zentralen Journey-Definition.
-    static let journeyFilename = "journey.json"
+    /// Dateiname der zentralen Journey-Definition (abhängig von der Geräte-Sprache:
+    /// Deutsch → journey.json, Englisch → journey-en.json, Französisch → journey-fr.json).
+    static var journeyFilename: String { L10n.journeyFilename }
 
     /// Gong-Dateien im App-Bundle (Resources/)
     static let gongFilename = "gong"

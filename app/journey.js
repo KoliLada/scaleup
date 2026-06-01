@@ -1,57 +1,89 @@
 /* ==========================================================================
-   Innercraft Meditation — Zentrale Journey
-   Lädt die vom Autor festgelegte Journey (journey.json) und stellt
+   Innercraft Meditation — Zentrale Journey (mehrsprachig)
+   Lädt die vom Autor festgelegte Journey der jeweiligen Sprache und stellt
    Hilfsfunktionen bereit. Wird von der Nutzer-App und vom Autoren-Modus
    gemeinsam verwendet.
+
+   Journey-Dateien:
+     Deutsch     → audio/journey.json
+     Englisch    → audio/journey-en.json
+     Französisch → audio/journey-fr.json
    ========================================================================== */
 
 "use strict";
 
-const JOURNEY_URL = "audio/journey.json";
 const AUDIO_BASE = "audio/";
 
 const GONG_FILE = "gong.wav";
 const GONG_DEEP_FILE = "gong-deep.wav";
 const GONG_DEEPEST_FILE = "gong-deepest.wav";
 
-/** Standard-Journey, falls journey.json (noch) nicht erreichbar ist */
-const DEFAULT_JOURNEY = {
-  version: 1,
-  intro: { file: "intro-meditation.m4a", title: "Geführte Meditation (Willigis Jäger)" },
-  iterations: [
-    { instructionFile: null, silenceMinutes: 5 },
-    { instructionFile: null, silenceMinutes: 6 },
-  ],
-  outroPauseMinutes: 0,
-  outroFile: null,
+/** Pfad der Journey-Datei einer Sprache */
+function journeyUrl(lang) {
+  return lang === "de" ? `${AUDIO_BASE}journey.json` : `${AUDIO_BASE}journey-${lang}.json`;
+}
+
+/** Standard-Journeys, falls die jeweilige journey-Datei (noch) nicht erreichbar ist */
+const DEFAULT_JOURNEYS = {
+  de: {
+    version: 1,
+    intro: { file: "intro-meditation.m4a", title: "Geführte Meditation (Willigis Jäger)" },
+    iterations: [
+      { instructionFile: null, silenceMinutes: 5 },
+      { instructionFile: null, silenceMinutes: 6 },
+    ],
+    outroPauseMinutes: 0,
+    outroFile: null,
+  },
+  en: {
+    version: 1,
+    intro: null,
+    iterations: [
+      { instructionFile: null, silenceMinutes: 5 },
+      { instructionFile: null, silenceMinutes: 6 },
+    ],
+    outroPauseMinutes: 0,
+    outroFile: null,
+  },
+  fr: {
+    version: 1,
+    intro: null,
+    iterations: [
+      { instructionFile: null, silenceMinutes: 5 },
+      { instructionFile: null, silenceMinutes: 6 },
+    ],
+    outroPauseMinutes: 0,
+    outroFile: null,
+  },
 };
 
 /**
- * Lädt die zentrale Journey-Definition.
+ * Lädt die zentrale Journey-Definition einer Sprache.
  * Cache wird umgangen, damit Änderungen des Autors sofort ankommen.
  */
-async function loadJourney() {
+async function loadJourney(lang = "de") {
+  const fallback = DEFAULT_JOURNEYS[lang] || DEFAULT_JOURNEYS.de;
   try {
-    const res = await fetch(`${JOURNEY_URL}?t=${Date.now()}`, { cache: "no-store" });
-    if (!res.ok) return structuredClone(DEFAULT_JOURNEY);
+    const res = await fetch(`${journeyUrl(lang)}?t=${Date.now()}`, { cache: "no-store" });
+    if (!res.ok) return structuredClone(fallback);
     const journey = await res.json();
-    return normalizeJourney(journey);
+    return normalizeJourney(journey, fallback);
   } catch {
-    return structuredClone(DEFAULT_JOURNEY);
+    return structuredClone(fallback);
   }
 }
 
 /** Stellt sicher, dass alle Felder vorhanden und gültig sind */
-function normalizeJourney(journey) {
-  const result = structuredClone(DEFAULT_JOURNEY);
+function normalizeJourney(journey, fallback) {
+  const result = structuredClone(fallback);
 
   if (journey && typeof journey === "object") {
     if (journey.intro && typeof journey.intro.file === "string") {
       result.intro = {
         file: journey.intro.file,
-        title: journey.intro.title || result.intro.title,
+        title: journey.intro.title || (result.intro && result.intro.title) || "",
       };
-    } else if (journey.intro === null) {
+    } else {
       result.intro = null;
     }
 

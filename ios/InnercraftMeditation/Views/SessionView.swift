@@ -68,7 +68,7 @@ struct SessionView: View {
             .frame(width: 260, height: 260)
             .padding(.bottom, 28)
 
-            Text("SCHRITT \(engine.phaseIndex + 1) VON \(engine.phases.count)")
+            Text(L10n.stepLabel(engine.phaseIndex + 1, of: engine.phases.count))
                 .font(.system(size: 12, weight: .light))
                 .tracking(2)
                 .foregroundStyle(Color.icInkSoft)
@@ -79,7 +79,7 @@ struct SessionView: View {
                 Button {
                     engine.togglePause()
                 } label: {
-                    Text(engine.state == .paused ? "Fortsetzen" : "Pause")
+                    Text(engine.state == .paused ? L10n.t("btnResume") : L10n.t("btnPause"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Color.icForest)
                         .padding(.horizontal, 28)
@@ -90,7 +90,7 @@ struct SessionView: View {
                 Button {
                     showStopConfirmation = true
                 } label: {
-                    Text("Beenden")
+                    Text(L10n.t("btnStop"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Color.icClay)
                         .padding(.horizontal, 28)
@@ -102,11 +102,11 @@ struct SessionView: View {
             Spacer()
         }
         .padding(22)
-        .confirmationDialog("Meditation wirklich beenden?", isPresented: $showStopConfirmation, titleVisibility: .visible) {
-            Button("Beenden", role: .destructive) {
+        .confirmationDialog(L10n.t("confirmStop"), isPresented: $showStopConfirmation, titleVisibility: .visible) {
+            Button(L10n.t("btnStop"), role: .destructive) {
                 engine.stop()
             }
-            Button("Weiter meditieren", role: .cancel) {}
+            Button(L10n.t("btnKeepMeditating"), role: .cancel) {}
         }
     }
 
@@ -138,25 +138,25 @@ struct SessionView: View {
             GongMark(color: .icGold)
                 .frame(width: 76, height: 76)
 
-            Text("MEDITATION ABGESCHLOSSEN")
+            Text(L10n.t("doneEyebrow"))
                 .font(.system(size: 12, weight: .medium))
                 .tracking(4)
                 .foregroundStyle(Color.icClay)
                 .padding(.top, 16)
 
-            Text("Jetzt bist du präsent\nund gerüstet für deinen Tag.")
+            Text(L10n.t("doneTitle"))
                 .font(.custom("Cormorant Garamond", size: 32).weight(.medium))
                 .foregroundStyle(Color.icInk)
                 .multilineTextAlignment(.center)
 
-            Text("Wir wünschen dir einen schönen Tag.")
+            Text(L10n.t("doneLead"))
                 .font(.system(size: 15, weight: .light))
                 .foregroundStyle(Color.icInkSoft)
 
             Button {
                 dismiss()
             } label: {
-                Text("Zurück zum Start")
+                Text(L10n.t("btnBackHome"))
                     .font(.system(size: 16, weight: .medium))
                     .tracking(1)
                     .foregroundStyle(Color.icCream)

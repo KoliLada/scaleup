@@ -21,7 +21,10 @@ Die Nutzer müssen nichts einstellen und nichts aufnehmen — App öffnen,
 
 ## Funktionen
 
-- Lädt die zentrale Journey (`journey.json`) und alle Audio-Dateien von
+- **Dreisprachig** (Deutsch / Englisch / Französisch): Die App folgt der
+  Geräte-Sprache und lädt die Journey der jeweiligen Sprache
+  (`journey.json` / `journey-en.json` / `journey-fr.json`)
+- Lädt die zentrale Journey und alle Audio-Dateien von
   innercraft.com und cacht sie für die **Offline-Nutzung**
 - Ändert der Autor die Journey (über den Autoren-Modus der Web-App), bekommen
   alle Nutzer beim nächsten App-Start automatisch die neue Version
@@ -60,6 +63,7 @@ https://innercraft.com/app/audio/
 InnercraftMeditation/
   InnercraftMeditationApp.swift   — App-Einstieg
   MeditationConfig.swift          — zentrale URL, Konstanten, Farbpalette
+  L10n.swift                      — Übersetzungen (DE / EN / FR)
   Info.plist                      — Hintergrund-Audio
   Models/
     JourneyProvider.swift         — lädt & cacht journey.json + Audio-Dateien

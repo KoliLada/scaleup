@@ -68,28 +68,28 @@ final class MeditationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate 
            let localURL = provider.localAudioURL(for: intro.file) {
             result.append(MeditationPhase(
                 kind: .audio(localURL),
-                label: "Eingangs-Meditation",
-                title: "Geführte Meditation"
+                label: L10n.t("phaseIntroLabel"),
+                title: L10n.t("phaseIntroTitle")
             ))
         }
 
         // 2) Iterationen: Anweisung → Stille → Gong
         let total = journey.iterations.count
         for (index, iteration) in journey.iterations.enumerated() {
-            let label = "Iteration \(index + 1) von \(total)"
+            let label = L10n.iterationPhaseLabel(index + 1, of: total)
 
             if let instructionURL = provider.localAudioURL(for: iteration.instructionFile) {
-                result.append(MeditationPhase(kind: .audio(instructionURL), label: label, title: "Anweisung"))
+                result.append(MeditationPhase(kind: .audio(instructionURL), label: label, title: L10n.t("phaseInstruction")))
             }
 
             result.append(MeditationPhase(
                 kind: .silence(iteration.silenceMinutes * 60),
                 label: label,
-                title: "Stille"
+                title: L10n.t("phaseSilence")
             ))
 
             if let gongURL = Self.bundleAudioURL(MeditationConfig.gongFilename) {
-                result.append(MeditationPhase(kind: .audio(gongURL), label: label, title: "Gong"))
+                result.append(MeditationPhase(kind: .audio(gongURL), label: label, title: L10n.t("phaseGong")))
             }
         }
 
@@ -97,24 +97,24 @@ final class MeditationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate 
         if journey.outroPauseMinutes > 0 {
             result.append(MeditationPhase(
                 kind: .silence(journey.outroPauseMinutes * 60),
-                label: "Übergang",
-                title: "Stille"
+                label: L10n.t("phaseTransition"),
+                title: L10n.t("phaseSilence")
             ))
         }
 
         // 4) Tieferer Gong leitet das Outro ein
         if let deepURL = Self.bundleAudioURL(MeditationConfig.gongDeepFilename) {
-            result.append(MeditationPhase(kind: .audio(deepURL), label: "Outro", title: "Tieferer Gong"))
+            result.append(MeditationPhase(kind: .audio(deepURL), label: L10n.t("phaseOutro"), title: L10n.t("phaseDeepGong")))
         }
 
         // 5) Outro-Ansprache des Autors
         if let outroURL = provider.localAudioURL(for: journey.outroFile) {
-            result.append(MeditationPhase(kind: .audio(outroURL), label: "Outro", title: "Outro"))
+            result.append(MeditationPhase(kind: .audio(outroURL), label: L10n.t("phaseOutro"), title: L10n.t("phaseOutro")))
         }
 
         // 6) Ganz tiefer Gong als Abschluss
         if let deepestURL = Self.bundleAudioURL(MeditationConfig.gongDeepestFilename) {
-            result.append(MeditationPhase(kind: .audio(deepestURL), label: "Abschluss", title: "Tiefer Gong"))
+            result.append(MeditationPhase(kind: .audio(deepestURL), label: L10n.t("phaseFinal"), title: L10n.t("phaseFinalGong")))
         }
 
         phases = result

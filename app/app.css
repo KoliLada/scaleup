@@ -58,7 +58,10 @@ body {
 .app-header {
   padding: calc(var(--safe-top) + 14px) 22px 12px;
   display: flex;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 560px;
+  margin: 0 auto;
 }
 
 .brand {
@@ -71,6 +74,29 @@ body {
 .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
 .brand-name { font-family: var(--serif); font-size: 1.2rem; font-weight: 600; letter-spacing: .04em; }
 .brand-tag  { font-family: var(--sans); font-size: .62rem; letter-spacing: .28em; text-transform: uppercase; color: var(--clay); }
+
+/* Sprachumschalter (DE · EN · FR) */
+.app-lang-switch {
+  display: flex;
+  align-items: center;
+  gap: .45em;
+  font-family: var(--sans);
+  font-size: .74rem;
+  letter-spacing: .1em;
+  color: var(--ink-soft);
+}
+.app-lang-switch a {
+  color: inherit;
+  text-decoration: none;
+  opacity: .55;
+  padding: 4px 2px;
+}
+.app-lang-switch a.is-current {
+  opacity: 1;
+  color: var(--clay);
+  border-bottom: 1px solid currentColor;
+}
+.app-lang-switch span { opacity: .35; }
 
 /* ---------- Screens ---------- */
 #app {
@@ -322,6 +348,36 @@ code {
 }
 
 /* ---------- Autoren-Modus ---------- */
+.journey-lang-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 18px 0 8px;
+}
+
+.journey-lang-tab {
+  flex: 1;
+  font-family: var(--sans);
+  font-size: .88rem;
+  padding: 12px 8px;
+  background: var(--cream);
+  border: 1px solid rgba(47, 59, 48, .2);
+  border-radius: var(--radius);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all .2s var(--ease);
+}
+
+.journey-lang-tab.is-active {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--cream);
+  font-weight: 500;
+}
+
+.journey-lang-hint {
+  margin-bottom: 20px;
+}
+
 .card-head {
   display: flex;
   align-items: center;

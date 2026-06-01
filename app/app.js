@@ -1,6 +1,7 @@
 /* ==========================================================================
-   Innercraft Meditation — Nutzer-App
-   Spielt die zentral vom Autor festgelegte Journey in einem Durchlauf ab:
+   Innercraft Meditation — Nutzer-App (mehrsprachig: DE / EN / FR)
+   Spielt die zentral vom Autor festgelegte Journey der gewählten Sprache
+   in einem Durchlauf ab:
    Eingangs-Meditation → Iterationen (Anweisung · Stille · Gong)
    → tieferer Gong → Outro → ganz tiefer Gong
    ========================================================================== */
@@ -19,8 +20,8 @@ function formatMinutes(totalSeconds) {
 }
 
 function formatDurationLabel(seconds) {
-  if (seconds < 90) return `${Math.round(seconds)} Sek.`;
-  return `${Math.round(seconds / 60)} Min.`;
+  if (seconds < 90) return t("durationSec", Math.round(seconds));
+  return t("durationMin", Math.round(seconds / 60));
 }
 
 function showScreen(id) {
@@ -35,7 +36,7 @@ let introAvailable = false;
 let introDuration = null;
 
 async function initJourney() {
-  journey = await loadJourney();
+  journey = await loadJourney(LANG);
 
   // Verfügbarkeit & Dauer der Eingangs-Meditation prüfen
   if (journey.intro) {
@@ -68,7 +69,7 @@ function renderFlow() {
     totalSeconds += silence;
     items.push({
       icon: String(index + 1),
-      label: `Iteration ${index + 1}: ${iteration.instructionFile ? "Anweisung · " : ""}Stille · Gong`,
+      label: t("flowIteration", index + 1, !!iteration.instructionFile),
       duration: formatDurationLabel(silence),
     });
   });
@@ -77,8 +78,8 @@ function renderFlow() {
     totalSeconds += journey.outroPauseMinutes * 60;
   }
 
-  items.push({ icon: "◎", label: journey.outroFile ? "Tieferer Gong · Outro" : "Tieferer Gong", duration: "" });
-  items.push({ icon: "●", label: "Ganz tiefer Gong — Abschluss", duration: "" });
+  items.push({ icon: "◎", label: journey.outroFile ? t("flowDeepGongOutro") : t("flowDeepGong"), duration: "" });
+  items.push({ icon: "●", label: t("flowFinalGong"), duration: "" });
 
   list.innerHTML = items
     .map(
@@ -92,7 +93,7 @@ function renderFlow() {
     .join("");
 
   $("#flow-total").textContent = totalSeconds
-    ? `Gesamt ca. ${Math.round(totalSeconds / 60)} Minuten`
+    ? t("flowTotal", Math.round(totalSeconds / 60))
     : "";
 }
 
@@ -126,8 +127,8 @@ const Session = {
     if (journey.intro && introAvailable) {
       phases.push({
         type: "audio",
-        label: "Eingangs-Meditation",
-        title: "Geführte Meditation",
+        label: t("phaseIntroLabel"),
+        title: t("phaseIntroTitle"),
         audio: makeAudio(journey.intro.file),
         durationSeconds: introDuration || null,
       });
@@ -137,13 +138,13 @@ const Session = {
     const total = journey.iterations.length;
     for (let i = 0; i < total; i++) {
       const iteration = journey.iterations[i];
-      const label = `Iteration ${i + 1} von ${total}`;
+      const label = t("phaseIterationLabel", i + 1, total);
 
       if (iteration.instructionFile && (await audioExists(iteration.instructionFile))) {
         phases.push({
           type: "audio",
           label,
-          title: "Anweisung",
+          title: t("phaseInstruction"),
           audio: makeAudio(iteration.instructionFile),
           durationSeconds: null,
         });
@@ -152,14 +153,14 @@ const Session = {
       phases.push({
         type: "silence",
         label,
-        title: "Stille",
+        title: t("phaseSilence"),
         durationSeconds: iteration.silenceMinutes * 60,
       });
 
       phases.push({
         type: "audio",
         label,
-        title: "Gong",
+        title: t("phaseGong"),
         audio: makeAudio(GONG_FILE),
         durationSeconds: null,
       });
@@ -169,8 +170,8 @@ const Session = {
     if (journey.outroPauseMinutes > 0) {
       phases.push({
         type: "silence",
-        label: "Übergang",
-        title: "Stille",
+        label: t("phaseTransition"),
+        title: t("phaseSilence"),
         durationSeconds: journey.outroPauseMinutes * 60,
       });
     }
@@ -178,8 +179,8 @@ const Session = {
     // 4) Tieferer Gong leitet das Outro ein
     phases.push({
       type: "audio",
-      label: "Outro",
-      title: "Tieferer Gong",
+      label: t("phaseOutro"),
+      title: t("phaseDeepGong"),
       audio: makeAudio(GONG_DEEP_FILE),
       durationSeconds: null,
     });
@@ -188,8 +189,8 @@ const Session = {
     if (journey.outroFile && (await audioExists(journey.outroFile))) {
       phases.push({
         type: "audio",
-        label: "Outro",
-        title: "Outro",
+        label: t("phaseOutro"),
+        title: t("phaseOutro"),
         audio: makeAudio(journey.outroFile),
         durationSeconds: null,
       });
@@ -198,8 +199,8 @@ const Session = {
     // 6) Ganz tiefer Gong als Abschluss
     phases.push({
       type: "audio",
-      label: "Abschluss",
-      title: "Tiefer Gong",
+      label: t("phaseFinal"),
+      title: t("phaseFinalGong"),
       audio: makeAudio(GONG_DEEPEST_FILE),
       durationSeconds: null,
     });
@@ -346,7 +347,7 @@ const Session = {
 
     $("#session-phase-label").textContent = phase.label;
     $("#session-phase-title").textContent = phase.title;
-    $("#session-step").textContent = `Schritt ${this.phaseIndex + 1} von ${this.phases.length}`;
+    $("#session-step").textContent = t("sessionStep", this.phaseIndex + 1, this.phases.length);
 
     let elapsed;
     let total = phase.durationSeconds;
@@ -382,13 +383,13 @@ const Session = {
     if (this.pausedAt === null) {
       this.pausedAt = Date.now();
       if (phase.audio) phase.audio.pause();
-      $("#btn-pause").textContent = "Fortsetzen";
+      $("#btn-pause").textContent = t("btnResume");
     } else {
       const pausedDuration = Date.now() - this.pausedAt;
       this.phaseStartedAt += pausedDuration;
       this.pausedAt = null;
       if (phase.type === "audio" && phase.audio) phase.audio.play();
-      $("#btn-pause").textContent = "Pause";
+      $("#btn-pause").textContent = t("btnPause");
     }
   },
 
@@ -429,7 +430,7 @@ const Session = {
       this.wakeLock = null;
     }
 
-    $("#btn-pause").textContent = "Pause";
+    $("#btn-pause").textContent = t("btnPause");
   },
 };
 
@@ -445,7 +446,7 @@ function bindNavigation() {
   $("#btn-start").addEventListener("click", () => Session.start());
   $("#btn-pause").addEventListener("click", () => Session.togglePause());
   $("#btn-stop").addEventListener("click", () => {
-    if (confirm("Meditation wirklich beenden?")) Session.stop();
+    if (confirm(t("confirmStop"))) Session.stop();
   });
 }
 
@@ -458,6 +459,7 @@ function registerServiceWorker() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  applyTranslations();
   bindNavigation();
   initJourney();
   registerServiceWorker();

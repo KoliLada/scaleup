@@ -30,6 +30,20 @@ ios/         — Innercraft Meditation als native iOS-App (SwiftUI / Xcode)
 tools/       — Skripte zur Erzeugung der Gong-Klänge und App-Icons
 ```
 
+## Sprachen
+
+Die Website und die Meditations-App gibt es in **drei Sprachen**:
+
+| Sprache | Website | Meditations-App |
+|---|---|---|
+| 🇩🇪 Deutsch | `/` (index.html) | `/app/` (Standard) |
+| 🇬🇧 Englisch | `/en/` | `/app/?lang=en` |
+| 🇫🇷 Französisch | `/fr/` | `/app/?lang=fr` |
+
+Beim ersten Besuch wird die Browser-Sprache erkannt; der Sprachumschalter
+(DE · EN · FR) sitzt oben rechts im Menü. Jede Sprache hat ihre **eigene
+Meditations-Journey** mit eigenen Aufnahmen (verwaltet im Autoren-Modus).
+
 ## Meditations-App
 
 Die tägliche Innercraft-Meditation gibt es in zwei Varianten — beide mit
