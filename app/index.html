@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
   <title>Innercraft Meditation</title>
-  <meta name="description" content="Deine tägliche Meditation: geführte Eingangs-Meditation, eigene Anweisungen in deiner Stimme, Stille-Iterationen mit Gong und ein persönliches Outro." />
+  <meta name="description" content="Deine tägliche Meditation mit Innercraft: geführte Eingangs-Meditation, Stille-Iterationen mit Anleitung und Gong, und ein Outro, das dich gerüstet in den Tag schickt." />
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.webmanifest" />
@@ -40,101 +40,21 @@
       <p class="eyebrow">Deine tägliche Praxis</p>
       <h1>Komm zur Ruhe.<br />Werde präsent.</h1>
 
+      <p class="lead">
+        Lass dich führen: eine Meditation in einem Fluss — von der geführten
+        Eingangs-Meditation über Impulse und Stille bis zum Gong, der dich in
+        deinen Tag entlässt.
+      </p>
+
       <div class="flow-card">
-        <h2>Dein Ablauf</h2>
+        <h2>Die Reise heute</h2>
         <ol class="flow-list" id="flow-list">
-          <!-- wird von app.js befüllt -->
+          <li><span class="flow-icon">…</span><span>Lade die Journey …</span></li>
         </ol>
         <p class="flow-total" id="flow-total"></p>
       </div>
 
-      <div class="notice notice-warn hidden" id="intro-missing-notice">
-        Die geführte Eingangs-Meditation (Willigis Jäger) ist noch nicht hinterlegt.
-        Sobald die Datei <code>app/audio/intro-meditation.m4a</code> verfügbar ist,
-        wird sie automatisch abgespielt. Bis dahin beginnt die Meditation direkt mit
-        der ersten Iteration.
-      </div>
-
-      <div class="notice notice-warn hidden" id="recordings-missing-notice">
-        Du hast noch keine Anweisungen aufgenommen. Gehe zu
-        <strong>„Aufnahmen“</strong>, um deine Iterations-Anweisungen und den
-        Outro-Satz mit deiner eigenen Stimme aufzusprechen.
-      </div>
-
-      <button class="btn btn-primary btn-big" id="btn-start">Meditation beginnen</button>
-
-      <nav class="home-nav">
-        <button class="btn btn-ghost" data-goto="screen-settings">Ablauf &amp; Dauer</button>
-        <button class="btn btn-ghost" data-goto="screen-recordings">Aufnahmen</button>
-      </nav>
-    </section>
-
-    <!-- ============ EINSTELLUNGEN ============ -->
-    <section class="screen" id="screen-settings">
-      <button class="btn-back" data-goto="screen-home">‹ Zurück</button>
-      <p class="eyebrow">Einstellungen</p>
-      <h1>Ablauf &amp; Dauer</h1>
-
-      <div class="card">
-        <h2>Eingangs-Meditation</h2>
-        <label class="row row-toggle">
-          <span>Geführte Meditation (Willigis Jäger) abspielen</span>
-          <input type="checkbox" id="setting-intro" checked />
-          <span class="toggle" aria-hidden="true"></span>
-        </label>
-        <p class="hint" id="intro-status">Prüfe Verfügbarkeit …</p>
-      </div>
-
-      <div class="card">
-        <h2>Iterationen</h2>
-        <p class="hint">Jede Iteration beginnt mit deiner Anweisung, gefolgt von Stille, und endet mit einem Gong.</p>
-        <div class="row">
-          <span>Anzahl der Iterationen</span>
-          <div class="stepper" id="iteration-count-stepper">
-            <button class="stepper-btn" data-step="-1" aria-label="Weniger Iterationen">−</button>
-            <span class="stepper-value" id="iteration-count">3</span>
-            <button class="stepper-btn" data-step="1" aria-label="Mehr Iterationen">+</button>
-          </div>
-        </div>
-        <div id="iteration-durations">
-          <!-- wird von app.js befüllt: pro Iteration ein Dauer-Regler -->
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Outro</h2>
-        <p class="hint">
-          Nach der letzten Iteration ertönt ein tieferer Gong, dann dein Outro-Satz,
-          und zum Abschluss der ganz tiefe Gong.
-        </p>
-        <div class="row">
-          <span>Stille vor dem Outro</span>
-          <div class="duration-input">
-            <input type="number" id="setting-outro-pause" min="0" max="10" step="1" value="0" inputmode="numeric" />
-            <span class="unit">Min.</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ AUFNAHMEN ============ -->
-    <section class="screen" id="screen-recordings">
-      <button class="btn-back" data-goto="screen-home">‹ Zurück</button>
-      <p class="eyebrow">Deine Stimme</p>
-      <h1>Aufnahmen</h1>
-      <p class="lead">
-        Sprich hier deine Anweisungen für jede Iteration sowie deinen Outro-Satz auf.
-        Die Aufnahmen bleiben auf deinem Gerät gespeichert.
-      </p>
-
-      <div class="notice notice-warn hidden" id="mic-error">
-        Der Zugriff auf das Mikrofon wurde verweigert. Bitte erlaube den Mikrofon-Zugriff
-        in den Safari-Einstellungen, um Aufnahmen zu machen.
-      </div>
-
-      <div id="recording-list">
-        <!-- wird von app.js befüllt -->
-      </div>
+      <button class="btn btn-primary btn-big" id="btn-start" disabled>Meditation beginnen</button>
     </section>
 
     <!-- ============ LAUFENDE MEDITATION ============ -->
@@ -189,6 +109,7 @@
     </defs>
   </svg>
 
+  <script src="journey.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

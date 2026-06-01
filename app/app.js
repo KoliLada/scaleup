@@ -1,116 +1,11 @@
 /* ==========================================================================
-   Innercraft Meditation — App-Logik
-   Ablauf: Eingangs-Meditation → 3–5 Iterationen (Anweisung · Stille · Gong)
-           → tieferer Gong → Outro-Satz → ganz tiefer Gong
+   Innercraft Meditation — Nutzer-App
+   Spielt die zentral vom Autor festgelegte Journey in einem Durchlauf ab:
+   Eingangs-Meditation → Iterationen (Anweisung · Stille · Gong)
+   → tieferer Gong → Outro → ganz tiefer Gong
    ========================================================================== */
 
 "use strict";
-
-/* ---------- Konstanten ---------- */
-
-// Zentrale Eingangs-Meditation für alle Nutzer — die erste gefundene Datei wird verwendet
-const INTRO_URL_CANDIDATES = [
-  "audio/intro-meditation.m4a",
-  "audio/intro-meditation.mp3",
-];
-const GONG_URL = "audio/gong.wav";
-const GONG_DEEP_URL = "audio/gong-deep.wav";
-const GONG_DEEPEST_URL = "audio/gong-deepest.wav";
-
-const MAX_ITERATIONS = 5;
-const MIN_ITERATIONS = 3;
-
-const RECORDING_SLOTS = [
-  { key: "instruction-1", title: "Anweisung — Iteration 1", hint: "Kurze verbale Anweisung, mit der die erste Stille beginnt." },
-  { key: "instruction-2", title: "Anweisung — Iteration 2", hint: "Anweisung für die zweite Iteration." },
-  { key: "instruction-3", title: "Anweisung — Iteration 3", hint: "Anweisung für die dritte Iteration." },
-  { key: "instruction-4", title: "Anweisung — Iteration 4", hint: "Anweisung für die vierte Iteration (falls aktiviert)." },
-  { key: "instruction-5", title: "Anweisung — Iteration 5", hint: "Anweisung für die fünfte Iteration (falls aktiviert)." },
-  { key: "outro", title: "Outro-Satz", hint: "Z. B.: „Jetzt bist du präsent und gerüstet für deinen Tag. Ich wünsche dir einen schönen Tag.“" },
-];
-
-/* ---------- Einstellungen (localStorage) ---------- */
-
-const Settings = {
-  defaults: {
-    introEnabled: true,
-    iterationCount: 3,
-    iterationMinutes: [5, 6, 5, 5, 5],
-    outroPauseMinutes: 0,
-  },
-
-  load() {
-    try {
-      const raw = localStorage.getItem("innercraft-meditation-settings");
-      if (!raw) return { ...this.defaults };
-      const parsed = JSON.parse(raw);
-      return {
-        ...this.defaults,
-        ...parsed,
-        iterationMinutes: [
-          ...this.defaults.iterationMinutes.map((d, i) =>
-            Array.isArray(parsed.iterationMinutes) && parsed.iterationMinutes[i] > 0
-              ? parsed.iterationMinutes[i]
-              : d
-          ),
-        ],
-      };
-    } catch {
-      return { ...this.defaults };
-    }
-  },
-
-  save(settings) {
-    localStorage.setItem("innercraft-meditation-settings", JSON.stringify(settings));
-  },
-};
-
-let settings = Settings.load();
-
-/* ---------- Aufnahmen (IndexedDB) ---------- */
-
-const RecordingStore = {
-  db: null,
-
-  open() {
-    if (this.db) return Promise.resolve(this.db);
-    return new Promise((resolve, reject) => {
-      const req = indexedDB.open("innercraft-meditation", 1);
-      req.onupgradeneeded = () => req.result.createObjectStore("recordings");
-      req.onsuccess = () => { this.db = req.result; resolve(this.db); };
-      req.onerror = () => reject(req.error);
-    });
-  },
-
-  async get(key) {
-    const db = await this.open();
-    return new Promise((resolve, reject) => {
-      const req = db.transaction("recordings").objectStore("recordings").get(key);
-      req.onsuccess = () => resolve(req.result || null);
-      req.onerror = () => reject(req.error);
-    });
-  },
-
-  async set(key, value) {
-    const db = await this.open();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction("recordings", "readwrite");
-      tx.objectStore("recordings").put(value, key);
-      tx.oncomplete = resolve;
-      tx.onerror = () => reject(tx.error);
-    });
-  },
-
-  async remove(key) {
-    const db = await this.open();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction("recordings", "readwrite");
-      tx.objectStore("recordings").delete(key);
-      tx.oncomplete = resolve;
-      tx.onerror = () => reject(tx.error);
-    });
-  },
-};
 
 /* ---------- Hilfsfunktionen ---------- */
 
@@ -133,92 +28,56 @@ function showScreen(id) {
   window.scrollTo(0, 0);
 }
 
-/* ---------- Verfügbarkeit der Eingangs-Meditation ---------- */
+/* ---------- Journey laden & anzeigen ---------- */
 
+let journey = null;
 let introAvailable = false;
-let introUrl = null;      // erste verfügbare Datei aus INTRO_URL_CANDIDATES
-let introDuration = null; // Sekunden, falls ermittelbar
+let introDuration = null;
 
-async function checkIntroAvailability() {
-  introAvailable = false;
-  introUrl = null;
+async function initJourney() {
+  journey = await loadJourney();
 
-  for (const candidate of INTRO_URL_CANDIDATES) {
-    try {
-      const res = await fetch(candidate, { method: "HEAD", cache: "no-store" });
-      if (res.ok) {
-        introAvailable = true;
-        introUrl = candidate;
-        break;
-      }
-    } catch {
-      // Kandidat nicht erreichbar — nächsten prüfen
+  // Verfügbarkeit & Dauer der Eingangs-Meditation prüfen
+  if (journey.intro) {
+    introAvailable = await audioExists(journey.intro.file);
+    if (introAvailable) {
+      introDuration = await probeAudioDuration(audioUrl(journey.intro.file));
     }
   }
 
-  if (introAvailable) {
-    // Dauer über ein temporäres Audio-Element ermitteln
-    await new Promise((resolve) => {
-      const probe = new Audio(introUrl);
-      probe.preload = "metadata";
-      probe.onloadedmetadata = () => {
-        if (isFinite(probe.duration)) introDuration = probe.duration;
-        resolve();
-      };
-      probe.onerror = resolve;
-      setTimeout(resolve, 5000);
-    });
-  }
-
-  updateIntroStatus();
   renderFlow();
+  $("#btn-start").disabled = false;
 }
 
-function updateIntroStatus() {
-  const status = $("#intro-status");
-  const notice = $("#intro-missing-notice");
-  if (introAvailable) {
-    const mins = introDuration ? ` (${Math.round(introDuration / 60)} Min.)` : "";
-    status.textContent = `Geführte Meditation von Willigis Jäger ist hinterlegt${mins}.`;
-    notice.classList.add("hidden");
-  } else {
-    status.textContent = "Noch nicht verfügbar — die Datei app/audio/intro-meditation.m4a ist nicht hinterlegt.";
-    notice.classList.toggle("hidden", !settings.introEnabled);
-  }
-}
-
-/* ---------- Ablauf-Übersicht (Home) ---------- */
-
-async function renderFlow() {
+function renderFlow() {
   const list = $("#flow-list");
   const items = [];
   let totalSeconds = 0;
 
-  if (settings.introEnabled && introAvailable) {
-    const dur = introDuration || 0;
-    totalSeconds += dur;
+  if (journey.intro && introAvailable) {
+    if (introDuration) totalSeconds += introDuration;
     items.push({
       icon: "◉",
-      label: "Geführte Meditation (Willigis Jäger)",
-      duration: dur ? formatDurationLabel(dur) : "",
+      label: journey.intro.title,
+      duration: introDuration ? formatDurationLabel(introDuration) : "",
     });
   }
 
-  for (let i = 0; i < settings.iterationCount; i++) {
-    const silence = settings.iterationMinutes[i] * 60;
+  journey.iterations.forEach((iteration, index) => {
+    const silence = iteration.silenceMinutes * 60;
     totalSeconds += silence;
     items.push({
-      icon: String(i + 1),
-      label: `Iteration ${i + 1}: Anweisung · Stille · Gong`,
+      icon: String(index + 1),
+      label: `Iteration ${index + 1}: ${iteration.instructionFile ? "Anweisung · " : ""}Stille · Gong`,
       duration: formatDurationLabel(silence),
     });
+  });
+
+  if (journey.outroPauseMinutes > 0) {
+    totalSeconds += journey.outroPauseMinutes * 60;
   }
 
-  if (settings.outroPauseMinutes > 0) {
-    totalSeconds += settings.outroPauseMinutes * 60;
-  }
-
-  items.push({ icon: "◎", label: "Tieferer Gong · Outro-Satz", duration: "" });
+  items.push({ icon: "◎", label: journey.outroFile ? "Tieferer Gong · Outro" : "Tieferer Gong", duration: "" });
   items.push({ icon: "●", label: "Ganz tiefer Gong — Abschluss", duration: "" });
 
   list.innerHTML = items
@@ -235,208 +94,6 @@ async function renderFlow() {
   $("#flow-total").textContent = totalSeconds
     ? `Gesamt ca. ${Math.round(totalSeconds / 60)} Minuten`
     : "";
-
-  // Hinweis, falls Aufnahmen fehlen
-  const firstInstruction = await RecordingStore.get("instruction-1").catch(() => null);
-  $("#recordings-missing-notice").classList.toggle("hidden", !!firstInstruction);
-}
-
-/* ---------- Einstellungs-Screen ---------- */
-
-function renderSettings() {
-  $("#setting-intro").checked = settings.introEnabled;
-  $("#iteration-count").textContent = settings.iterationCount;
-  $("#setting-outro-pause").value = settings.outroPauseMinutes;
-
-  const container = $("#iteration-durations");
-  container.innerHTML = "";
-  for (let i = 0; i < settings.iterationCount; i++) {
-    const row = document.createElement("div");
-    row.className = "row";
-    row.innerHTML = `
-      <span>Stille in Iteration ${i + 1}</span>
-      <div class="duration-input">
-        <input type="number" min="1" max="60" step="1" inputmode="numeric"
-               value="${settings.iterationMinutes[i]}" data-iteration="${i}" />
-        <span class="unit">Min.</span>
-      </div>`;
-    container.appendChild(row);
-  }
-
-  container.querySelectorAll("input[data-iteration]").forEach((input) => {
-    input.addEventListener("change", () => {
-      const idx = Number(input.dataset.iteration);
-      const value = Math.min(60, Math.max(1, Number(input.value) || 1));
-      input.value = value;
-      settings.iterationMinutes[idx] = value;
-      Settings.save(settings);
-      renderFlow();
-    });
-  });
-}
-
-function bindSettings() {
-  $("#setting-intro").addEventListener("change", (e) => {
-    settings.introEnabled = e.target.checked;
-    Settings.save(settings);
-    updateIntroStatus();
-    renderFlow();
-  });
-
-  $("#iteration-count-stepper").addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-step]");
-    if (!btn) return;
-    const next = settings.iterationCount + Number(btn.dataset.step);
-    settings.iterationCount = Math.min(MAX_ITERATIONS, Math.max(MIN_ITERATIONS, next));
-    Settings.save(settings);
-    renderSettings();
-    renderFlow();
-  });
-
-  $("#setting-outro-pause").addEventListener("change", (e) => {
-    settings.outroPauseMinutes = Math.min(10, Math.max(0, Number(e.target.value) || 0));
-    e.target.value = settings.outroPauseMinutes;
-    Settings.save(settings);
-    renderFlow();
-  });
-}
-
-/* ---------- Aufnahme-Screen ---------- */
-
-const Recorder = {
-  mediaRecorder: null,
-  chunks: [],
-  activeKey: null,
-  startedAt: 0,
-
-  pickMimeType() {
-    const candidates = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm", "audio/aac"];
-    for (const type of candidates) {
-      if (window.MediaRecorder && MediaRecorder.isTypeSupported(type)) return type;
-    }
-    return "";
-  },
-
-  async start(key) {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mimeType = this.pickMimeType();
-    this.mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
-    this.chunks = [];
-    this.activeKey = key;
-    this.startedAt = Date.now();
-
-    this.mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) this.chunks.push(e.data);
-    };
-
-    return new Promise((resolve) => {
-      this.mediaRecorder.onstop = async () => {
-        stream.getTracks().forEach((t) => t.stop());
-        const type = this.mediaRecorder.mimeType || mimeType || "audio/mp4";
-        const blob = new Blob(this.chunks, { type });
-        const duration = (Date.now() - this.startedAt) / 1000;
-        await RecordingStore.set(key, {
-          blob,
-          mimeType: type,
-          duration,
-          createdAt: new Date().toISOString(),
-        });
-        this.activeKey = null;
-        resolve();
-      };
-      this.mediaRecorder.start();
-    });
-  },
-
-  stop() {
-    if (this.mediaRecorder && this.mediaRecorder.state !== "inactive") {
-      this.mediaRecorder.stop();
-    }
-  },
-};
-
-let previewAudio = null; // aktive Wiedergabe einer Aufnahme zur Kontrolle
-
-async function renderRecordings() {
-  const container = $("#recording-list");
-  container.innerHTML = "";
-
-  // Nur die Slots anzeigen, die laut Einstellungen gebraucht werden (+ Outro)
-  const visibleSlots = RECORDING_SLOTS.filter((slot, idx) => {
-    if (slot.key === "outro") return true;
-    return idx < settings.iterationCount;
-  });
-
-  for (const slot of visibleSlots) {
-    const recording = await RecordingStore.get(slot.key).catch(() => null);
-    const item = document.createElement("div");
-    item.className = "recording-item";
-    item.innerHTML = `
-      <h3>${slot.title}</h3>
-      <p class="recording-hint">${slot.hint}</p>
-      <div class="recording-controls">
-        <button class="rec-btn rec-btn-record" data-action="record">Aufnehmen</button>
-        <button class="rec-btn" data-action="play" ${recording ? "" : "disabled"}>Anhören</button>
-        <button class="rec-btn" data-action="delete" ${recording ? "" : "disabled"}>Löschen</button>
-        <span class="rec-status ${recording ? "" : "empty"}">
-          ${recording ? `${Math.round(recording.duration)} Sek. aufgenommen` : "noch keine Aufnahme"}
-        </span>
-      </div>`;
-
-    const recordBtn = item.querySelector('[data-action="record"]');
-    const playBtn = item.querySelector('[data-action="play"]');
-    const deleteBtn = item.querySelector('[data-action="delete"]');
-
-    recordBtn.addEventListener("click", async () => {
-      if (Recorder.activeKey === slot.key) {
-        // Aufnahme läuft -> stoppen
-        Recorder.stop();
-        return;
-      }
-      if (Recorder.activeKey) return; // andere Aufnahme läuft
-
-      $("#mic-error").classList.add("hidden");
-      try {
-        recordBtn.classList.add("is-recording");
-        recordBtn.textContent = "■ Stoppen";
-        await Recorder.start(slot.key);
-        // Promise löst erst nach dem Stoppen auf
-        await renderRecordings();
-        renderFlow();
-      } catch (err) {
-        console.error(err);
-        recordBtn.classList.remove("is-recording");
-        recordBtn.textContent = "Aufnehmen";
-        $("#mic-error").classList.remove("hidden");
-      }
-    });
-
-    playBtn.addEventListener("click", async () => {
-      if (previewAudio) {
-        previewAudio.pause();
-        previewAudio = null;
-        playBtn.textContent = "Anhören";
-        return;
-      }
-      const rec = await RecordingStore.get(slot.key);
-      if (!rec) return;
-      previewAudio = new Audio(URL.createObjectURL(rec.blob));
-      playBtn.textContent = "■ Stopp";
-      previewAudio.onended = () => {
-        previewAudio = null;
-        playBtn.textContent = "Anhören";
-      };
-      previewAudio.play();
-    });
-
-    deleteBtn.addEventListener("click", async () => {
-      await RecordingStore.remove(slot.key);
-      await renderRecordings();
-      renderFlow();
-    });
-
-    container.appendChild(item);
-  }
 }
 
 /* ==========================================================================
@@ -446,125 +103,104 @@ async function renderRecordings() {
 const Session = {
   phases: [],          // [{ type, label, title, audio?, durationSeconds? }]
   phaseIndex: -1,
-  phaseStartedAt: 0,   // Zeitstempel (ms) des Phasenstarts
+  phaseStartedAt: 0,
   pausedAt: null,
   tickTimer: null,
   wakeLock: null,
   audioContext: null,
   keepAliveSource: null,
-  objectUrls: [],
 
-  /* ----- Aufbau ----- */
+  /* ----- Aufbau aus der zentralen Journey ----- */
 
   async build() {
     const phases = [];
 
-    // Audio-Elemente vorbereiten (alle innerhalb der Nutzer-Geste erzeugen!)
-    const gong = new Audio(GONG_URL);
-    const gongDeep = new Audio(GONG_DEEP_URL);
-    const gongDeepest = new Audio(GONG_DEEPEST_URL);
-    [gong, gongDeep, gongDeepest].forEach((a) => { a.preload = "auto"; a.load(); });
+    const makeAudio = (filename) => {
+      const audio = new Audio(audioUrl(filename));
+      audio.preload = "auto";
+      audio.load();
+      return audio;
+    };
 
     // 1) Eingangs-Meditation
-    if (settings.introEnabled && introAvailable) {
-      const intro = new Audio(introUrl);
-      intro.preload = "auto";
-      intro.load();
+    if (journey.intro && introAvailable) {
       phases.push({
         type: "audio",
         label: "Eingangs-Meditation",
         title: "Geführte Meditation",
-        audio: intro,
+        audio: makeAudio(journey.intro.file),
         durationSeconds: introDuration || null,
       });
     }
 
-    // 2) Iterationen
-    for (let i = 0; i < settings.iterationCount; i++) {
-      // Anweisung (eigene Stimme); Fallback: Anweisung der ersten Iteration
-      let recording = await RecordingStore.get(`instruction-${i + 1}`).catch(() => null);
-      if (!recording && i > 0) {
-        recording = await RecordingStore.get("instruction-1").catch(() => null);
-      }
+    // 2) Iterationen: Anweisung → Stille → Gong
+    const total = journey.iterations.length;
+    for (let i = 0; i < total; i++) {
+      const iteration = journey.iterations[i];
+      const label = `Iteration ${i + 1} von ${total}`;
 
-      if (recording) {
-        const url = URL.createObjectURL(recording.blob);
-        this.objectUrls.push(url);
-        const audio = new Audio(url);
-        audio.preload = "auto";
-        audio.load();
+      if (iteration.instructionFile && (await audioExists(iteration.instructionFile))) {
         phases.push({
           type: "audio",
-          label: `Iteration ${i + 1} von ${settings.iterationCount}`,
-          title: "Deine Anweisung",
-          audio,
-          durationSeconds: recording.duration || null,
+          label,
+          title: "Anweisung",
+          audio: makeAudio(iteration.instructionFile),
+          durationSeconds: null,
         });
       }
 
-      // Stille
       phases.push({
         type: "silence",
-        label: `Iteration ${i + 1} von ${settings.iterationCount}`,
+        label,
         title: "Stille",
-        durationSeconds: settings.iterationMinutes[i] * 60,
+        durationSeconds: iteration.silenceMinutes * 60,
       });
 
-      // Gong am Ende der Iteration
-      const gongAudio = new Audio(GONG_URL);
-      gongAudio.preload = "auto";
-      gongAudio.load();
       phases.push({
         type: "audio",
-        label: `Iteration ${i + 1} von ${settings.iterationCount}`,
+        label,
         title: "Gong",
-        audio: gongAudio,
+        audio: makeAudio(GONG_FILE),
         durationSeconds: null,
       });
     }
 
     // 3) Optionale Stille vor dem Outro
-    if (settings.outroPauseMinutes > 0) {
+    if (journey.outroPauseMinutes > 0) {
       phases.push({
         type: "silence",
         label: "Übergang",
         title: "Stille",
-        durationSeconds: settings.outroPauseMinutes * 60,
+        durationSeconds: journey.outroPauseMinutes * 60,
       });
     }
 
-    // 4) Tieferer Gong — leitet das Outro ein
+    // 4) Tieferer Gong leitet das Outro ein
     phases.push({
       type: "audio",
       label: "Outro",
       title: "Tieferer Gong",
-      audio: gongDeep,
+      audio: makeAudio(GONG_DEEP_FILE),
       durationSeconds: null,
     });
 
-    // 5) Outro-Satz (eigene Stimme)
-    const outroRecording = await RecordingStore.get("outro").catch(() => null);
-    if (outroRecording) {
-      const url = URL.createObjectURL(outroRecording.blob);
-      this.objectUrls.push(url);
-      const audio = new Audio(url);
-      audio.preload = "auto";
-      audio.load();
+    // 5) Outro-Ansprache
+    if (journey.outroFile && (await audioExists(journey.outroFile))) {
       phases.push({
         type: "audio",
         label: "Outro",
-        title: "Dein Outro",
-        audio,
-        durationSeconds: outroRecording.duration || null,
+        title: "Outro",
+        audio: makeAudio(journey.outroFile),
+        durationSeconds: null,
       });
     }
 
-    // 6) Ganz tiefer Gong — Abschluss
+    // 6) Ganz tiefer Gong als Abschluss
     phases.push({
       type: "audio",
       label: "Abschluss",
       title: "Tiefer Gong",
-      audio: gongDeepest,
+      audio: makeAudio(GONG_DEEPEST_FILE),
       durationSeconds: null,
     });
 
@@ -674,7 +310,6 @@ const Session = {
         // Nicht hängen bleiben: nach kurzer Wartezeit weiter
         setTimeout(() => this.advance(), 2000);
       });
-      // Dauer für die Anzeige nachladen, sobald Metadaten da sind
       if (!phase.durationSeconds && isFinite(phase.audio.duration) && phase.audio.duration > 0) {
         phase.durationSeconds = phase.audio.duration;
       }
@@ -781,9 +416,6 @@ const Session = {
     this.phaseIndex = -1;
     this.pausedAt = null;
 
-    this.objectUrls.forEach((url) => URL.revokeObjectURL(url));
-    this.objectUrls = [];
-
     if (this.keepAliveSource) {
       try { this.keepAliveSource.stop(); } catch { /* bereits gestoppt */ }
       this.keepAliveSource = null;
@@ -807,11 +439,7 @@ function bindNavigation() {
   document.addEventListener("click", (e) => {
     const target = e.target.closest("[data-goto]");
     if (!target) return;
-    const screenId = target.dataset.goto;
-    if (screenId === "screen-recordings") renderRecordings();
-    if (screenId === "screen-settings") renderSettings();
-    if (screenId === "screen-home") renderFlow();
-    showScreen(screenId);
+    showScreen(target.dataset.goto);
   });
 
   $("#btn-start").addEventListener("click", () => Session.start());
@@ -831,9 +459,6 @@ function registerServiceWorker() {
 
 document.addEventListener("DOMContentLoaded", () => {
   bindNavigation();
-  bindSettings();
-  renderSettings();
-  renderFlow();
-  checkIntroAvailability();
+  initJourney();
   registerServiceWorker();
 });

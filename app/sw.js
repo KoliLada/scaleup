@@ -1,18 +1,20 @@
 /* ==========================================================================
    Innercraft Meditation — Service Worker
    Cacht App-Dateien und Gongs für die Offline-Nutzung.
-   Die Eingangs-Meditation wird beim ersten Abspielen mitgecacht.
+   Die Journey-Definition (journey.json) kommt immer zuerst vom Netz,
+   damit Änderungen des Autors sofort bei allen Nutzern ankommen.
    ========================================================================== */
 
 "use strict";
 
-const CACHE_NAME = "innercraft-meditation-v1";
+const CACHE_NAME = "innercraft-meditation-v2";
 
 const PRECACHE_URLS = [
   "./",
   "index.html",
   "app.css",
   "app.js",
+  "journey.js",
   "manifest.webmanifest",
   "icons/icon-180.png",
   "icons/icon-192.png",
@@ -41,16 +43,34 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  // Nur eigene Anfragen behandeln (keine Google Fonts etc.)
-  if (url.origin !== self.location.origin) return;
+  // Nur eigene GET-Anfragen behandeln (keine Google Fonts, keine GitHub-API)
+  if (url.origin !== self.location.origin || event.request.method !== "GET") return;
 
-  // Audio (inkl. Eingangs-Meditation): Cache zuerst, sonst Netz + nachträglich cachen
+  // Journey-Definition: immer Netz zuerst, Cache nur als Offline-Fallback
+  if (url.pathname.endsWith("/journey.json")) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request, { ignoreSearch: true }))
+    );
+    return;
+  }
+
+  // Übrige Audio-Dateien (Meditation, Anweisungen, Gongs): Cache zuerst,
+  // sonst Netz + nachträglich cachen — die Dateinamen ändern sich bei
+  // jeder Veröffentlichung, daher ist Cache-First hier sicher.
   if (url.pathname.includes("/audio/")) {
     event.respondWith(
       caches.match(event.request, { ignoreSearch: true }).then((cached) => {
         if (cached) return cached;
         return fetch(event.request).then((response) => {
-          if (response.ok && event.request.method === "GET" && response.status === 200) {
+          if (response.ok && response.status === 200) {
             const copy = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
           }
@@ -65,7 +85,7 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        if (response.ok && event.request.method === "GET") {
+        if (response.ok) {
           const copy = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         }

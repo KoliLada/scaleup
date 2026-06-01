@@ -2,26 +2,31 @@
 
 Native iPhone-App (SwiftUI) für die tägliche Innercraft-Meditation.
 
-## Ablauf der Meditation
+## Konzept: Eine zentrale Journey für alle
 
-1. **Geführte Eingangs-Meditation** (Willigis Jäger) — wird zentral gehostet
-   und automatisch geladen (siehe unten)
-2. **3–5 Iterationen**, jeweils:
-   - deine eigene, aufgesprochene **Anweisung**
-   - **Stille** (Dauer pro Iteration einstellbar, 1–60 Min.)
+Der **Autor** (Innercraft) legt die Journey zentral fest — die App lädt sie von
+innercraft.com und spielt sie in einem ungestörten Durchlauf ab:
+
+1. **Geführte Eingangs-Meditation** (Willigis Jäger)
+2. **Iterationen** (Anzahl & Dauer bestimmt der Autor), jeweils:
+   - Anweisung in der Stimme des Autors
+   - **Stille**
    - **Gong**
 3. **Tieferer Gong** leitet das Outro ein
-4. **Dein Outro-Satz** in eigener Stimme
-   („Jetzt bist du präsent und gerüstet für deinen Tag …“)
+4. **Outro-Ansprache** des Autors
 5. **Ganz tiefer Gong** zum Abschluss
+
+Die Nutzer müssen nichts einstellen und nichts aufnehmen — App öffnen,
+„Meditation beginnen“, im Fluss bleiben.
 
 ## Funktionen
 
-- Eigene Anweisungen und Outro-Satz direkt in der App **mit dem Mikrofon aufnehmen**
-  (werden lokal auf dem Gerät gespeichert)
-- Anzahl (3–5) und Stille-Dauer der Iterationen einstellbar
+- Lädt die zentrale Journey (`journey.json`) und alle Audio-Dateien von
+  innercraft.com und cacht sie für die **Offline-Nutzung**
+- Ändert der Autor die Journey (über den Autoren-Modus der Web-App), bekommen
+  alle Nutzer beim nächsten App-Start automatisch die neue Version
 - Läuft dank Hintergrund-Audio **auch bei gesperrtem Bildschirm** weiter
-- Eingangs-Meditation wird einmal geladen und ist danach **offline** verfügbar
+- Zum Aktualisieren: auf dem Startbildschirm nach unten ziehen (Pull-to-Refresh)
 
 ## Bauen & auf dem iPhone installieren
 
@@ -37,20 +42,16 @@ Voraussetzungen: **Mac mit Xcode 16** (oder neuer), Apple-ID.
 Für die Veröffentlichung im App Store ist ein
 [Apple Developer Program](https://developer.apple.com/programs/)-Konto (99 €/Jahr) nötig.
 
-## Zentrale Eingangs-Meditation
+## Zentrale Journey-URL
 
-Die App lädt die geführte Meditation von dieser zentralen URL
+Die App lädt die Journey von dieser Basis-URL
 (definiert in `InnercraftMeditation/MeditationConfig.swift`):
 
 ```
-https://innercraft.com/app/audio/intro-meditation.m4a
+https://innercraft.com/app/audio/
 ```
 
-Damit ist die Meditation **für alle Nutzer auf allen Geräten identisch** und kann
-zentral ausgetauscht werden, ohne dass die App aktualisiert werden muss:
-Einfach die Datei `app/audio/intro-meditation.m4a` im Web-Repository ersetzen.
-
-> **Wichtig:** Sobald die Website unter einer anderen Domain veröffentlicht wird,
+> **Wichtig:** Falls die Website einmal unter einer anderen Domain läuft,
 > die URL in `MeditationConfig.swift` entsprechend anpassen.
 
 ## Projektstruktur
@@ -59,18 +60,13 @@ Einfach die Datei `app/audio/intro-meditation.m4a` im Web-Repository ersetzen.
 InnercraftMeditation/
   InnercraftMeditationApp.swift   — App-Einstieg
   MeditationConfig.swift          — zentrale URL, Konstanten, Farbpalette
-  Info.plist                      — Mikrofon-Berechtigung, Hintergrund-Audio
+  Info.plist                      — Hintergrund-Audio
   Models/
-    MeditationSettings.swift      — Einstellungen (UserDefaults)
-    RecordingStore.swift          — eigene Sprachaufnahmen (Documents)
-    IntroProvider.swift           — Download & Cache der Eingangs-Meditation
+    JourneyProvider.swift         — lädt & cacht journey.json + Audio-Dateien
   Engine/
-    VoiceRecorder.swift           — Mikrofon-Aufnahme (AVAudioRecorder)
     MeditationEngine.swift        — Ablauf-Steuerung der Meditation
   Views/
-    HomeView.swift                — Start & Ablauf-Übersicht
-    SettingsView.swift            — Ablauf & Dauer
-    RecordingsView.swift          — Aufnahmen
+    HomeView.swift                — Start & Journey-Übersicht
     SessionView.swift             — laufende Meditation & Abschluss
   Resources/
     gong.wav, gong-deep.wav, gong-deepest.wav

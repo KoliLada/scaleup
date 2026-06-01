@@ -2,49 +2,41 @@
 //  HomeView.swift
 //  Innercraft Meditation
 //
-//  Startbildschirm: Ablauf-Übersicht und Einstieg in die Meditation.
+//  Startbildschirm: zeigt die zentral festgelegte Journey und startet sie.
 //
 
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject private var settings: MeditationSettings
-    @EnvironmentObject private var recordings: RecordingStore
-    @EnvironmentObject private var intro: IntroProvider
+    @EnvironmentObject private var provider: JourneyProvider
 
     @StateObject private var engine = MeditationEngine()
     @State private var showSession = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.icPaper.ignoresSafeArea()
+        ZStack {
+            Color.icPaper.ignoresSafeArea()
 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
-                        header
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    header
 
-                        flowCard
+                    flowCard
 
-                        if settings.introEnabled && intro.state == .unavailable {
-                            notice("Die geführte Eingangs-Meditation ist noch nicht verfügbar. Sie wird automatisch geladen, sobald sie zentral hinterlegt ist. Bis dahin beginnt die Meditation mit der ersten Iteration.")
-                        }
-
-                        if !recordings.hasRecording(for: .instruction1) {
-                            notice("Du hast noch keine Anweisungen aufgenommen. Gehe zu „Aufnahmen“, um deine Iterations-Anweisungen und den Outro-Satz mit deiner eigenen Stimme aufzusprechen.")
-                        }
-
-                        startButton
-
-                        navButtons
+                    if provider.state == .offline {
+                        notice("Keine Verbindung — es wird die zuletzt geladene Journey verwendet. Sobald du wieder online bist, wird die aktuelle Journey automatisch geladen.")
                     }
-                    .padding(22)
+
+                    startButton
                 }
+                .padding(22)
             }
-            .navigationBarHidden(true)
-            .fullScreenCover(isPresented: $showSession) {
-                SessionView(engine: engine)
+            .refreshable {
+                await provider.refresh()
             }
+        }
+        .fullScreenCover(isPresented: $showSession) {
+            SessionView(engine: engine)
         }
     }
 
@@ -76,39 +68,59 @@ struct HomeView: View {
                 .font(.custom("Cormorant Garamond", size: 38).weight(.medium))
                 .foregroundStyle(Color.icInk)
                 .lineSpacing(2)
+
+            Text("Lass dich führen: eine Meditation in einem Fluss — von der geführten Eingangs-Meditation über Impulse und Stille bis zum Gong, der dich in deinen Tag entlässt.")
+                .font(.system(size: 15, weight: .light))
+                .foregroundStyle(Color.icInkSoft)
+                .padding(.top, 6)
         }
     }
 
     private var flowCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Dein Ablauf")
+            Text("Die Reise heute")
                 .font(.custom("Cormorant Garamond", size: 22).weight(.semibold))
                 .foregroundStyle(Color.icInk)
 
-            VStack(spacing: 0) {
-                if settings.introEnabled && intro.state == .available {
-                    flowRow(icon: "◉", label: "Geführte Meditation (Willigis Jäger)",
-                            duration: intro.duration.map { "\(Int(($0 / 60).rounded())) Min." })
+            if provider.state == .loading {
+                HStack(spacing: 10) {
+                    ProgressView()
+                    Text("Lade die Journey …")
+                        .font(.system(size: 14, weight: .light))
+                        .foregroundStyle(Color.icInkSoft)
+                }
+                .padding(.vertical, 12)
+            } else {
+                VStack(spacing: 0) {
+                    if let intro = provider.journey.intro,
+                       provider.localAudioURL(for: intro.file) != nil {
+                        flowRow(icon: "◉", label: intro.title,
+                                duration: provider.introDuration.map { "\(Int(($0 / 60).rounded())) Min." })
+                        Divider()
+                    }
+
+                    ForEach(Array(provider.journey.iterations.enumerated()), id: \.offset) { index, iteration in
+                        flowRow(
+                            icon: "\(index + 1)",
+                            label: "Iteration \(index + 1): \(iteration.instructionFile != nil ? "Anweisung · " : "")Stille · Gong",
+                            duration: "\(Int(iteration.silenceMinutes)) Min."
+                        )
+                        Divider()
+                    }
+
+                    flowRow(icon: "◎",
+                            label: provider.journey.outroFile != nil ? "Tieferer Gong · Outro" : "Tieferer Gong",
+                            duration: nil)
                     Divider()
+                    flowRow(icon: "●", label: "Ganz tiefer Gong — Abschluss", duration: nil)
                 }
 
-                ForEach(0..<settings.iterationCount, id: \.self) { index in
-                    flowRow(icon: "\(index + 1)",
-                            label: "Iteration \(index + 1): Anweisung · Stille · Gong",
-                            duration: "\(Int(settings.iterationMinutes[index])) Min.")
-                    Divider()
+                HStack {
+                    Spacer()
+                    Text("Gesamt ca. \(Int((provider.estimatedTotalSeconds / 60).rounded())) Minuten")
+                        .font(.system(size: 13, weight: .regular))
+                        .foregroundStyle(Color.icClay)
                 }
-
-                flowRow(icon: "◎", label: "Tieferer Gong · Outro-Satz", duration: nil)
-                Divider()
-                flowRow(icon: "●", label: "Ganz tiefer Gong — Abschluss", duration: nil)
-            }
-
-            HStack {
-                Spacer()
-                Text("Gesamt ca. \(Int((settings.estimatedTotalSeconds(introDuration: intro.duration) / 60).rounded())) Minuten")
-                    .font(.system(size: 13, weight: .regular))
-                    .foregroundStyle(Color.icClay)
             }
         }
         .padding(20)
@@ -149,7 +161,7 @@ struct HomeView: View {
 
     private var startButton: some View {
         Button {
-            engine.start(settings: settings, recordings: recordings, intro: intro)
+            engine.start(provider: provider)
             showSession = true
         } label: {
             Text("Meditation beginnen")
@@ -161,32 +173,8 @@ struct HomeView: View {
                 .background(Color.icForest)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
         }
-    }
-
-    private var navButtons: some View {
-        HStack(spacing: 10) {
-            NavigationLink {
-                SettingsView()
-            } label: {
-                navButtonLabel("Ablauf & Dauer")
-            }
-
-            NavigationLink {
-                RecordingsView()
-            } label: {
-                navButtonLabel("Aufnahmen")
-            }
-        }
-    }
-
-    private func navButtonLabel(_ title: String) -> some View {
-        Text(title)
-            .font(.system(size: 14, weight: .medium))
-            .tracking(0.5)
-            .foregroundStyle(Color.icForest)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.icForest.opacity(0.35)))
+        .disabled(provider.state == .loading)
+        .opacity(provider.state == .loading ? 0.5 : 1)
     }
 }
 
@@ -213,7 +201,5 @@ struct GongMark: View {
 
 #Preview {
     HomeView()
-        .environmentObject(MeditationSettings())
-        .environmentObject(RecordingStore())
-        .environmentObject(IntroProvider())
+        .environmentObject(JourneyProvider())
 }

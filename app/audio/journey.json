@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "updatedAt": "2026-06-01",
+  "intro": {
+    "file": "intro-meditation.m4a",
+    "title": "Geführte Meditation (Willigis Jäger)"
+  },
+  "iterations": [
+    {
+      "instructionFile": null,
+      "silenceMinutes": 5
+    },
+    {
+      "instructionFile": null,
+      "silenceMinutes": 6
+    }
+  ],
+  "outroPauseMinutes": 0,
+  "outroFile": null
+}

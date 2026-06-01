@@ -254,6 +254,87 @@ code {
   color: var(--ink);
 }
 
+.notice:not(.notice-warn) {
+  background: rgba(91, 107, 77, .12);
+  border: 1px solid rgba(91, 107, 77, .35);
+  color: var(--ink);
+}
+
+/* ---------- Autoren-Modus ---------- */
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: .4rem;
+}
+.card-head h2 { margin-bottom: 0; }
+
+.card-remove { color: var(--ink-soft); }
+.card-remove:disabled { opacity: .3; pointer-events: none; }
+
+.author-recording {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(47, 59, 48, .1);
+}
+
+.author-recording .recording-hint {
+  font-family: var(--sans);
+  font-size: .8rem;
+  font-weight: 300;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+
+.card-publish { margin-top: 28px; }
+
+.card-publish .btn-big { margin: 1rem 0 .6rem; }
+.card-publish .btn-ghost { width: 100%; }
+
+.publish-setup {
+  font-family: var(--sans);
+  font-size: .85rem;
+  margin: 10px 0;
+}
+
+.publish-setup summary {
+  cursor: pointer;
+  color: var(--clay);
+  font-weight: 500;
+  padding: 6px 0;
+}
+
+.setup-steps {
+  margin: 10px 0 14px 1.2em;
+  display: grid;
+  gap: 6px;
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.setup-steps a { color: var(--clay); }
+
+#github-token {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: .9rem;
+  padding: 12px 14px;
+  border: 1px solid rgba(47, 59, 48, .3);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.publish-status {
+  font-family: var(--sans);
+  font-size: .85rem;
+  min-height: 1.4em;
+  margin-top: .6rem;
+  color: var(--ink-soft);
+}
+.publish-status.is-success { color: var(--moss); }
+.publish-status.is-error { color: var(--clay); }
+
 /* ---------- Einstellungen ---------- */
 .row {
   display: flex;

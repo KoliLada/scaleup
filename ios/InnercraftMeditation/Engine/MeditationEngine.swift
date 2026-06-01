@@ -2,11 +2,11 @@
 //  MeditationEngine.swift
 //  Innercraft Meditation
 //
-//  Steuert den Ablauf einer Meditations-Sitzung:
+//  Steuert den Ablauf der zentral festgelegten Journey:
 //
-//    1. Geführte Eingangs-Meditation (Willigis Jäger, zentral gehostet)
-//    2. 3–5 Iterationen: eigene Anweisung → Stille → Gong
-//    3. Tieferer Gong → eigener Outro-Satz → ganz tiefer Gong
+//    1. Geführte Eingangs-Meditation (Willigis Jäger)
+//    2. Iterationen: Anweisung des Autors → Stille → Gong
+//    3. Tieferer Gong → Outro-Ansprache → ganz tiefer Gong
 //
 //  Dank AVAudioSession (.playback) läuft die Sitzung auch bei
 //  gesperrtem Bildschirm weiter.
@@ -57,30 +57,33 @@ final class MeditationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate 
     private var silenceStartedAt: Date?
     private var silenceAccumulated: TimeInterval = 0
 
-    // MARK: Aufbau des Ablaufs
+    // MARK: Aufbau des Ablaufs aus der zentralen Journey
 
-    func buildPhases(settings: MeditationSettings, recordings: RecordingStore, intro: IntroProvider) {
+    func buildPhases(provider: JourneyProvider) {
+        let journey = provider.journey
         var result: [MeditationPhase] = []
 
         // 1) Eingangs-Meditation
-        if settings.introEnabled, intro.state == .available {
+        if let intro = journey.intro,
+           let localURL = provider.localAudioURL(for: intro.file) {
             result.append(MeditationPhase(
-                kind: .audio(intro.localURL),
+                kind: .audio(localURL),
                 label: "Eingangs-Meditation",
                 title: "Geführte Meditation"
             ))
         }
 
         // 2) Iterationen: Anweisung → Stille → Gong
-        for index in 0..<settings.iterationCount {
-            let label = "Iteration \(index + 1) von \(settings.iterationCount)"
+        let total = journey.iterations.count
+        for (index, iteration) in journey.iterations.enumerated() {
+            let label = "Iteration \(index + 1) von \(total)"
 
-            if let instructionURL = recordings.instructionURL(forIteration: index) {
-                result.append(MeditationPhase(kind: .audio(instructionURL), label: label, title: "Deine Anweisung"))
+            if let instructionURL = provider.localAudioURL(for: iteration.instructionFile) {
+                result.append(MeditationPhase(kind: .audio(instructionURL), label: label, title: "Anweisung"))
             }
 
             result.append(MeditationPhase(
-                kind: .silence(settings.iterationMinutes[index] * 60),
+                kind: .silence(iteration.silenceMinutes * 60),
                 label: label,
                 title: "Stille"
             ))
@@ -91,9 +94,9 @@ final class MeditationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate 
         }
 
         // 3) Optionale Stille vor dem Outro
-        if settings.outroPauseMinutes > 0 {
+        if journey.outroPauseMinutes > 0 {
             result.append(MeditationPhase(
-                kind: .silence(settings.outroPauseMinutes * 60),
+                kind: .silence(journey.outroPauseMinutes * 60),
                 label: "Übergang",
                 title: "Stille"
             ))
@@ -104,9 +107,9 @@ final class MeditationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate 
             result.append(MeditationPhase(kind: .audio(deepURL), label: "Outro", title: "Tieferer Gong"))
         }
 
-        // 5) Outro-Satz mit eigener Stimme
-        if let outroURL = recordings.outroURL {
-            result.append(MeditationPhase(kind: .audio(outroURL), label: "Outro", title: "Dein Outro"))
+        // 5) Outro-Ansprache des Autors
+        if let outroURL = provider.localAudioURL(for: journey.outroFile) {
+            result.append(MeditationPhase(kind: .audio(outroURL), label: "Outro", title: "Outro"))
         }
 
         // 6) Ganz tiefer Gong als Abschluss
@@ -123,8 +126,8 @@ final class MeditationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate 
 
     // MARK: Steuerung
 
-    func start(settings: MeditationSettings, recordings: RecordingStore, intro: IntroProvider) {
-        buildPhases(settings: settings, recordings: recordings, intro: intro)
+    func start(provider: JourneyProvider) {
+        buildPhases(provider: provider)
         guard !phases.isEmpty else { return }
 
         configureAudioSession()

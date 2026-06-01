@@ -8,17 +8,13 @@
 import SwiftUI
 
 enum MeditationConfig {
-    /// Zentrale URL der geführten Eingangs-Meditation (Willigis Jäger).
-    /// Die Datei liegt im Web-Repository unter app/audio/intro-meditation.m4a
-    /// und ist damit für alle Nutzer auf allen Geräten identisch.
-    /// Beim Veröffentlichen der Website ggf. an die echte Domain anpassen.
-    static let introMeditationURL = URL(string: "https://innercraft.com/app/audio/intro-meditation.m4a")!
+    /// Basis-URL der zentral gehosteten Journey (Audio-Ordner der Web-App).
+    /// Der Autor steuert dort über journey.json den kompletten Ablauf —
+    /// alle Nutzer auf allen Geräten erleben dieselbe Journey.
+    static let audioBaseURL = URL(string: "https://innercraft.com/app/audio/")!
 
-    /// Lokaler Dateiname für die gecachte Eingangs-Meditation.
-    static let introCacheFilename = "intro-meditation.m4a"
-
-    static let minIterations = 3
-    static let maxIterations = 5
+    /// Dateiname der zentralen Journey-Definition.
+    static let journeyFilename = "journey.json"
 
     /// Gong-Dateien im App-Bundle (Resources/)
     static let gongFilename = "gong"

@@ -39,15 +39,17 @@ demselben Ablauf und Design:
 |---|---|---|
 | Nutzung | sofort im Safari, als Icon zum Homescreen hinzufügbar | Mac mit Xcode nötig |
 | Bildschirm | muss während der Meditation an bleiben | läuft auch bei gesperrtem Bildschirm |
-| Aufnahmen | im Browser gespeichert | auf dem Gerät gespeichert |
 
-**Ablauf:** Geführte Eingangs-Meditation (Willigis Jäger) → 3–5 Iterationen
-(eigene Anweisung · Stille · Gong) → tieferer Gong → eigener Outro-Satz →
-ganz tiefer Gong.
+**Konzept:** Der **Autor** legt die Journey **zentral** fest (`journey.json` +
+eigene Sprachaufnahmen) — alle Nutzer erleben denselben Ablauf in einem
+ungestörten Durchlauf:
 
-Die geführte Eingangs-Meditation wird **zentral** unter
-`app/audio/intro-meditation.m4a` hinterlegt und ist damit für alle Nutzer
-identisch (siehe `app/audio/LIES-MICH.md`).
+> Geführte Eingangs-Meditation (Willigis Jäger) → Iterationen
+> (Anweisung · Stille · Gong) → tieferer Gong → Outro → ganz tiefer Gong
+
+**Autoren-Modus** (`app/autor.html`): Hier nimmt der Autor seine Anweisungen
+auf, legt Anzahl und Dauer der Iterationen fest und veröffentlicht die Journey
+mit einem Klick für alle Nutzer (Details in `app/audio/LIES-MICH.md`).
 
 ## Lokal ansehen
 
