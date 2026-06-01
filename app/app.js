@@ -227,6 +227,52 @@ const Session = {
     });
 
     this.phases = phases;
+
+    // Dauern aller Audio-Phasen ermitteln (für Gesamt-Countdown)
+    // und Phasen zu sinnvollen Schritten gruppieren
+    await this.probeDurations();
+    this.computeSteps();
+  },
+
+  /** Dauer jeder Audio-Phase über die Metadaten ermitteln */
+  async probeDurations() {
+    await Promise.all(
+      this.phases.map(async (phase) => {
+        if (phase.type === "audio" && !phase.durationSeconds) {
+          phase.durationSeconds = (await probeAudioDuration(phase.audio.src)) || 0;
+        }
+      })
+    );
+  },
+
+  /** Aufeinanderfolgende Phasen mit gleichem Label bilden einen Schritt
+      (z. B. "Iteration 1 von 3" = Anweisung + Gong + Stille + Gong) */
+  computeSteps() {
+    let step = 0;
+    let lastLabel = null;
+    this.phases.forEach((phase) => {
+      if (phase.label !== lastLabel) {
+        step += 1;
+        lastLabel = phase.label;
+      }
+      phase.step = step;
+    });
+    this.totalSteps = step;
+  },
+
+  /** Gesamtdauer aller Phasen (Sekunden) */
+  get totalDuration() {
+    return this.phases.reduce((sum, phase) => sum + (phase.durationSeconds || 0), 0);
+  },
+
+  /** Verbleibende Gesamtzeit ab der aktuellen Phase */
+  remainingTotal(currentElapsed) {
+    let remaining = 0;
+    for (let i = this.phaseIndex; i < this.phases.length; i++) {
+      const duration = this.phases[i].durationSeconds || 0;
+      remaining += i === this.phaseIndex ? Math.max(0, duration - currentElapsed) : duration;
+    }
+    return remaining;
   },
 
   /* ----- Steuerung ----- */
@@ -368,33 +414,62 @@ const Session = {
 
     $("#session-phase-label").textContent = phase.label;
     $("#session-phase-title").textContent = phase.title;
-    $("#session-step").textContent = t("sessionStep", this.phaseIndex + 1, this.phases.length);
+    $("#session-step").textContent = t("sessionStep", phase.step, this.totalSteps);
 
+    // Vergangene Zeit der aktuellen Phase
     let elapsed;
-    let total = phase.durationSeconds;
+    let phaseDuration = phase.durationSeconds;
 
     if (phase.type === "audio" && phase.audio) {
       elapsed = phase.audio.currentTime || 0;
-      if (!total && isFinite(phase.audio.duration) && phase.audio.duration > 0) {
-        total = phase.audio.duration;
+      if (!phaseDuration && isFinite(phase.audio.duration) && phase.audio.duration > 0) {
+        phaseDuration = phase.audio.duration;
+        phase.durationSeconds = phaseDuration;
       }
     } else {
       elapsed = (Date.now() - this.phaseStartedAt) / 1000;
     }
 
-    // Bei Stille: Restzeit anzeigen; bei Audio: vergangene Zeit
-    if (phase.type === "silence") {
-      const remaining = Math.max(0, total - elapsed);
-      $("#session-time").textContent = formatMinutes(remaining);
-    } else {
-      $("#session-time").textContent = formatMinutes(elapsed);
-    }
+    // Beide Werte laufen rückwärts:
+    // groß = verbleibende Gesamtzeit, klein = Restzeit des aktuellen Schritts
+    const totalRemaining = this.remainingTotal(elapsed);
+    const phaseRemaining = phaseDuration ? Math.max(0, phaseDuration - elapsed) : 0;
 
-    // Fortschrittsring
+    $("#session-time").textContent = formatMinutes(totalRemaining);
+    $("#session-time-step").textContent = formatMinutes(phaseRemaining);
+
+    // Fortschrittsring zeigt den Fortschritt der gesamten Meditation
     const ring = $("#session-ring");
     const circumference = 553;
-    const progress = total ? Math.min(1, elapsed / total) : 0;
+    const total = this.totalDuration;
+    const progress = total ? Math.min(1, 1 - totalRemaining / total) : 0;
     ring.style.strokeDashoffset = circumference * (1 - progress);
+  },
+
+  /** Springt zum nächsten Schritt (z. B. Eingangs-Meditation überspringen) */
+  skip() {
+    const phase = this.phases[this.phaseIndex];
+    if (!phase) return;
+
+    // Pause aufheben, falls aktiv
+    this.pausedAt = null;
+    $("#btn-pause").textContent = t("btnPause");
+
+    // Laufendes Audio der aktuellen Phase stoppen
+    if (phase.audio) {
+      phase.audio.onended = null;
+      phase.audio.pause();
+    }
+
+    // Erste Phase finden, die zu einem anderen Schritt gehört
+    let next = this.phaseIndex + 1;
+    while (next < this.phases.length && this.phases[next].label === phase.label) {
+      next += 1;
+    }
+
+    // advance() erhöht den Index um 1 und startet dann genau diese Phase
+    this.phaseIndex = next - 1;
+    this.advance();
   },
 
   togglePause() {
@@ -466,6 +541,7 @@ function bindNavigation() {
 
   $("#btn-start").addEventListener("click", () => Session.start());
   $("#btn-pause").addEventListener("click", () => Session.togglePause());
+  $("#btn-skip").addEventListener("click", () => Session.skip());
   $("#btn-stop").addEventListener("click", () => {
     if (confirm(t("confirmStop"))) Session.stop();
   });

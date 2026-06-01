@@ -149,6 +149,21 @@ enum L10n {
             "en": "End",
             "fr": "Terminer",
         ],
+        "timerTotal": [
+            "de": "GESAMT",
+            "en": "TOTAL",
+            "fr": "TOTAL",
+        ],
+        "timerStep": [
+            "de": "DIESER SCHRITT",
+            "en": "THIS STEP",
+            "fr": "CETTE ÉTAPE",
+        ],
+        "btnSkip": [
+            "de": "Überspringen",
+            "en": "Skip",
+            "fr": "Passer",
+        ],
         "btnKeepMeditating": [
             "de": "Weiter meditieren",
             "en": "Keep meditating",

@@ -49,7 +49,8 @@ struct SessionView: View {
                 .foregroundStyle(Color.icInk)
                 .padding(.bottom, 36)
 
-            // Fortschrittsring mit Zeit
+            // Fortschrittsring mit zwei rückwärts laufenden Werten:
+            // groß = verbleibende Gesamtzeit, klein = Restzeit des aktuellen Schritts
             ZStack {
                 Circle()
                     .stroke(Color.icForest.opacity(0.14), lineWidth: 4)
@@ -60,15 +61,39 @@ struct SessionView: View {
                     .rotationEffect(.degrees(-90))
                     .animation(.linear(duration: 0.25), value: progress)
 
-                Text(timeText)
-                    .font(.system(size: 52, weight: .light))
-                    .monospacedDigit()
-                    .foregroundStyle(Color.icForest)
+                VStack(spacing: 2) {
+                    Text(L10n.t("timerTotal"))
+                        .font(.system(size: 10, weight: .regular))
+                        .tracking(3)
+                        .foregroundStyle(Color.icClay)
+
+                    Text(format(engine.totalRemaining))
+                        .font(.system(size: 46, weight: .light))
+                        .monospacedDigit()
+                        .foregroundStyle(Color.icForest)
+
+                    VStack(spacing: 2) {
+                        Text(L10n.t("timerStep"))
+                            .font(.system(size: 9, weight: .regular))
+                            .tracking(3)
+                            .foregroundStyle(Color.icClay)
+                        Text(format(engine.phaseRemaining))
+                            .font(.system(size: 20, weight: .light))
+                            .monospacedDigit()
+                            .foregroundStyle(Color.icInkSoft)
+                    }
+                    .padding(.top, 10)
+                    .overlay(alignment: .top) {
+                        Rectangle()
+                            .fill(Color.icForest.opacity(0.14))
+                            .frame(width: 90, height: 1)
+                    }
+                }
             }
             .frame(width: 260, height: 260)
             .padding(.bottom, 28)
 
-            Text(L10n.stepLabel(engine.phaseIndex + 1, of: engine.phases.count))
+            Text(L10n.stepLabel(engine.currentPhase?.step ?? 1, of: engine.totalSteps))
                 .font(.system(size: 12, weight: .light))
                 .tracking(2)
                 .foregroundStyle(Color.icInkSoft)
@@ -82,7 +107,18 @@ struct SessionView: View {
                     Text(engine.state == .paused ? L10n.t("btnResume") : L10n.t("btnPause"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Color.icForest)
-                        .padding(.horizontal, 28)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 14)
+                        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.icForest.opacity(0.35)))
+                }
+
+                Button {
+                    engine.skip()
+                } label: {
+                    Text(L10n.t("btnSkip"))
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(Color.icForest)
+                        .padding(.horizontal, 20)
                         .padding(.vertical, 14)
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.icForest.opacity(0.35)))
                 }
@@ -93,7 +129,7 @@ struct SessionView: View {
                     Text(L10n.t("btnStop"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(Color.icClay)
-                        .padding(.horizontal, 28)
+                        .padding(.horizontal, 20)
                         .padding(.vertical, 14)
                         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.icClay.opacity(0.4)))
                 }
@@ -110,20 +146,14 @@ struct SessionView: View {
         }
     }
 
+    /// Fortschritt der gesamten Meditation (0…1)
     private var progress: CGFloat {
-        guard let duration = engine.phaseDuration, duration > 0 else { return 0 }
-        return min(1, engine.phaseElapsed / duration)
+        let total = engine.totalDuration
+        guard total > 0 else { return 0 }
+        return min(1, 1 - engine.totalRemaining / total)
     }
 
-    private var timeText: String {
-        let phase = engine.currentPhase
-        var seconds = engine.phaseElapsed
-
-        // Bei Stille die Restzeit anzeigen, bei Audio die vergangene Zeit
-        if case .silence(let duration) = phase?.kind {
-            seconds = max(0, duration - engine.phaseElapsed)
-        }
-
+    private func format(_ seconds: TimeInterval) -> String {
         let minutes = Int(seconds) / 60
         let secs = Int(seconds) % 60
         return String(format: "%02d:%02d", minutes, secs)

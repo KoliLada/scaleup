@@ -29,6 +29,11 @@ struct MeditationPhase: Identifiable {
     let kind: Kind
     let label: String   // z. B. "Iteration 2 von 4"
     let title: String   // z. B. "Stille"
+
+    /// Geschätzte Dauer (für die Countdown-Anzeige), wird beim Aufbau gefüllt
+    var estimatedDuration: TimeInterval = 0
+    /// Sinnvoller Schritt, zu dem diese Phase gehört (1-basiert)
+    var step: Int = 1
 }
 
 // MARK: - Engine
@@ -47,9 +52,32 @@ final class MeditationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate 
     @Published private(set) var phaseIndex = 0
     @Published private(set) var phaseElapsed: TimeInterval = 0
     @Published private(set) var phaseDuration: TimeInterval?
+    @Published private(set) var totalSteps = 0
 
     var currentPhase: MeditationPhase? {
         phases.indices.contains(phaseIndex) ? phases[phaseIndex] : nil
+    }
+
+    /// Gesamtdauer aller Phasen
+    var totalDuration: TimeInterval {
+        phases.reduce(0) { $0 + $1.estimatedDuration }
+    }
+
+    /// Verbleibende Zeit der gesamten Meditation (läuft rückwärts)
+    var totalRemaining: TimeInterval {
+        guard phaseIndex >= 0, phaseIndex < phases.count else { return 0 }
+        var remaining: TimeInterval = 0
+        for i in phaseIndex..<phases.count {
+            let duration = phases[i].estimatedDuration
+            remaining += i == phaseIndex ? max(0, duration - phaseElapsed) : duration
+        }
+        return remaining
+    }
+
+    /// Verbleibende Zeit des aktuellen Schritts (läuft rückwärts)
+    var phaseRemaining: TimeInterval {
+        guard let phase = currentPhase else { return 0 }
+        return max(0, phase.estimatedDuration - phaseElapsed)
     }
 
     private var player: AVAudioPlayer?
@@ -141,6 +169,28 @@ final class MeditationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate 
         if let deepestURL = Self.bundleAudioURL(MeditationConfig.gongDeepestFilename) {
             result.append(MeditationPhase(kind: .audio(deepestURL), label: L10n.t("phaseFinal"), title: L10n.t("phaseFinalGong")))
         }
+
+        // Dauern aller Phasen ermitteln (für die Countdown-Anzeige)
+        for i in result.indices {
+            switch result[i].kind {
+            case .audio(let url):
+                result[i].estimatedDuration = (try? AVAudioPlayer(contentsOf: url))?.duration ?? 0
+            case .silence(let duration):
+                result[i].estimatedDuration = duration
+            }
+        }
+
+        // Aufeinanderfolgende Phasen mit gleichem Label bilden einen Schritt
+        var step = 0
+        var lastLabel: String?
+        for i in result.indices {
+            if result[i].label != lastLabel {
+                step += 1
+                lastLabel = result[i].label
+            }
+            result[i].step = step
+        }
+        totalSteps = step
 
         phases = result
     }
@@ -256,6 +306,24 @@ final class MeditationEngine: NSObject, ObservableObject, AVAudioPlayerDelegate 
         default:
             break
         }
+    }
+
+    /// Springt zum nächsten Schritt (z. B. Eingangs-Meditation überspringen)
+    func skip() {
+        guard let phase = currentPhase else { return }
+
+        // Pause aufheben, falls aktiv
+        if state == .paused { state = .running }
+
+        // Erste Phase finden, die zu einem anderen Schritt gehört
+        var next = phaseIndex + 1
+        while next < phases.count && phases[next].label == phase.label {
+            next += 1
+        }
+
+        // advance() stoppt das laufende Audio und erhöht den Index um 1
+        phaseIndex = next - 1
+        advance()
     }
 
     func stop() {

@@ -104,13 +104,21 @@
           <circle class="ring-bg" cx="100" cy="100" r="88" />
           <circle class="ring-fg" cx="100" cy="100" r="88" id="session-ring" />
         </svg>
-        <div class="session-time" id="session-time">00:00</div>
+        <div class="session-time-wrap">
+          <span class="session-time-label" data-i18n="timerTotal">Gesamt</span>
+          <div class="session-time" id="session-time">00:00</div>
+          <div class="session-time-step">
+            <span class="session-time-label" data-i18n="timerStep">Dieser Schritt</span>
+            <span id="session-time-step">00:00</span>
+          </div>
+        </div>
       </div>
 
       <p class="session-step" id="session-step"></p>
 
       <div class="session-actions">
         <button class="btn btn-ghost" id="btn-pause" data-i18n="btnPause">Pause</button>
+        <button class="btn btn-ghost" id="btn-skip" data-i18n="btnSkip">Überspringen</button>
         <button class="btn btn-ghost btn-danger" id="btn-stop" data-i18n="btnStop">Beenden</button>
       </div>
     </section>
