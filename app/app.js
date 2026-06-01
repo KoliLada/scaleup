@@ -8,7 +8,11 @@
 
 /* ---------- Konstanten ---------- */
 
-const INTRO_URL = "audio/intro-meditation.mp3"; // zentrale Datei für alle Nutzer
+// Zentrale Eingangs-Meditation für alle Nutzer — die erste gefundene Datei wird verwendet
+const INTRO_URL_CANDIDATES = [
+  "audio/intro-meditation.m4a",
+  "audio/intro-meditation.mp3",
+];
 const GONG_URL = "audio/gong.wav";
 const GONG_DEEP_URL = "audio/gong-deep.wav";
 const GONG_DEEPEST_URL = "audio/gong-deepest.wav";
@@ -132,20 +136,30 @@ function showScreen(id) {
 /* ---------- Verfügbarkeit der Eingangs-Meditation ---------- */
 
 let introAvailable = false;
+let introUrl = null;      // erste verfügbare Datei aus INTRO_URL_CANDIDATES
 let introDuration = null; // Sekunden, falls ermittelbar
 
 async function checkIntroAvailability() {
-  try {
-    const res = await fetch(INTRO_URL, { method: "HEAD", cache: "no-store" });
-    introAvailable = res.ok;
-  } catch {
-    introAvailable = false;
+  introAvailable = false;
+  introUrl = null;
+
+  for (const candidate of INTRO_URL_CANDIDATES) {
+    try {
+      const res = await fetch(candidate, { method: "HEAD", cache: "no-store" });
+      if (res.ok) {
+        introAvailable = true;
+        introUrl = candidate;
+        break;
+      }
+    } catch {
+      // Kandidat nicht erreichbar — nächsten prüfen
+    }
   }
 
   if (introAvailable) {
     // Dauer über ein temporäres Audio-Element ermitteln
     await new Promise((resolve) => {
-      const probe = new Audio(INTRO_URL);
+      const probe = new Audio(introUrl);
       probe.preload = "metadata";
       probe.onloadedmetadata = () => {
         if (isFinite(probe.duration)) introDuration = probe.duration;
@@ -168,7 +182,7 @@ function updateIntroStatus() {
     status.textContent = `Geführte Meditation von Willigis Jäger ist hinterlegt${mins}.`;
     notice.classList.add("hidden");
   } else {
-    status.textContent = "Noch nicht verfügbar — die Datei app/audio/intro-meditation.mp3 ist nicht hinterlegt.";
+    status.textContent = "Noch nicht verfügbar — die Datei app/audio/intro-meditation.m4a ist nicht hinterlegt.";
     notice.classList.toggle("hidden", !settings.introEnabled);
   }
 }
@@ -453,7 +467,7 @@ const Session = {
 
     // 1) Eingangs-Meditation
     if (settings.introEnabled && introAvailable) {
-      const intro = new Audio(INTRO_URL);
+      const intro = new Audio(introUrl);
       intro.preload = "auto";
       intro.load();
       phases.push({

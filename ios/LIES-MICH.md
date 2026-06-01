@@ -43,12 +43,12 @@ Die App lädt die geführte Meditation von dieser zentralen URL
 (definiert in `InnercraftMeditation/MeditationConfig.swift`):
 
 ```
-https://innercraft.com/app/audio/intro-meditation.mp3
+https://innercraft.com/app/audio/intro-meditation.m4a
 ```
 
 Damit ist die Meditation **für alle Nutzer auf allen Geräten identisch** und kann
 zentral ausgetauscht werden, ohne dass die App aktualisiert werden muss:
-Einfach die Datei `app/audio/intro-meditation.mp3` im Web-Repository ersetzen.
+Einfach die Datei `app/audio/intro-meditation.m4a` im Web-Repository ersetzen.
 
 > **Wichtig:** Sobald die Website unter einer anderen Domain veröffentlicht wird,
 > die URL in `MeditationConfig.swift` entsprechend anpassen.

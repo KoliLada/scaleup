@@ -6,14 +6,14 @@ Die geführte Eingangs-Meditation wird **zentral** in diesem Ordner hinterlegt u
 ist damit für **alle Nutzer** der App verfügbar:
 
 ```
-app/audio/intro-meditation.mp3
+app/audio/intro-meditation.m4a   (aktuell hinterlegt: 12,9 Min., AAC)
 ```
 
-**So fügst du sie hinzu / tauschst sie aus:**
+**So tauschst du sie aus:**
 
-1. Die Audio-Datei als MP3 (alternativ M4A, dann Dateiname in `app/app.js`
-   und `ios/.../MeditationConfig.swift` anpassen) in diesen Ordner legen.
-2. Datei exakt `intro-meditation.mp3` nennen.
+1. Die neue Audio-Datei als M4A/AAC (alternativ MP3 als
+   `intro-meditation.mp3` — die Web-App prüft beide) in diesen Ordner legen.
+2. Datei exakt `intro-meditation.m4a` nennen (die alte ersetzen).
 3. Committen und veröffentlichen — fertig. Die Web-App und die iOS-App laden
    die Datei automatisch von dieser zentralen Stelle.
 

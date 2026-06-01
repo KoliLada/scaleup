@@ -46,7 +46,7 @@ demselben Ablauf und Design:
 ganz tiefer Gong.
 
 Die geführte Eingangs-Meditation wird **zentral** unter
-`app/audio/intro-meditation.mp3` hinterlegt und ist damit für alle Nutzer
+`app/audio/intro-meditation.m4a` hinterlegt und ist damit für alle Nutzer
 identisch (siehe `app/audio/LIES-MICH.md`).
 
 ## Lokal ansehen
