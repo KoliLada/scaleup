@@ -178,24 +178,60 @@ struct HomeView: View {
     }
 }
 
-// MARK: - Gong-Symbol
+// MARK: - Die Qualle (Logo)
 
 struct GongMark: View {
-    var color: Color = .icForest
+    var color: Color = .icBiolume
+
+    @State private var pulse = false
 
     var body: some View {
-        GeometryReader { geo in
-            let size = min(geo.size.width, geo.size.height)
-            ZStack {
-                Circle().stroke(color.opacity(0.55), lineWidth: size * 0.03)
-                Circle().stroke(color.opacity(0.75), lineWidth: size * 0.03)
-                    .frame(width: size * 0.64, height: size * 0.64)
-                Circle().fill(color.opacity(0.9))
-                    .frame(width: size * 0.38, height: size * 0.38)
-                Circle().fill(Color.icCream)
-                    .frame(width: size * 0.14, height: size * 0.14)
-            }
-        }
+        JellyfishShape()
+            .stroke(color, style: StrokeStyle(lineWidth: 1.6, lineCap: .round, lineJoin: .round))
+            .shadow(color: color.opacity(0.6), radius: 10)
+            .scaleEffect(x: pulse ? 1.05 : 1.0, y: pulse ? 0.96 : 1.0, anchor: .top)
+            .animation(.easeInOut(duration: 3.5).repeatForever(autoreverses: true), value: pulse)
+            .onAppear { pulse = true }
+    }
+}
+
+/// Die Qualle als Pfad — identisch mit dem SVG-Logo der Website (viewBox 48×64)
+struct JellyfishShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let sx = rect.width / 48
+        let sy = rect.height / 64
+        func pt(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: rect.minX + x * sx, y: rect.minY + y * sy) }
+
+        // Schirm
+        path.move(to: pt(9, 24))
+        path.addCurve(to: pt(24, 5), control1: pt(9, 11.5), control2: pt(15.5, 5))
+        path.addCurve(to: pt(39, 24), control1: pt(32.5, 5), control2: pt(39, 11.5))
+        path.addCurve(to: pt(24, 28.5), control1: pt(34, 27.5), control2: pt(29, 28.5))
+        path.addCurve(to: pt(9, 24), control1: pt(19, 28.5), control2: pt(14, 27.5))
+
+        // Tentakel (außen)
+        path.move(to: pt(12.5, 26.5))
+        path.addCurve(to: pt(12, 45.5), control1: pt(11.5, 33), control2: pt(14, 39))
+        path.addCurve(to: pt(11.5, 59), control1: pt(10.8, 49.5), control2: pt(13, 54))
+
+        path.move(to: pt(17.5, 28))
+        path.addCurve(to: pt(17, 49.5), control1: pt(16.5, 35.5), control2: pt(19, 42.5))
+        path.addCurve(to: pt(17, 61), control1: pt(16.2, 52.8), control2: pt(18, 56.5))
+
+        path.move(to: pt(24, 28.5))
+        path.addCurve(to: pt(24, 51), control1: pt(24, 36.5), control2: pt(23, 44))
+        path.addCurve(to: pt(24, 62.5), control1: pt(24.4, 54.5), control2: pt(23.6, 58.5))
+
+        path.move(to: pt(30.5, 28))
+        path.addCurve(to: pt(31, 49.5), control1: pt(31.5, 35.5), control2: pt(29, 42.5))
+        path.addCurve(to: pt(31, 61), control1: pt(31.8, 52.8), control2: pt(30, 56.5))
+
+        path.move(to: pt(35.5, 26.5))
+        path.addCurve(to: pt(36, 45.5), control1: pt(36.5, 33), control2: pt(34, 39))
+        path.addCurve(to: pt(36.5, 59), control1: pt(37.2, 49.5), control2: pt(35, 54))
+
+        return path
     }
 }
 

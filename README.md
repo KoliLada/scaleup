@@ -8,15 +8,18 @@ Die Inhalte basieren auf der Arbeitsversion v2 des Website-Texts und sind an
 einigen Stellen behutsam erweitert (Hero, Fragen-Band, Purpose-Guiding-Sektion
 nach Gustin, Kontaktformular).
 
-## Design
+## Design: „Die Qualle"
 
-Stil im Sinne von **„The Tree of Life“ / „Nostalgia“** — warm, erdig, organisch
-und unaufgeregt:
+Das visuelle Konzept ist die **Qualle** — für Innercraft die manifestierteste
+Form der Seele: reine Präsenz, eine Lichtquelle im Wasser.
 
-- Erdpalette: Tiefes Waldgrün, Sand, Creme, Terrakotta, gealtertes Gold
-- Serifen-Display (Cormorant / EB Garamond) für eine ruhige, zeitlose Anmutung
-- Dezente Filmkorn-Textur, „Tree of Life“-Motiv als SVG, sanfte Scroll-Reveals
-- Baum-Silhouette und geschichtete Hügel im Hero
+- **Logo**: die Qualle als feine, leuchtende Linienzeichnung (SVG, sanft pulsierend)
+- **Palette**: Tiefwasser (Nachtblau/Petrol) · Biolumineszenz-Türkis · Lichtstrahl-Gold · Koralle
+- **Dunkel + hell im Wechsel**: immersive Wasser-Sektionen (Hero, Qualle, Meditation,
+  Kontakt) wechseln sich mit hellen, gut lesbaren Inhalts-Sektionen ab
+- **Video-first**: Nach dem Video-Shooting ersetzen echte Aufnahmen die animierten
+  Wasserwelt-Platzhalter (siehe `media/LIES-MICH.md`)
+- Serifen-Display (Cormorant / EB Garamond), dezente Filmkorn-Textur, sanfte Scroll-Reveals
 
 ## Struktur
 
@@ -27,6 +30,7 @@ script.js    — Navigation, Scroll-Reveals, Kontaktformular-Stub
 
 app/         — Innercraft Meditation als Web-App (PWA, sofort am iPhone nutzbar)
 ios/         — Innercraft Meditation als native iOS-App (SwiftUI / Xcode)
+media/       — Video-/Bild-Material vom Shooting (siehe media/LIES-MICH.md)
 tools/       — Skripte zur Erzeugung der Gong-Klänge und App-Icons
 ```
 

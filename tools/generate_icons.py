@@ -2,8 +2,8 @@
 """
 Erzeugt die App-Icons der Innercraft-Meditations-App (PWA + iOS).
 
-Motiv: das Innercraft-Logo — der goldene Baum des Lebens auf tiefem
-Waldgrün, identisch mit dem Logo der Website (SVG-Sprite in index.html).
+Motiv: das Innercraft-Logo — die Qualle, leuchtend (Biolumineszenz)
+auf tiefem Nachtwasser. Identisch mit dem Logo der Website.
 
 Aufruf:  python3 tools/generate_icons.py
 Benötigt:  pip install cairosvg
@@ -13,10 +13,11 @@ import os
 
 import cairosvg
 
-# Farben der Innercraft-Website (styles.css)
-FOREST_DEEP = "#232c24"   # --forest-deep
-FOREST = "#2f3b30"        # --forest
-GOLD = "#c9a24b"          # --gold
+# Tiefwasser-Palette der Innercraft-Website (styles.css)
+ABYSS = "#081623"      # --forest-deep (Nachtwasser)
+DEEP = "#0d2433"       # --forest (tiefes Wasser)
+WATER = "#1d4459"      # --moss (mittleres Wasser)
+BIOLUME = "#8fe0d8"    # --biolume (Leuchten der Qualle)
 
 OUT_PWA = os.path.join(os.path.dirname(__file__), "..", "app", "icons")
 OUT_IOS = os.path.join(
@@ -24,30 +25,47 @@ OUT_IOS = os.path.join(
     "Assets.xcassets", "AppIcon.appiconset",
 )
 
-# Baum des Lebens — identische Pfade wie im SVG-Sprite der Website (index.html)
-TREE_PATHS = """
-  <path d="M24 44 L24 26" />
-  <path d="M24 44 C20 44 18 46 14 46 M24 44 C28 44 30 46 34 46 M24 44 C23 45 22 47 20 47 M24 44 C25 45 26 47 28 47" />
-  <path d="M24 30 C20 28 17 25 15 21 M24 30 C28 28 31 25 33 21 M24 26 C22 23 20 21 19 17 M24 26 C26 23 28 21 29 17 M24 24 L24 13" />
-  <circle cx="24" cy="13" r="11" />
-  <path d="M24 24 C19 22 16 18 16 13 M24 24 C29 22 32 18 32 13 M24 13 C21 11 19 8 19 5 M24 13 C27 11 29 8 29 5" />
+# Die Qualle — identische Pfade wie im SVG-Sprite der Website
+JELLYFISH_PATHS = """
+  <path d="M9 24 C9 11.5 15.5 5 24 5 C32.5 5 39 11.5 39 24 C34 27.5 29 28.5 24 28.5 C19 28.5 14 27.5 9 24 Z" />
+  <path d="M13.5 22.5 C13.5 13 18 8.5 24 8.5 C30 8.5 34.5 13 34.5 22.5" opacity=".45" />
+  <path d="M20 28.5 C19.5 34 21.5 38 20.5 43 C20 46 21 49 20.5 52" opacity=".55" />
+  <path d="M28 28.5 C28.5 34 26.5 38 27.5 43 C28 46 27 49 27.5 52" opacity=".55" />
+  <path d="M12.5 26.5 C11.5 33 14 39 12 45.5 C10.8 49.5 13 54 11.5 59" opacity=".75" />
+  <path d="M17.5 28 C16.5 35.5 19 42.5 17 49.5 C16.2 52.8 18 56.5 17 61" opacity=".9" />
+  <path d="M24 28.5 C24 36.5 23 44 24 51 C24.4 54.5 23.6 58.5 24 62.5" />
+  <path d="M30.5 28 C31.5 35.5 29 42.5 31 49.5 C31.8 52.8 30 56.5 31 61" opacity=".9" />
+  <path d="M35.5 26.5 C36.5 33 34 39 36 45.5 C37.2 49.5 35 54 36.5 59" opacity=".75" />
+  <circle cx="24" cy="15" r="1.4" fill="{biolume}" stroke="none" opacity=".95" />
+  <circle cx="18.5" cy="17.5" r=".9" fill="{biolume}" stroke="none" opacity=".55" />
+  <circle cx="29.5" cy="17.5" r=".9" fill="{biolume}" stroke="none" opacity=".55" />
 """
 
 
 def icon_svg() -> str:
-    """Quadratisches Icon: Waldgrün-Verlauf + goldener Baum des Lebens."""
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+    """Quadratisches Icon: Nachtwasser-Verlauf + leuchtende Qualle."""
+    paths = JELLYFISH_PATHS.format(biolume=BIOLUME)
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <radialGradient id="bg" cx="50%" cy="42%" r="78%">
-      <stop offset="0%" stop-color="{FOREST}" />
-      <stop offset="100%" stop-color="{FOREST_DEEP}" />
+    <radialGradient id="bg" cx="50%" cy="30%" r="85%">
+      <stop offset="0%" stop-color="{WATER}" />
+      <stop offset="55%" stop-color="{DEEP}" />
+      <stop offset="100%" stop-color="{ABYSS}" />
     </radialGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2.2" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
   </defs>
-  <rect width="48" height="48" fill="url(#bg)" />
-  <g transform="translate(24 24) scale(0.68) translate(-24 -26)"
-     fill="none" stroke="{GOLD}" stroke-width="1.7"
-     stroke-linecap="round" stroke-linejoin="round">
-    {TREE_PATHS}
+  <rect width="64" height="64" fill="url(#bg)" />
+  <!-- Qualle: zentriert, mit Leuchten -->
+  <g transform="translate(32 30) scale(0.78) translate(-24 -32)"
+     fill="none" stroke="{BIOLUME}" stroke-width="1.7"
+     stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+    {paths}
   </g>
 </svg>"""
 
@@ -64,7 +82,7 @@ def render(path: str, size: int) -> None:
 def main():
     os.makedirs(OUT_PWA, exist_ok=True)
     os.makedirs(OUT_IOS, exist_ok=True)
-    print("Erzeuge Icons (Innercraft-Logo):")
+    print("Erzeuge Icons (Qualle):")
 
     # PWA / Homescreen (iOS verlangt nicht-transparente apple-touch-icons)
     for name, size in [
