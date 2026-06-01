@@ -37,7 +37,7 @@ enum L10n {
         ],
         "homeLead": [
             "de": "Lass dich führen: eine Meditation in einem Fluss — von der geführten Eingangs-Meditation über Impulse und Stille bis zum Gong, der dich in deinen Tag entlässt.",
-            "en": "Let yourself be guided: one meditation in one flow — from the guided opening meditation through prompts and stillness to the gong that releases you into your day.",
+            "en": "Let yourself be guided: one meditation in one flow — from the guided opening meditation through prompts and silence to the gong that releases you into your day.",
             "fr": "Laisse-toi guider : une méditation d'un seul flux — de la méditation d'ouverture guidée, en passant par les impulsions et le silence, jusqu'au gong qui te libère dans ta journée.",
         ],
         "flowTitle": [
@@ -94,7 +94,7 @@ enum L10n {
         ],
         "phaseSilence": [
             "de": "Stille",
-            "en": "Stillness",
+            "en": "Silence",
             "fr": "Silence",
         ],
         "phaseGong": [
@@ -187,7 +187,7 @@ enum L10n {
 
     static func iterationFlowLabel(_ n: Int, hasInstruction: Bool) -> String {
         switch lang {
-        case "en": return "Iteration \(n): \(hasInstruction ? "Instruction · " : "")Stillness · Gong"
+        case "en": return "Iteration \(n): \(hasInstruction ? "Instruction · " : "")Silence · Gong"
         case "fr": return "Itération \(n) : \(hasInstruction ? "Instruction · " : "")Silence · Gong"
         default:   return "Iteration \(n): \(hasInstruction ? "Anweisung · " : "")Stille · Gong"
         }
