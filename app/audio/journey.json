@@ -7,14 +7,18 @@
   },
   "iterations": [
     {
-      "instructionFile": null,
-      "silenceMinutes": 5
+      "instructionFile": "journey-iteration-1-1780316600958.m4a",
+      "silenceMinutes": 3
     },
     {
-      "instructionFile": null,
-      "silenceMinutes": 6
+      "instructionFile": "journey-iteration-2-1780316600958.m4a",
+      "silenceMinutes": 3
+    },
+    {
+      "instructionFile": "journey-iteration-3-1780316600958.m4a",
+      "silenceMinutes": 3
     }
   ],
-  "outroPauseMinutes": 0,
-  "outroFile": null
+  "outroPauseMinutes": 1,
+  "outroFile": "journey-outro-1780316600958.m4a"
 }
