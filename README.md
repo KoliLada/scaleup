@@ -24,7 +24,30 @@ und unaufgeregt:
 index.html   — alle Inhalte als One-Pager
 styles.css   — komplettes Design / Theme
 script.js    — Navigation, Scroll-Reveals, Kontaktformular-Stub
+
+app/         — Innercraft Meditation als Web-App (PWA, sofort am iPhone nutzbar)
+ios/         — Innercraft Meditation als native iOS-App (SwiftUI / Xcode)
+tools/       — Skripte zur Erzeugung der Gong-Klänge und App-Icons
 ```
+
+## Meditations-App
+
+Die tägliche Innercraft-Meditation gibt es in zwei Varianten — beide mit
+demselben Ablauf und Design:
+
+| | Web-App (`app/`) | iOS-App (`ios/`) |
+|---|---|---|
+| Nutzung | sofort im Safari, als Icon zum Homescreen hinzufügbar | Mac mit Xcode nötig |
+| Bildschirm | muss während der Meditation an bleiben | läuft auch bei gesperrtem Bildschirm |
+| Aufnahmen | im Browser gespeichert | auf dem Gerät gespeichert |
+
+**Ablauf:** Geführte Eingangs-Meditation (Willigis Jäger) → 3–5 Iterationen
+(eigene Anweisung · Stille · Gong) → tieferer Gong → eigener Outro-Satz →
+ganz tiefer Gong.
+
+Die geführte Eingangs-Meditation wird **zentral** unter
+`app/audio/intro-meditation.mp3` hinterlegt und ist damit für alle Nutzer
+identisch (siehe `app/audio/LIES-MICH.md`).
 
 ## Lokal ansehen
 
