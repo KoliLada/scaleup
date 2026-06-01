@@ -154,10 +154,11 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
 .brand-name { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; letter-spacing: .01em; }
 .brand-tag { font-family: var(--sans); font-size: .62rem; letter-spacing: .28em; text-transform: uppercase; opacity: .8; margin-top: 3px; }
 
-.nav-menu { display: flex; align-items: center; gap: 2rem; list-style: none; margin: 0; padding: 0; }
+.nav-menu { display: flex; align-items: center; gap: clamp(1.1rem, 1.8vw, 2rem); list-style: none; margin: 0; padding: 0; }
 .nav-menu a {
   font-family: var(--sans);
   font-size: .82rem;
+  white-space: nowrap;
   letter-spacing: .12em;
   text-transform: uppercase;
   text-decoration: none;
@@ -347,6 +348,18 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
 .offer-featured .offer-facts span { color: var(--gold); }
 .offer .btn { margin-top: auto; align-self: flex-start; }
 
+/* ---------- Meditations-App ---------- */
+.meditation-mark { display: flex; justify-content: center; margin-bottom: 1.6rem; color: var(--gold); }
+.meditation-actions { margin-top: 2.4rem; }
+.meditation-actions .btn { padding: 1.05rem 2.8rem; font-size: 1rem; }
+.meditation-hint {
+  margin-top: 1.8rem;
+  font-family: var(--sans);
+  font-size: .85rem;
+  font-weight: 300;
+  color: rgba(245, 239, 226, .6);
+}
+
 /* ---------- Team ---------- */
 .team { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem, 5vw, 4rem); }
 .person { text-align: center; }
@@ -409,7 +422,10 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
   .movements, .offers, .two-col, .team, .footer-grid { grid-template-columns: 1fr; }
   .two-col { gap: 2.5rem; }
   .footer-grid { gap: 2rem; }
+}
 
+/* Burger-Menü greift früher, damit die Navigation nie gequetscht wird */
+@media (max-width: 1000px) {
   .nav-toggle { display: block; z-index: 110; }
   .nav-menu {
     position: fixed; inset: 0 0 0 auto; width: min(78vw, 320px);

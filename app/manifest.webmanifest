@@ -1,0 +1,26 @@
+{
+  "name": "Innercraft Meditation",
+  "short_name": "Meditation",
+  "description": "Deine tägliche Meditation: geführte Eingangs-Meditation, eigene Anweisungen in deiner Stimme, Stille-Iterationen mit Gong und ein persönliches Outro.",
+  "lang": "de",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf6ec",
+  "theme_color": "#232c24",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

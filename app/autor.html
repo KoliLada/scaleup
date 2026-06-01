@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Innercraft Meditation — Autoren-Modus</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <link rel="icon" href="icons/icon-192.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="app-header">
+    <div class="brand">
+      <svg viewBox="0 0 48 48" width="30" height="30" aria-hidden="true"><use href="#gong-mark"></use></svg>
+      <div class="brand-text">
+        <span class="brand-name">Innercraft</span>
+        <span class="brand-tag">Autoren-Modus</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="app">
+    <section class="screen is-active">
+      <p class="eyebrow">Nur für dich</p>
+      <h1>Deine Journey gestalten</h1>
+      <p class="lead">
+        Hier legst du fest, was alle Nutzer der Meditations-App erleben:
+        Anzahl und Länge der Iterationen, deine aufgesprochenen Anweisungen
+        und dein Outro. Mit „Veröffentlichen“ geht deine Journey für alle live.
+      </p>
+
+      <div class="notice notice-warn hidden" id="mic-error">
+        Der Zugriff auf das Mikrofon wurde verweigert. Bitte erlaube den
+        Mikrofon-Zugriff in den Browser-Einstellungen.
+      </div>
+
+      <div class="notice hidden" id="draft-notice">
+        Du hast unveröffentlichte Änderungen. Sie sind nur auf diesem Gerät
+        gespeichert, bis du sie veröffentlichst.
+      </div>
+
+      <!-- Eingangs-Meditation -->
+      <div class="card">
+        <h2>Eingangs-Meditation</h2>
+        <p class="hint" id="intro-info">Geführte Meditation (Willigis Jäger) — zentral hinterlegt.</p>
+      </div>
+
+      <!-- Iterationen -->
+      <div id="iteration-cards"><!-- wird von autor.js befüllt --></div>
+
+      <button class="btn btn-ghost btn-big" id="btn-add-iteration">+ Iteration hinzufügen</button>
+
+      <!-- Outro -->
+      <div class="card">
+        <h2>Outro</h2>
+        <p class="hint">
+          Nach der letzten Iteration: tieferer Gong → deine Outro-Ansprache →
+          ganz tiefer Gong.
+        </p>
+
+        <div class="row">
+          <span>Stille vor dem Outro</span>
+          <div class="duration-input">
+            <input type="number" id="outro-pause" min="0" max="30" step="1" value="0" inputmode="numeric" />
+            <span class="unit">Min.</span>
+          </div>
+        </div>
+
+        <div class="author-recording" id="outro-recording">
+          <p class="recording-hint">
+            Deine Outro-Ansprache, z. B.: „Jetzt bist du präsent und gerüstet für
+            deinen Tag. Ich wünsche dir einen schönen Tag.“
+          </p>
+          <div class="recording-controls" data-slot="outro"><!-- wird von autor.js befüllt --></div>
+        </div>
+      </div>
+
+      <!-- Veröffentlichen -->
+      <div class="card card-publish">
+        <h2>Veröffentlichen</h2>
+        <p class="hint">
+          Damit gehen deine Journey und deine Aufnahmen für <strong>alle Nutzer</strong> live —
+          in der Web-App und in der iPhone-App.
+        </p>
+
+        <details class="publish-setup" id="publish-setup">
+          <summary>Einmalige Einrichtung (GitHub-Zugang)</summary>
+          <ol class="setup-steps">
+            <li>Öffne <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Fine-grained Token erstellen ↗</a></li>
+            <li>Name: z. B. „Innercraft Autoren-Modus“ · Ablauf: 1 Jahr</li>
+            <li>Repository access: <strong>Only select repositories</strong> → <code>KoliLada/scaleup</code></li>
+            <li>Permissions → Repository permissions → <strong>Contents: Read and write</strong></li>
+            <li>Token erstellen, kopieren und unten einfügen. Er wird nur auf diesem Gerät gespeichert.</li>
+          </ol>
+          <input type="password" id="github-token" placeholder="GitHub-Token (github_pat_…)" autocomplete="off" />
+        </details>
+
+        <button class="btn btn-primary btn-big" id="btn-publish">Journey veröffentlichen</button>
+        <button class="btn btn-ghost" id="btn-discard">Änderungen verwerfen</button>
+        <p class="publish-status" id="publish-status"></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Gong-/Klang-Symbol -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <g id="gong-mark">
+        <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".55" />
+        <circle cx="24" cy="24" r="15" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".75" />
+        <circle cx="24" cy="24" r="9" fill="currentColor" opacity=".9" />
+        <circle cx="24" cy="24" r="3.4" fill="#f5efe2" />
+      </g>
+    </defs>
+  </svg>
+
+  <script src="journey.js"></script>
+  <script src="autor.js"></script>
+</body>
+</html>
