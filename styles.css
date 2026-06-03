@@ -577,6 +577,32 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
 }
 .footer-bottom p { margin: 0; }
 
+/* ---------- Stimmungsband (Vollbreite-Foto) ---------- */
+.mood-band {
+  position: relative;
+  height: clamp(320px, 56vh, 620px);
+  overflow: hidden;
+  background: var(--forest-deep);
+}
+.mood-band img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+}
+/* sanfter Übergang in die dunkle Sektion darunter */
+.mood-band::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(8,22,35,0) 55%, rgba(13,36,51,.85) 100%);
+  pointer-events: none;
+}
+@media (min-width: 760px) {
+  .mood-band { background-attachment: fixed; }
+  .mood-band img { object-position: center 35%; }
+}
+
 /* ---------- Reveal animation ---------- */
 .reveal { opacity: 0; transform: translateY(26px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
 .reveal.in { opacity: 1; transform: none; }
