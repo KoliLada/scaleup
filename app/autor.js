@@ -1,8 +1,9 @@
 /* ==========================================================================
-   Innercraft Meditation — Autoren-Modus
-   Hier gestaltet der Autor die zentrale Journey: Iterationen anlegen,
-   Anweisungen mit eigener Stimme aufnehmen, Dauern festlegen und alles
-   per GitHub-API veröffentlichen (Cloudflare Pages deployt automatisch).
+   Innercraft Meditation — Autoren-Modus (mehrsprachig)
+   Hier gestaltet der Autor die zentralen Journeys: pro Sprache (DE/EN/FR)
+   Iterationen anlegen, Anweisungen mit eigener Stimme aufnehmen, Dauern
+   festlegen und alles per GitHub-API veröffentlichen
+   (Cloudflare Pages deployt automatisch).
    ========================================================================== */
 
 "use strict";
@@ -15,6 +16,17 @@ const REPO_AUDIO_DIR = "app/audio";           // Zielordner im Repository
 
 const MAX_AUTHOR_ITERATIONS = 10;
 
+const JOURNEY_LANGS = [
+  { code: "de", label: "Deutsch" },
+  { code: "en", label: "English" },
+  { code: "fr", label: "Français" },
+];
+
+/** Dateiname der Journey-Definition im Repository je Sprache */
+function journeyRepoFilename(lang) {
+  return lang === "de" ? "journey.json" : `journey-${lang}.json`;
+}
+
 /* ---------- Hilfsfunktionen ---------- */
 
 function $(selector) { return document.querySelector(selector); }
@@ -23,27 +35,29 @@ function uid() {
   return `rec-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-/* ---------- Lokale Entwurfs-Daten ---------- */
+/* ---------- Aktive Journey-Sprache ---------- */
+
+let journeyLang = "de";
+
+/* ---------- Lokale Entwurfs-Daten (pro Sprache) ---------- */
 
 // Entwurf der Journey (localStorage) — Audio-Quellen zeigen entweder auf
 // bereits veröffentlichte Dateien ("published") oder lokale Aufnahmen ("local")
 const Draft = {
   data: null,
 
-  blank() {
-    return {
-      iterations: [
-        { silenceMinutes: 5, audio: null },
-        { silenceMinutes: 6, audio: null },
-      ],
-      outroPauseMinutes: 0,
-      outroAudio: null,
-    };
+  storageKey(lang = journeyLang) {
+    return lang === "de" ? "innercraft-author-draft" : `innercraft-author-draft-${lang}`;
   },
 
   /** Entwurf aus der veröffentlichten Journey ableiten */
   fromJourney(journey) {
     return {
+      // Eingangs-Meditation: optional (Checkbox) und mit eigener Aufnahme ersetzbar
+      introEnabled: !!journey.intro,
+      introAudio: journey.intro
+        ? { type: "published", file: journey.intro.file, title: journey.intro.title }
+        : null,
       iterations: journey.iterations.map((iteration) => ({
         silenceMinutes: iteration.silenceMinutes,
         audio: iteration.instructionFile ? { type: "published", file: iteration.instructionFile } : null,
@@ -55,7 +69,7 @@ const Draft = {
 
   load() {
     try {
-      const raw = localStorage.getItem("innercraft-author-draft");
+      const raw = localStorage.getItem(this.storageKey());
       return raw ? JSON.parse(raw) : null;
     } catch {
       return null;
@@ -63,17 +77,24 @@ const Draft = {
   },
 
   save() {
-    localStorage.setItem("innercraft-author-draft", JSON.stringify(this.data));
+    localStorage.setItem(this.storageKey(), JSON.stringify(this.data));
     updateDraftNotice();
   },
 
   clear() {
-    localStorage.removeItem("innercraft-author-draft");
+    localStorage.removeItem(this.storageKey());
     updateDraftNotice();
   },
 
   hasUnpublished() {
-    return localStorage.getItem("innercraft-author-draft") !== null;
+    return localStorage.getItem(this.storageKey()) !== null;
+  },
+
+  /** Gibt zurück, welche Sprachen unveröffentlichte Entwürfe haben */
+  langsWithDrafts() {
+    return JOURNEY_LANGS
+      .map((l) => l.code)
+      .filter((code) => localStorage.getItem(this.storageKey(code)) !== null);
   },
 };
 
@@ -283,6 +304,88 @@ async function renderRecordingControls(container, getAudio, setAudio) {
   container.append(recordBtn, playBtn, deleteBtn, status);
 }
 
+/* ---------- UI: Sprach-Tabs ---------- */
+
+async function switchJourneyLang(lang) {
+  stopPreview();
+  journeyLang = lang;
+
+  // Tabs aktualisieren
+  document.querySelectorAll(".journey-lang-tab").forEach((tab) => {
+    const active = tab.dataset.journeyLang === lang;
+    tab.classList.toggle("is-active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+
+  // Entwurf der Sprache laden (oder von der veröffentlichten Journey ableiten)
+  const journey = await loadJourney(lang);
+  const draft = Draft.load();
+  Draft.data = draft || Draft.fromJourney(journey);
+
+  // Ältere Entwürfe (vor Einführung der Intro-Checkbox) ergänzen
+  if (Draft.data.introEnabled === undefined) {
+    Draft.data.introEnabled = !!journey.intro;
+    Draft.data.introAudio = journey.intro
+      ? { type: "published", file: journey.intro.file, title: journey.intro.title }
+      : null;
+  }
+
+  await renderAll();
+}
+
+/* ---------- UI: Eingangs-Meditation (optional, mit eigener Aufnahme) ---------- */
+
+/** Standard-Titel einer selbst aufgenommenen Eingangs-Meditation je Sprache */
+function introTitleForLang(lang) {
+  return {
+    de: "Geführte Eingangs-Meditation",
+    en: "Guided opening meditation",
+    fr: "Méditation guidée d'ouverture",
+  }[lang] || "Geführte Eingangs-Meditation";
+}
+
+async function renderIntro() {
+  const enabled = Draft.data.introEnabled;
+
+  $("#intro-enabled").checked = enabled;
+  $("#intro-body").classList.toggle("hidden", !enabled);
+  $("#intro-disabled-hint").classList.toggle("hidden", enabled);
+
+  if (!enabled) return;
+
+  // Info-Zeile: was ist aktuell als Eingangs-Meditation hinterlegt?
+  const info = $("#intro-info");
+  const audio = Draft.data.introAudio;
+  if (!audio) {
+    info.textContent = "Noch keine Aufnahme — nimm unten deine Eingangs-Meditation auf. " +
+      "Ohne Aufnahme beginnt die Journey direkt mit Iteration 1.";
+  } else if (audio.type === "published") {
+    info.textContent = `${audio.title || "Eingangs-Meditation"} — zentral hinterlegt.`;
+    audioExists(audio.file).then(async (available) => {
+      if (available) {
+        const duration = await probeAudioDuration(audioUrl(audio.file));
+        info.textContent = `${audio.title || "Eingangs-Meditation"} — zentral hinterlegt${duration ? ` (${Math.round(duration / 60)} Min.)` : ""}.`;
+      } else {
+        info.textContent = `${audio.title || "Eingangs-Meditation"} — Datei noch nicht hinterlegt.`;
+      }
+    });
+  } else {
+    info.textContent = `Deine eigene Aufnahme (${Math.round((audio.duration || 0) / 60)} Min.) — noch nicht veröffentlicht.`;
+  }
+
+  // Aufnahme-Steuerung
+  await renderRecordingControls(
+    $('[data-slot="intro"]'),
+    () => Draft.data.introAudio,
+    (newAudio) => {
+      // Eigene Aufnahmen bekommen den Sprach-Titel
+      Draft.data.introAudio = newAudio
+        ? { ...newAudio, title: newAudio.type === "local" ? introTitleForLang(journeyLang) : newAudio.title }
+        : null;
+    }
+  );
+}
+
 /* ---------- UI: Iterationen ---------- */
 
 async function renderIterations() {
@@ -356,10 +459,19 @@ async function renderOutro() {
 }
 
 function updateDraftNotice() {
-  $("#draft-notice").classList.toggle("hidden", !Draft.hasUnpublished());
+  const langs = Draft.langsWithDrafts();
+  const notice = $("#draft-notice");
+  if (langs.length === 0) {
+    notice.classList.add("hidden");
+  } else {
+    notice.classList.remove("hidden");
+    const labels = langs.map((code) => JOURNEY_LANGS.find((l) => l.code === code)?.label || code);
+    notice.textContent = `Du hast unveröffentlichte Änderungen (${labels.join(", ")}). Sie sind nur auf diesem Gerät gespeichert, bis du sie veröffentlichst.`;
+  }
 }
 
 async function renderAll() {
+  await renderIntro();
   await renderIterations();
   await renderOutro();
   updateDraftNotice();
@@ -413,17 +525,42 @@ const Publisher = {
     }
   },
 
-  /** Veröffentlicht den aktuellen Entwurf: Aufnahmen + journey.json */
+  /** Veröffentlicht den aktuellen Entwurf der aktiven Sprache */
   async publish(onProgress) {
     if (!this.token) {
       throw new Error("Bitte zuerst den GitHub-Token einrichten (siehe „Einmalige Einrichtung“).");
     }
 
+    const lang = journeyLang;
+    const langLabel = JOURNEY_LANGS.find((l) => l.code === lang)?.label || lang;
+
     onProgress("Verbinde mit GitHub …");
     const branch = await this.defaultBranch();
     const stamp = Date.now();
 
-    // 1) Lokale Aufnahmen hochladen und Dateinamen vergeben
+    // 1) Eingangs-Meditation: optional, ggf. eigene Aufnahme hochladen
+    let intro = null;
+    if (Draft.data.introEnabled && Draft.data.introAudio) {
+      const introAudio = Draft.data.introAudio;
+      if (introAudio.type === "published") {
+        intro = { file: introAudio.file, title: introAudio.title || introTitleForLang(lang) };
+      } else {
+        onProgress(`Lade Eingangs-Meditation (${langLabel}) hoch — das kann bei langen Aufnahmen etwas dauern …`);
+        const rec = await LocalRecordings.get(introAudio.key);
+        if (rec) {
+          const introFile = `journey-${lang}-intro-${stamp}.m4a`;
+          await this.putFile(
+            `${REPO_AUDIO_DIR}/${introFile}`,
+            await blobToBase64(rec.blob),
+            `Journey (${langLabel}): Eingangs-Meditation`,
+            branch
+          );
+          intro = { file: introFile, title: introAudio.title || introTitleForLang(lang) };
+        }
+      }
+    }
+
+    // 2) Lokale Aufnahmen der Iterationen hochladen und Dateinamen vergeben
     const iterations = [];
     for (let i = 0; i < Draft.data.iterations.length; i++) {
       const iteration = Draft.data.iterations[i];
@@ -433,14 +570,14 @@ const Publisher = {
         if (iteration.audio.type === "published") {
           instructionFile = iteration.audio.file;
         } else {
-          onProgress(`Lade Anweisung ${i + 1} hoch …`);
+          onProgress(`Lade Anweisung ${i + 1} (${langLabel}) hoch …`);
           const rec = await LocalRecordings.get(iteration.audio.key);
           if (rec) {
-            instructionFile = `journey-iteration-${i + 1}-${stamp}.m4a`;
+            instructionFile = `journey-${lang}-iteration-${i + 1}-${stamp}.m4a`;
             await this.putFile(
               `${REPO_AUDIO_DIR}/${instructionFile}`,
               await blobToBase64(rec.blob),
-              `Journey: Anweisung für Iteration ${i + 1}`,
+              `Journey (${langLabel}): Anweisung für Iteration ${i + 1}`,
               branch
             );
           }
@@ -450,41 +587,41 @@ const Publisher = {
       iterations.push({ instructionFile, silenceMinutes: iteration.silenceMinutes });
     }
 
-    // 2) Outro hochladen
+    // 3) Outro hochladen
     let outroFile = null;
     if (Draft.data.outroAudio) {
       if (Draft.data.outroAudio.type === "published") {
         outroFile = Draft.data.outroAudio.file;
       } else {
-        onProgress("Lade Outro hoch …");
+        onProgress(`Lade Outro (${langLabel}) hoch …`);
         const rec = await LocalRecordings.get(Draft.data.outroAudio.key);
         if (rec) {
-          outroFile = `journey-outro-${stamp}.m4a`;
+          outroFile = `journey-${lang}-outro-${stamp}.m4a`;
           await this.putFile(
             `${REPO_AUDIO_DIR}/${outroFile}`,
             await blobToBase64(rec.blob),
-            "Journey: Outro-Ansprache",
+            `Journey (${langLabel}): Outro-Ansprache`,
             branch
           );
         }
       }
     }
 
-    // 3) journey.json schreiben
-    onProgress("Veröffentliche Journey …");
+    // 4) Journey-Definition schreiben
+    onProgress(`Veröffentliche Journey (${langLabel}) …`);
     const journey = {
       version: 1,
       updatedAt: new Date().toISOString().slice(0, 10),
-      intro: { file: "intro-meditation.m4a", title: "Geführte Meditation (Willigis Jäger)" },
+      intro,
       iterations,
       outroPauseMinutes: Draft.data.outroPauseMinutes,
       outroFile,
     };
 
     await this.putFile(
-      `${REPO_AUDIO_DIR}/journey.json`,
+      `${REPO_AUDIO_DIR}/${journeyRepoFilename(lang)}`,
       btoa(unescape(encodeURIComponent(JSON.stringify(journey, null, 2) + "\n"))),
-      "Journey aktualisiert (Autoren-Modus)",
+      `Journey (${langLabel}) aktualisiert (Autoren-Modus)`,
       branch
     );
 
@@ -504,21 +641,17 @@ function blobToBase64(blob) {
 /* ---------- Initialisierung ---------- */
 
 async function init() {
-  // Veröffentlichte Journey laden, ggf. lokalen Entwurf fortsetzen
-  const journey = await loadJourney();
-  const draft = Draft.load();
-  Draft.data = draft || Draft.fromJourney(journey);
+  // Sprach-Tabs
+  document.querySelectorAll(".journey-lang-tab").forEach((tab) => {
+    tab.addEventListener("click", () => switchJourneyLang(tab.dataset.journeyLang));
+  });
 
-  // Intro-Info anzeigen
-  if (journey.intro) {
-    const available = await audioExists(journey.intro.file);
-    if (available) {
-      const duration = await probeAudioDuration(audioUrl(journey.intro.file));
-      $("#intro-info").textContent = `${journey.intro.title} — zentral hinterlegt${duration ? ` (${Math.round(duration / 60)} Min.)` : ""}.`;
-    } else {
-      $("#intro-info").textContent = `${journey.intro.title} — Datei noch nicht hinterlegt.`;
-    }
-  }
+  // Eingangs-Meditation an/aus (Checkbox)
+  $("#intro-enabled").addEventListener("change", async (e) => {
+    Draft.data.introEnabled = e.target.checked;
+    Draft.save();
+    await renderAll();
+  });
 
   // GitHub-Token-Feld
   const tokenInput = $("#github-token");
@@ -551,8 +684,8 @@ async function init() {
     try {
       await Publisher.publish((msg) => { status.textContent = msg; });
       Draft.clear();
-      // Entwurf neu von der (gerade veröffentlichten) Journey ableiten
-      status.textContent = "✓ Veröffentlicht! Die neue Journey ist in 1–2 Minuten für alle Nutzer live.";
+      const langLabel = JOURNEY_LANGS.find((l) => l.code === journeyLang)?.label || journeyLang;
+      status.textContent = `✓ Veröffentlicht! Die ${langLabel}-Journey ist in 1–2 Minuten für alle Nutzer live.`;
       status.classList.add("is-success");
     } catch (err) {
       console.error(err);
@@ -563,16 +696,17 @@ async function init() {
     }
   });
 
-  // Änderungen verwerfen
+  // Änderungen verwerfen (nur aktive Sprache)
   $("#btn-discard").addEventListener("click", async () => {
-    if (!confirm("Alle unveröffentlichten Änderungen verwerfen?")) return;
+    if (!confirm("Alle unveröffentlichten Änderungen dieser Sprache verwerfen?")) return;
     Draft.clear();
-    const published = await loadJourney();
+    const published = await loadJourney(journeyLang);
     Draft.data = Draft.fromJourney(published);
     await renderAll();
   });
 
-  await renderAll();
+  // Mit der deutschen Journey starten
+  await switchJourneyLang("de");
 }
 
 document.addEventListener("DOMContentLoaded", init);

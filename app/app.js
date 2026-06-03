@@ -1,6 +1,7 @@
 /* ==========================================================================
-   Innercraft Meditation — Nutzer-App
-   Spielt die zentral vom Autor festgelegte Journey in einem Durchlauf ab:
+   Innercraft Meditation — Nutzer-App (mehrsprachig: DE / EN / FR)
+   Spielt die zentral vom Autor festgelegte Journey der gewählten Sprache
+   in einem Durchlauf ab:
    Eingangs-Meditation → Iterationen (Anweisung · Stille · Gong)
    → tieferer Gong → Outro → ganz tiefer Gong
    ========================================================================== */
@@ -19,14 +20,17 @@ function formatMinutes(totalSeconds) {
 }
 
 function formatDurationLabel(seconds) {
-  if (seconds < 90) return `${Math.round(seconds)} Sek.`;
-  return `${Math.round(seconds / 60)} Min.`;
+  if (seconds < 90) return t("durationSec", Math.round(seconds));
+  return t("durationMin", Math.round(seconds / 60));
 }
 
 function showScreen(id) {
   $$(".screen").forEach((s) => s.classList.toggle("is-active", s.id === id));
   window.scrollTo(0, 0);
 }
+
+/** Kurze Stille nach dem Start, bevor der erste Gong ertönt (Sekunden) */
+const START_DELAY_SECONDS = 3;
 
 /* ---------- Journey laden & anzeigen ---------- */
 
@@ -35,7 +39,7 @@ let introAvailable = false;
 let introDuration = null;
 
 async function initJourney() {
-  journey = await loadJourney();
+  journey = await loadJourney(LANG);
 
   // Verfügbarkeit & Dauer der Eingangs-Meditation prüfen
   if (journey.intro) {
@@ -68,7 +72,7 @@ function renderFlow() {
     totalSeconds += silence;
     items.push({
       icon: String(index + 1),
-      label: `Iteration ${index + 1}: ${iteration.instructionFile ? "Anweisung · " : ""}Stille · Gong`,
+      label: t("flowIteration", index + 1, !!iteration.instructionFile),
       duration: formatDurationLabel(silence),
     });
   });
@@ -77,8 +81,8 @@ function renderFlow() {
     totalSeconds += journey.outroPauseMinutes * 60;
   }
 
-  items.push({ icon: "◎", label: journey.outroFile ? "Tieferer Gong · Outro" : "Tieferer Gong", duration: "" });
-  items.push({ icon: "●", label: "Ganz tiefer Gong — Abschluss", duration: "" });
+  items.push({ icon: "◎", label: journey.outroFile ? t("flowDeepGongOutro") : t("flowDeepGong"), duration: "" });
+  items.push({ icon: "●", label: t("flowFinalGong"), duration: "" });
 
   list.innerHTML = items
     .map(
@@ -92,7 +96,7 @@ function renderFlow() {
     .join("");
 
   $("#flow-total").textContent = totalSeconds
-    ? `Gesamt ca. ${Math.round(totalSeconds / 60)} Minuten`
+    ? t("flowTotal", Math.round(totalSeconds / 60))
     : "";
 }
 
@@ -110,7 +114,10 @@ const Session = {
   audioContext: null,
   keepAliveSource: null,
 
-  /* ----- Aufbau aus der zentralen Journey ----- */
+  /* ----- Aufbau aus der zentralen Journey -----
+     Der Gong begleitet die ganze Meditation:
+     Start → kurze Stille → Gong → Eingangs-Meditation → Gong
+     → Anweisung → Gong → Stille → Gong → … → tieferer Gong → Outro → ganz tiefer Gong */
 
   async build() {
     const phases = [];
@@ -122,55 +129,70 @@ const Session = {
       return audio;
     };
 
-    // 1) Eingangs-Meditation
+    const gongPhase = (label) => ({
+      type: "audio",
+      label,
+      title: t("phaseGong"),
+      audio: makeAudio(GONG_FILE),
+      durationSeconds: null,
+    });
+
+    // 0) Kurze Stille zum Ankommen, dann der Eröffnungs-Gong
+    phases.push({
+      type: "silence",
+      label: t("phaseBegin"),
+      title: t("phaseSilence"),
+      durationSeconds: START_DELAY_SECONDS,
+    });
+    phases.push(gongPhase(t("phaseBegin")));
+
+    // 1) Eingangs-Meditation, danach ein Gong
     if (journey.intro && introAvailable) {
       phases.push({
         type: "audio",
-        label: "Eingangs-Meditation",
-        title: "Geführte Meditation",
+        label: t("phaseIntroLabel"),
+        title: t("phaseIntroTitle"),
         audio: makeAudio(journey.intro.file),
         durationSeconds: introDuration || null,
       });
+      phases.push(gongPhase(t("phaseIntroLabel")));
     }
 
-    // 2) Iterationen: Anweisung → Stille → Gong
+    // 2) Iterationen: Anweisung → Gong → Stille → Gong
     const total = journey.iterations.length;
     for (let i = 0; i < total; i++) {
       const iteration = journey.iterations[i];
-      const label = `Iteration ${i + 1} von ${total}`;
+      const label = t("phaseIterationLabel", i + 1, total);
 
       if (iteration.instructionFile && (await audioExists(iteration.instructionFile))) {
         phases.push({
           type: "audio",
           label,
-          title: "Anweisung",
+          title: t("phaseInstruction"),
           audio: makeAudio(iteration.instructionFile),
           durationSeconds: null,
         });
+        // Gong nach der Anweisung — er eröffnet die Stille
+        phases.push(gongPhase(label));
       }
 
       phases.push({
         type: "silence",
         label,
-        title: "Stille",
+        title: t("phaseSilence"),
         durationSeconds: iteration.silenceMinutes * 60,
       });
 
-      phases.push({
-        type: "audio",
-        label,
-        title: "Gong",
-        audio: makeAudio(GONG_FILE),
-        durationSeconds: null,
-      });
+      // Gong beendet die Stille
+      phases.push(gongPhase(label));
     }
 
     // 3) Optionale Stille vor dem Outro
     if (journey.outroPauseMinutes > 0) {
       phases.push({
         type: "silence",
-        label: "Übergang",
-        title: "Stille",
+        label: t("phaseTransition"),
+        title: t("phaseSilence"),
         durationSeconds: journey.outroPauseMinutes * 60,
       });
     }
@@ -178,8 +200,8 @@ const Session = {
     // 4) Tieferer Gong leitet das Outro ein
     phases.push({
       type: "audio",
-      label: "Outro",
-      title: "Tieferer Gong",
+      label: t("phaseOutro"),
+      title: t("phaseDeepGong"),
       audio: makeAudio(GONG_DEEP_FILE),
       durationSeconds: null,
     });
@@ -188,8 +210,8 @@ const Session = {
     if (journey.outroFile && (await audioExists(journey.outroFile))) {
       phases.push({
         type: "audio",
-        label: "Outro",
-        title: "Outro",
+        label: t("phaseOutro"),
+        title: t("phaseOutro"),
         audio: makeAudio(journey.outroFile),
         durationSeconds: null,
       });
@@ -198,13 +220,59 @@ const Session = {
     // 6) Ganz tiefer Gong als Abschluss
     phases.push({
       type: "audio",
-      label: "Abschluss",
-      title: "Tiefer Gong",
+      label: t("phaseFinal"),
+      title: t("phaseFinalGong"),
       audio: makeAudio(GONG_DEEPEST_FILE),
       durationSeconds: null,
     });
 
     this.phases = phases;
+
+    // Dauern aller Audio-Phasen ermitteln (für Gesamt-Countdown)
+    // und Phasen zu sinnvollen Schritten gruppieren
+    await this.probeDurations();
+    this.computeSteps();
+  },
+
+  /** Dauer jeder Audio-Phase über die Metadaten ermitteln */
+  async probeDurations() {
+    await Promise.all(
+      this.phases.map(async (phase) => {
+        if (phase.type === "audio" && !phase.durationSeconds) {
+          phase.durationSeconds = (await probeAudioDuration(phase.audio.src)) || 0;
+        }
+      })
+    );
+  },
+
+  /** Aufeinanderfolgende Phasen mit gleichem Label bilden einen Schritt
+      (z. B. "Iteration 1 von 3" = Anweisung + Gong + Stille + Gong) */
+  computeSteps() {
+    let step = 0;
+    let lastLabel = null;
+    this.phases.forEach((phase) => {
+      if (phase.label !== lastLabel) {
+        step += 1;
+        lastLabel = phase.label;
+      }
+      phase.step = step;
+    });
+    this.totalSteps = step;
+  },
+
+  /** Gesamtdauer aller Phasen (Sekunden) */
+  get totalDuration() {
+    return this.phases.reduce((sum, phase) => sum + (phase.durationSeconds || 0), 0);
+  },
+
+  /** Verbleibende Gesamtzeit ab der aktuellen Phase */
+  remainingTotal(currentElapsed) {
+    let remaining = 0;
+    for (let i = this.phaseIndex; i < this.phases.length; i++) {
+      const duration = this.phases[i].durationSeconds || 0;
+      remaining += i === this.phaseIndex ? Math.max(0, duration - currentElapsed) : duration;
+    }
+    return remaining;
   },
 
   /* ----- Steuerung ----- */
@@ -346,33 +414,62 @@ const Session = {
 
     $("#session-phase-label").textContent = phase.label;
     $("#session-phase-title").textContent = phase.title;
-    $("#session-step").textContent = `Schritt ${this.phaseIndex + 1} von ${this.phases.length}`;
+    $("#session-step").textContent = t("sessionStep", phase.step, this.totalSteps);
 
+    // Vergangene Zeit der aktuellen Phase
     let elapsed;
-    let total = phase.durationSeconds;
+    let phaseDuration = phase.durationSeconds;
 
     if (phase.type === "audio" && phase.audio) {
       elapsed = phase.audio.currentTime || 0;
-      if (!total && isFinite(phase.audio.duration) && phase.audio.duration > 0) {
-        total = phase.audio.duration;
+      if (!phaseDuration && isFinite(phase.audio.duration) && phase.audio.duration > 0) {
+        phaseDuration = phase.audio.duration;
+        phase.durationSeconds = phaseDuration;
       }
     } else {
       elapsed = (Date.now() - this.phaseStartedAt) / 1000;
     }
 
-    // Bei Stille: Restzeit anzeigen; bei Audio: vergangene Zeit
-    if (phase.type === "silence") {
-      const remaining = Math.max(0, total - elapsed);
-      $("#session-time").textContent = formatMinutes(remaining);
-    } else {
-      $("#session-time").textContent = formatMinutes(elapsed);
-    }
+    // Beide Werte laufen rückwärts:
+    // groß = verbleibende Gesamtzeit, klein = Restzeit des aktuellen Schritts
+    const totalRemaining = this.remainingTotal(elapsed);
+    const phaseRemaining = phaseDuration ? Math.max(0, phaseDuration - elapsed) : 0;
 
-    // Fortschrittsring
+    $("#session-time").textContent = formatMinutes(totalRemaining);
+    $("#session-time-step").textContent = formatMinutes(phaseRemaining);
+
+    // Fortschrittsring zeigt den Fortschritt der gesamten Meditation
     const ring = $("#session-ring");
     const circumference = 553;
-    const progress = total ? Math.min(1, elapsed / total) : 0;
+    const total = this.totalDuration;
+    const progress = total ? Math.min(1, 1 - totalRemaining / total) : 0;
     ring.style.strokeDashoffset = circumference * (1 - progress);
+  },
+
+  /** Springt zum nächsten Schritt (z. B. Eingangs-Meditation überspringen) */
+  skip() {
+    const phase = this.phases[this.phaseIndex];
+    if (!phase) return;
+
+    // Pause aufheben, falls aktiv
+    this.pausedAt = null;
+    $("#btn-pause").textContent = t("btnPause");
+
+    // Laufendes Audio der aktuellen Phase stoppen
+    if (phase.audio) {
+      phase.audio.onended = null;
+      phase.audio.pause();
+    }
+
+    // Erste Phase finden, die zu einem anderen Schritt gehört
+    let next = this.phaseIndex + 1;
+    while (next < this.phases.length && this.phases[next].label === phase.label) {
+      next += 1;
+    }
+
+    // advance() erhöht den Index um 1 und startet dann genau diese Phase
+    this.phaseIndex = next - 1;
+    this.advance();
   },
 
   togglePause() {
@@ -382,13 +479,13 @@ const Session = {
     if (this.pausedAt === null) {
       this.pausedAt = Date.now();
       if (phase.audio) phase.audio.pause();
-      $("#btn-pause").textContent = "Fortsetzen";
+      $("#btn-pause").textContent = t("btnResume");
     } else {
       const pausedDuration = Date.now() - this.pausedAt;
       this.phaseStartedAt += pausedDuration;
       this.pausedAt = null;
       if (phase.type === "audio" && phase.audio) phase.audio.play();
-      $("#btn-pause").textContent = "Pause";
+      $("#btn-pause").textContent = t("btnPause");
     }
   },
 
@@ -429,7 +526,7 @@ const Session = {
       this.wakeLock = null;
     }
 
-    $("#btn-pause").textContent = "Pause";
+    $("#btn-pause").textContent = t("btnPause");
   },
 };
 
@@ -444,8 +541,9 @@ function bindNavigation() {
 
   $("#btn-start").addEventListener("click", () => Session.start());
   $("#btn-pause").addEventListener("click", () => Session.togglePause());
+  $("#btn-skip").addEventListener("click", () => Session.skip());
   $("#btn-stop").addEventListener("click", () => {
-    if (confirm("Meditation wirklich beenden?")) Session.stop();
+    if (confirm(t("confirmStop"))) Session.stop();
   });
 }
 
@@ -458,6 +556,7 @@ function registerServiceWorker() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  applyTranslations();
   bindNavigation();
   initJourney();
   registerServiceWorker();

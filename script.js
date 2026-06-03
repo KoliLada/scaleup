@@ -2,6 +2,55 @@
 (function () {
   'use strict';
 
+  /* ---- Sprache der Seite & Übersetzungen für JS-Texte ---- */
+  var LANG = (document.documentElement.lang || 'de').slice(0, 2);
+  var STRINGS = {
+    de: {
+      menuOpen: 'Menü öffnen',
+      menuClose: 'Menü schließen',
+      formMissing: 'Bitte fülle Name und E-Mail aus.',
+      formThanks: function (name) { return 'Danke, ' + name + '. Deine Nachricht ist angekommen — wir melden uns bald bei dir.'; }
+    },
+    en: {
+      menuOpen: 'Open menu',
+      menuClose: 'Close menu',
+      formMissing: 'Please fill in your name and email.',
+      formThanks: function (name) { return 'Thank you, ' + name + '. Your message has arrived — we will get back to you soon.'; }
+    },
+    fr: {
+      menuOpen: 'Ouvrir le menu',
+      menuClose: 'Fermer le menu',
+      formMissing: 'Merci de renseigner ton nom et ton e-mail.',
+      formThanks: function (name) { return 'Merci, ' + name + '. Ton message est bien arrivé — nous te répondrons bientôt.'; }
+    }
+  };
+  var T = STRINGS[LANG] || STRINGS.de;
+
+  /* ---- Sprachwahl: beim ersten Besuch Browser-Sprache anbieten ----
+     - Die Wahl des Besuchers (Klick auf DE/EN/FR) wird gespeichert.
+     - Nur auf der deutschen Startseite und nur ohne gespeicherte Wahl
+       wird automatisch zur Browser-Sprache weitergeleitet.            */
+  var LANG_KEY = 'innercraft-lang';
+
+  document.querySelectorAll('[data-lang-choice]').forEach(function (link) {
+    link.addEventListener('click', function () {
+      try { localStorage.setItem(LANG_KEY, link.getAttribute('data-lang-choice')); } catch (e) { /* privater Modus */ }
+    });
+  });
+
+  (function autoRedirect() {
+    if (LANG !== 'de') return;                       // nur von der deutschen Seite aus
+    if (location.pathname.indexOf('/en/') !== -1 || location.pathname.indexOf('/fr/') !== -1) return;
+    var stored = null;
+    try { stored = localStorage.getItem(LANG_KEY); } catch (e) { /* privater Modus */ }
+    if (stored) return;                              // Besucher hat schon gewählt
+    var browser = (navigator.language || 'de').slice(0, 2);
+    if (browser === 'en' || browser === 'fr') {
+      try { localStorage.setItem(LANG_KEY, browser); } catch (e) { /* privater Modus */ }
+      location.replace(browser + '/');
+    }
+  })();
+
   /* ---- Header shadow on scroll ---- */
   var header = document.querySelector('.site-header');
   var onScroll = function () {
@@ -18,7 +67,7 @@
     var setMenu = function (open) {
       menu.classList.toggle('open', open);
       toggle.setAttribute('aria-expanded', String(open));
-      toggle.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+      toggle.setAttribute('aria-label', open ? T.menuClose : T.menuOpen);
     };
     toggle.addEventListener('click', function () {
       setMenu(!menu.classList.contains('open'));
@@ -64,11 +113,10 @@
       var name = form.querySelector('#name');
       var email = form.querySelector('#email');
       if (!name.value.trim() || !email.value.trim()) {
-        status.textContent = 'Bitte fülle Name und E-Mail aus.';
+        status.textContent = T.formMissing;
         return;
       }
-      status.textContent = 'Danke, ' + name.value.trim().split(' ')[0] +
-        '. Deine Nachricht ist angekommen — wir melden uns bald bei dir.';
+      status.textContent = T.formThanks(name.value.trim().split(' ')[0]);
       form.reset();
     });
   }

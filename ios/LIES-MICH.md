@@ -7,21 +7,24 @@ Native iPhone-App (SwiftUI) für die tägliche Innercraft-Meditation.
 Der **Autor** (Innercraft) legt die Journey zentral fest — die App lädt sie von
 innercraft.com und spielt sie in einem ungestörten Durchlauf ab:
 
-1. **Geführte Eingangs-Meditation** (Willigis Jäger)
-2. **Iterationen** (Anzahl & Dauer bestimmt der Autor), jeweils:
-   - Anweisung in der Stimme des Autors
-   - **Stille**
-   - **Gong**
-3. **Tieferer Gong** leitet das Outro ein
-4. **Outro-Ansprache** des Autors
-5. **Ganz tiefer Gong** zum Abschluss
+1. Kurze Stille → **Gong** zum Beginn
+2. **Geführte Eingangs-Meditation**, danach ein **Gong**
+3. **Iterationen** (Anzahl & Dauer bestimmt der Autor), jeweils:
+   - Anweisung in der Stimme des Autors → **Gong**
+   - **Stille** → **Gong**
+4. **Tieferer Gong** leitet das Outro ein
+5. **Outro-Ansprache** des Autors
+6. **Ganz tiefer Gong** zum Abschluss
 
 Die Nutzer müssen nichts einstellen und nichts aufnehmen — App öffnen,
 „Meditation beginnen“, im Fluss bleiben.
 
 ## Funktionen
 
-- Lädt die zentrale Journey (`journey.json`) und alle Audio-Dateien von
+- **Dreisprachig** (Deutsch / Englisch / Französisch): Die App folgt der
+  Geräte-Sprache und lädt die Journey der jeweiligen Sprache
+  (`journey.json` / `journey-en.json` / `journey-fr.json`)
+- Lädt die zentrale Journey und alle Audio-Dateien von
   innercraft.com und cacht sie für die **Offline-Nutzung**
 - Ändert der Autor die Journey (über den Autoren-Modus der Web-App), bekommen
   alle Nutzer beim nächsten App-Start automatisch die neue Version
@@ -60,6 +63,7 @@ https://innercraft.com/app/audio/
 InnercraftMeditation/
   InnercraftMeditationApp.swift   — App-Einstieg
   MeditationConfig.swift          — zentrale URL, Konstanten, Farbpalette
+  L10n.swift                      — Übersetzungen (DE / EN / FR)
   Info.plist                      — Hintergrund-Audio
   Models/
     JourneyProvider.swift         — lädt & cacht journey.json + Audio-Dateien

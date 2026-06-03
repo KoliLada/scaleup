@@ -7,13 +7,14 @@
 
 "use strict";
 
-const CACHE_NAME = "innercraft-meditation-v2";
+const CACHE_NAME = "innercraft-meditation-v3";
 
 const PRECACHE_URLS = [
   "./",
   "index.html",
   "app.css",
   "app.js",
+  "i18n.js",
   "journey.js",
   "manifest.webmanifest",
   "icons/icon-180.png",
@@ -46,8 +47,9 @@ self.addEventListener("fetch", (event) => {
   // Nur eigene GET-Anfragen behandeln (keine Google Fonts, keine GitHub-API)
   if (url.origin !== self.location.origin || event.request.method !== "GET") return;
 
-  // Journey-Definition: immer Netz zuerst, Cache nur als Offline-Fallback
-  if (url.pathname.endsWith("/journey.json")) {
+  // Journey-Definitionen (alle Sprachen): immer Netz zuerst,
+  // Cache nur als Offline-Fallback
+  if (/\/journey[^/]*\.json$/.test(url.pathname)) {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
