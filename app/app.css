@@ -145,6 +145,17 @@ h2 {
 
 .lead { color: var(--ink-soft); margin-bottom: 1.4rem; }
 
+/* Tages-Badge (z. B. „Heute ist Mittwoch") */
+.day-badge {
+  font-family: var(--sans);
+  font-size: .82rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--biolume);
+  margin: -.4rem 0 1rem;
+}
+.day-badge:empty { display: none; }
+
 .hint {
   font-family: var(--sans);
   font-size: .82rem;
@@ -377,7 +388,106 @@ code {
 }
 
 .journey-lang-hint {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+}
+
+/* Wochen-Matrix (7 Tage) */
+.week-card {
+  background: var(--cream);
+  border: 1px solid rgba(13, 36, 51, .12);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-soft);
+}
+.week-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.week-head h2 { margin-bottom: 0; }
+.current-day {
+  font-family: var(--sans);
+  font-size: .82rem;
+  letter-spacing: .04em;
+  color: var(--clay);
+}
+.week-matrix {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.day-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 2px 8px;
+  background: var(--paper);
+  border: 1px solid rgba(13, 36, 51, .15);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .2s var(--ease);
+}
+.day-cell-name {
+  font-family: var(--sans);
+  font-size: .8rem;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+.day-cell.is-active {
+  background: var(--forest);
+  border-color: var(--forest);
+}
+.day-cell.is-active .day-cell-name { color: var(--cream); }
+.day-cell.is-today { border-color: var(--biolume); border-width: 2px; }
+
+.day-cell-dot, .dot-mini {
+  width: 7px; height: 7px; border-radius: 50%;
+  display: inline-block;
+}
+.dot-published { background: var(--biolume); }
+.dot-draft     { background: var(--clay); }
+.dot-empty     { background: transparent; border: 1px solid rgba(13, 36, 51, .3); }
+.is-active .dot-empty { border-color: rgba(241, 242, 236, .4); }
+
+.week-hint { margin-top: 14px; margin-bottom: 0; }
+.dot-legend {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin-top: 8px;
+}
+.dot-legend .dot-mini { margin-right: 3px; vertical-align: middle; }
+
+/* Titel-Eingabefeld (eigene Überschriften) */
+.title-field {
+  margin: 4px 0 14px;
+}
+.title-field label {
+  display: block;
+  font-family: var(--sans);
+  font-size: .72rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.title-field input {
+  width: 100%;
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  padding: 10px 12px;
+  border: 1px solid rgba(13, 36, 51, .25);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--ink);
+}
+.title-field input:focus {
+  outline: none;
+  border-color: var(--clay);
 }
 
 .card-head {

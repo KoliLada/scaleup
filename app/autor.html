@@ -48,6 +48,24 @@
         Nutzer hören die Journey ihrer Sprache.
       </p>
 
+      <!-- Wochen-Matrix: für jeden Wochentag eine eigene Journey -->
+      <div class="week-card">
+        <div class="week-head">
+          <h2>Die Woche</h2>
+          <span class="current-day" id="current-day-label"></span>
+        </div>
+        <div class="week-matrix" id="week-matrix" role="tablist" aria-label="Wochentag"><!-- von autor.js befüllt --></div>
+        <p class="hint week-hint">
+          Jeder Wochentag hat seine <strong>eigene Journey</strong> — so bekommen die Nutzer
+          jeden Tag Abwechslung. Der Nutzer sieht automatisch die Journey des heutigen Tags.
+          <span class="dot-legend">
+            <span class="dot-mini dot-published"></span> veröffentlicht
+            <span class="dot-mini dot-draft"></span> Entwurf
+            <span class="dot-mini dot-empty"></span> leer
+          </span>
+        </p>
+      </div>
+
       <div class="notice notice-warn hidden" id="mic-error">
         Der Zugriff auf das Mikrofon wurde verweigert. Bitte erlaube den
         Mikrofon-Zugriff in den Browser-Einstellungen.
@@ -69,6 +87,10 @@
         </div>
         <div id="intro-body">
           <p class="hint" id="intro-info"></p>
+          <div class="title-field">
+            <label for="intro-title">Überschrift (erscheint in der App)</label>
+            <input type="text" id="intro-title" maxlength="60" placeholder="z. B. „Ankommen" …" />
+          </div>
           <div class="author-recording">
             <p class="recording-hint">
               Deine eigene geführte Eingangs-Meditation (ca. 10–15 Minuten).
@@ -94,6 +116,11 @@
           Nach der letzten Iteration: tieferer Gong → deine Outro-Ansprache →
           ganz tiefer Gong.
         </p>
+
+        <div class="title-field">
+          <label for="outro-title">Überschrift (erscheint in der App)</label>
+          <input type="text" id="outro-title" maxlength="60" placeholder="z. B. „Abschluss", „In den Tag" …" />
+        </div>
 
         <div class="row">
           <span>Stille vor dem Outro</span>

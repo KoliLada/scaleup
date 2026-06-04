@@ -22,9 +22,14 @@ const JOURNEY_LANGS = [
   { code: "fr", label: "Français" },
 ];
 
-/** Dateiname der Journey-Definition im Repository je Sprache */
-function journeyRepoFilename(lang) {
-  return lang === "de" ? "journey.json" : `journey-${lang}.json`;
+// Wochentage: Tag 1 = Montag … Tag 7 = Sonntag
+const WEEKDAYS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
+const WEEKDAYS_SHORT = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
+
+/** Dateiname der Journey-Definition im Repository je Sprache & Tag (Tag 1 = Bestandsdatei) */
+function journeyRepoFilename(lang, day = 1) {
+  const base = lang === "de" ? "journey" : `journey-${lang}`;
+  return day && day > 1 ? `${base}-day${day}.json` : `${base}.json`;
 }
 
 /* ---------- Hilfsfunktionen ---------- */
@@ -35,9 +40,17 @@ function uid() {
   return `rec-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-/* ---------- Aktive Journey-Sprache ---------- */
+function escapeHtml(s) {
+  return String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+}
+function escapeAttr(s) {
+  return String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+/* ---------- Aktive Journey-Sprache & Tag ---------- */
 
 let journeyLang = "de";
+let journeyDay = currentJourneyDay(); // startet beim heutigen Wochentag
 
 /* ---------- Lokale Entwurfs-Daten (pro Sprache) ---------- */
 
@@ -46,8 +59,9 @@ let journeyLang = "de";
 const Draft = {
   data: null,
 
-  storageKey(lang = journeyLang) {
-    return lang === "de" ? "innercraft-author-draft" : `innercraft-author-draft-${lang}`;
+  storageKey(lang = journeyLang, day = journeyDay) {
+    const base = lang === "de" ? "innercraft-author-draft" : `innercraft-author-draft-${lang}`;
+    return day && day > 1 ? `${base}-day${day}` : base;
   },
 
   /** Entwurf aus der veröffentlichten Journey ableiten */
@@ -55,15 +69,18 @@ const Draft = {
     return {
       // Eingangs-Meditation: optional (Checkbox) und mit eigener Aufnahme ersetzbar
       introEnabled: !!journey.intro,
+      introTitle: (journey.intro && journey.intro.title) || "",
       introAudio: journey.intro
         ? { type: "published", file: journey.intro.file, title: journey.intro.title }
         : null,
       iterations: journey.iterations.map((iteration) => ({
+        title: iteration.title || "",
         silenceMinutes: iteration.silenceMinutes,
         audio: iteration.instructionFile ? { type: "published", file: iteration.instructionFile } : null,
       })),
       outroPauseMinutes: journey.outroPauseMinutes,
       outroAudio: journey.outroFile ? { type: "published", file: journey.outroFile } : null,
+      outroTitle: journey.outroTitle || "",
     };
   },
 
@@ -90,11 +107,22 @@ const Draft = {
     return localStorage.getItem(this.storageKey()) !== null;
   },
 
-  /** Gibt zurück, welche Sprachen unveröffentlichte Entwürfe haben */
-  langsWithDrafts() {
-    return JOURNEY_LANGS
-      .map((l) => l.code)
-      .filter((code) => localStorage.getItem(this.storageKey(code)) !== null);
+  /** Hat ein bestimmter Tag (in der aktuellen Sprache) einen Entwurf? */
+  dayHasDraft(day, lang = journeyLang) {
+    return localStorage.getItem(this.storageKey(lang, day)) !== null;
+  },
+
+  /** Beschreibungen aller unveröffentlichten Entwürfe (sprach- & tagübergreifend) */
+  allDrafts() {
+    const out = [];
+    for (const l of JOURNEY_LANGS) {
+      for (let d = 1; d <= 7; d++) {
+        if (localStorage.getItem(this.storageKey(l.code, d)) !== null) {
+          out.push({ lang: l.code, langLabel: l.label, day: d });
+        }
+      }
+    }
+    return out;
   },
 };
 
@@ -304,33 +332,82 @@ async function renderRecordingControls(container, getAudio, setAudio) {
   container.append(recordBtn, playBtn, deleteBtn, status);
 }
 
-/* ---------- UI: Sprach-Tabs ---------- */
+/* ---------- UI: Sprach- & Tages-Tabs ---------- */
 
-async function switchJourneyLang(lang) {
+/** Lädt Sprache + Tag in den Editor (Entwurf oder veröffentlichte Journey) */
+async function switchJourney(lang, day) {
   stopPreview();
   journeyLang = lang;
+  journeyDay = day;
 
-  // Tabs aktualisieren
+  // Sprach-Tabs aktualisieren
   document.querySelectorAll(".journey-lang-tab").forEach((tab) => {
     const active = tab.dataset.journeyLang === lang;
     tab.classList.toggle("is-active", active);
     tab.setAttribute("aria-selected", String(active));
   });
 
-  // Entwurf der Sprache laden (oder von der veröffentlichten Journey ableiten)
-  const journey = await loadJourney(lang);
+  // Entwurf laden (oder von der veröffentlichten Journey dieses Tags ableiten)
+  const journey = await loadJourney(lang, day, false); // kein Fallback auf Tag 1 im Editor
   const draft = Draft.load();
   Draft.data = draft || Draft.fromJourney(journey);
 
-  // Ältere Entwürfe (vor Einführung der Intro-Checkbox) ergänzen
+  // Ältere Entwürfe (vor Einführung von Intro-Checkbox / Titeln) ergänzen
   if (Draft.data.introEnabled === undefined) {
     Draft.data.introEnabled = !!journey.intro;
     Draft.data.introAudio = journey.intro
       ? { type: "published", file: journey.intro.file, title: journey.intro.title }
       : null;
   }
+  Draft.data.iterations.forEach((it) => { if (it.title === undefined) it.title = ""; });
+  if (Draft.data.outroTitle === undefined) Draft.data.outroTitle = "";
 
+  await renderWeekMatrix();
   await renderAll();
+}
+
+/** Komfort-Wechsel nur der Sprache (behält den aktuellen Tag) */
+function switchJourneyLang(lang) {
+  return switchJourney(lang, journeyDay);
+}
+
+/* ---------- UI: Wochen-Matrix (Übersicht & Navigation) ---------- */
+
+async function renderWeekMatrix() {
+  const grid = $("#week-matrix");
+  if (!grid) return;
+  grid.innerHTML = "";
+
+  const today = currentJourneyDay();
+
+  for (let day = 1; day <= 7; day++) {
+    const cell = document.createElement("button");
+    cell.className = "day-cell";
+    cell.classList.toggle("is-active", day === journeyDay);
+    cell.classList.toggle("is-today", day === today);
+
+    // Status ermitteln: Entwurf? veröffentlicht (Datei existiert)? leer?
+    let dot = "empty";
+    if (Draft.dayHasDraft(day)) {
+      dot = "draft";
+    } else if (await journeyExists(journeyLang, day)) {
+      dot = "published";
+    }
+
+    cell.innerHTML = `
+      <span class="day-cell-name">${WEEKDAYS_SHORT[day - 1]}</span>
+      <span class="day-cell-dot dot-${dot}"></span>`;
+    cell.title = WEEKDAYS[day - 1] + (day === today ? " (heute)" : "");
+    cell.addEventListener("click", () => switchJourney(journeyLang, day));
+    grid.appendChild(cell);
+  }
+
+  // Aktueller Tag als Klartext
+  const label = $("#current-day-label");
+  if (label) {
+    label.textContent = WEEKDAYS[journeyDay - 1] +
+      (journeyDay === today ? " · heute" : "");
+  }
 }
 
 /* ---------- UI: Eingangs-Meditation (optional, mit eigener Aufnahme) ---------- */
@@ -352,6 +429,18 @@ async function renderIntro() {
   $("#intro-disabled-hint").classList.toggle("hidden", enabled);
 
   if (!enabled) return;
+
+  // Eigener Titel der Eingangs-Meditation (erscheint in der App)
+  const titleInput = $("#intro-title");
+  if (titleInput) {
+    titleInput.value = Draft.data.introTitle || "";
+    titleInput.placeholder = introTitleForLang(journeyLang);
+    titleInput.oninput = (e) => {
+      Draft.data.introTitle = e.target.value;
+      if (Draft.data.introAudio) Draft.data.introAudio.title = e.target.value;
+      Draft.save();
+    };
+  }
 
   // Info-Zeile: was ist aktuell als Eingangs-Meditation hinterlegt?
   const info = $("#intro-info");
@@ -395,21 +484,27 @@ async function renderIterations() {
   for (let index = 0; index < Draft.data.iterations.length; index++) {
     const iteration = Draft.data.iterations[index];
 
+    const headline = iteration.title ? iteration.title : `Iteration ${index + 1}`;
+
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `
       <div class="card-head">
-        <h2>Iteration ${index + 1}</h2>
+        <h2>${escapeHtml(headline)}</h2>
         <button class="rec-btn card-remove" ${Draft.data.iterations.length <= 1 ? "disabled" : ""}>Entfernen</button>
       </div>
+      <div class="title-field">
+        <label>Überschrift (erscheint in der App)</label>
+        <input type="text" class="iteration-title" maxlength="60" placeholder="z. B. „Ankommen", „Der Atem" …" value="${escapeAttr(iteration.title || "")}" />
+      </div>
       <div class="author-recording">
-        <p class="recording-hint">Deine Anweisung, mit der diese Iteration beginnt.</p>
+        <p class="recording-hint">Deine Anweisung, mit der dieser Schritt beginnt.</p>
         <div class="recording-controls"></div>
       </div>
       <div class="row">
         <span>Stille danach</span>
         <div class="duration-input">
-          <input type="number" min="1" max="60" step="1" inputmode="numeric" value="${iteration.silenceMinutes}" />
+          <input type="number" class="silence-input" min="1" max="60" step="1" inputmode="numeric" value="${iteration.silenceMinutes}" />
           <span class="unit">Min.</span>
         </div>
       </div>`;
@@ -421,8 +516,16 @@ async function renderIterations() {
       (audio) => { Draft.data.iterations[index].audio = audio; }
     );
 
+    // Eigene Überschrift
+    const titleInput = card.querySelector(".iteration-title");
+    titleInput.addEventListener("input", (e) => {
+      Draft.data.iterations[index].title = e.target.value;
+      card.querySelector(".card-head h2").textContent = e.target.value.trim() || `Iteration ${index + 1}`;
+      Draft.save();
+    });
+
     // Stille-Dauer
-    card.querySelector("input[type=number]").addEventListener("change", (e) => {
+    card.querySelector(".silence-input").addEventListener("change", (e) => {
       const value = Math.min(60, Math.max(1, Number(e.target.value) || 1));
       e.target.value = value;
       Draft.data.iterations[index].silenceMinutes = value;
@@ -451,6 +554,13 @@ async function renderIterations() {
 async function renderOutro() {
   $("#outro-pause").value = Draft.data.outroPauseMinutes;
 
+  // Eigener Outro-Titel (erscheint in der App)
+  const titleInput = $("#outro-title");
+  if (titleInput) {
+    titleInput.value = Draft.data.outroTitle || "";
+    titleInput.oninput = (e) => { Draft.data.outroTitle = e.target.value; Draft.save(); };
+  }
+
   await renderRecordingControls(
     $('#outro-recording .recording-controls'),
     () => Draft.data.outroAudio,
@@ -459,15 +569,17 @@ async function renderOutro() {
 }
 
 function updateDraftNotice() {
-  const langs = Draft.langsWithDrafts();
+  const drafts = Draft.allDrafts();
   const notice = $("#draft-notice");
-  if (langs.length === 0) {
+  if (drafts.length === 0) {
     notice.classList.add("hidden");
   } else {
     notice.classList.remove("hidden");
-    const labels = langs.map((code) => JOURNEY_LANGS.find((l) => l.code === code)?.label || code);
-    notice.textContent = `Du hast unveröffentlichte Änderungen (${labels.join(", ")}). Sie sind nur auf diesem Gerät gespeichert, bis du sie veröffentlichst.`;
+    const labels = drafts.map((d) => `${d.langLabel} · ${WEEKDAYS[d.day - 1]}`);
+    notice.textContent = `Du hast unveröffentlichte Änderungen (${labels.join("; ")}). Sie sind nur auf diesem Gerät gespeichert, bis du sie veröffentlichst.`;
   }
+  // Wochen-Matrix neu einfärben (Entwurfs-Status kann sich geändert haben)
+  renderWeekMatrix();
 }
 
 async function renderAll() {
@@ -532,7 +644,10 @@ const Publisher = {
     }
 
     const lang = journeyLang;
+    const day = journeyDay;
     const langLabel = JOURNEY_LANGS.find((l) => l.code === lang)?.label || lang;
+    const dayLabel = WEEKDAYS[day - 1];
+    const tag = `${lang}-day${day}`; // eindeutiges Kürzel für Dateinamen
 
     onProgress("Verbinde mit GitHub …");
     const branch = await this.defaultBranch();
@@ -542,20 +657,21 @@ const Publisher = {
     let intro = null;
     if (Draft.data.introEnabled && Draft.data.introAudio) {
       const introAudio = Draft.data.introAudio;
+      const introTitle = (Draft.data.introTitle || introAudio.title || introTitleForLang(lang)).trim();
       if (introAudio.type === "published") {
-        intro = { file: introAudio.file, title: introAudio.title || introTitleForLang(lang) };
+        intro = { file: introAudio.file, title: introTitle };
       } else {
-        onProgress(`Lade Eingangs-Meditation (${langLabel}) hoch — das kann bei langen Aufnahmen etwas dauern …`);
+        onProgress(`Lade Eingangs-Meditation (${langLabel} · ${dayLabel}) hoch — das kann bei langen Aufnahmen etwas dauern …`);
         const rec = await LocalRecordings.get(introAudio.key);
         if (rec) {
-          const introFile = `journey-${lang}-intro-${stamp}.m4a`;
+          const introFile = `journey-${tag}-intro-${stamp}.m4a`;
           await this.putFile(
             `${REPO_AUDIO_DIR}/${introFile}`,
             await blobToBase64(rec.blob),
-            `Journey (${langLabel}): Eingangs-Meditation`,
+            `Journey (${langLabel} · ${dayLabel}): Eingangs-Meditation`,
             branch
           );
-          intro = { file: introFile, title: introAudio.title || introTitleForLang(lang) };
+          intro = { file: introFile, title: introTitle };
         }
       }
     }
@@ -564,27 +680,28 @@ const Publisher = {
     const iterations = [];
     for (let i = 0; i < Draft.data.iterations.length; i++) {
       const iteration = Draft.data.iterations[i];
+      const title = (iteration.title || "").trim() || null;
       let instructionFile = null;
 
       if (iteration.audio) {
         if (iteration.audio.type === "published") {
           instructionFile = iteration.audio.file;
         } else {
-          onProgress(`Lade Anweisung ${i + 1} (${langLabel}) hoch …`);
+          onProgress(`Lade Anweisung ${i + 1} (${langLabel} · ${dayLabel}) hoch …`);
           const rec = await LocalRecordings.get(iteration.audio.key);
           if (rec) {
-            instructionFile = `journey-${lang}-iteration-${i + 1}-${stamp}.m4a`;
+            instructionFile = `journey-${tag}-iteration-${i + 1}-${stamp}.m4a`;
             await this.putFile(
               `${REPO_AUDIO_DIR}/${instructionFile}`,
               await blobToBase64(rec.blob),
-              `Journey (${langLabel}): Anweisung für Iteration ${i + 1}`,
+              `Journey (${langLabel} · ${dayLabel}): Anweisung ${i + 1}`,
               branch
             );
           }
         }
       }
 
-      iterations.push({ instructionFile, silenceMinutes: iteration.silenceMinutes });
+      iterations.push({ title, instructionFile, silenceMinutes: iteration.silenceMinutes });
     }
 
     // 3) Outro hochladen
@@ -593,14 +710,14 @@ const Publisher = {
       if (Draft.data.outroAudio.type === "published") {
         outroFile = Draft.data.outroAudio.file;
       } else {
-        onProgress(`Lade Outro (${langLabel}) hoch …`);
+        onProgress(`Lade Outro (${langLabel} · ${dayLabel}) hoch …`);
         const rec = await LocalRecordings.get(Draft.data.outroAudio.key);
         if (rec) {
-          outroFile = `journey-${lang}-outro-${stamp}.m4a`;
+          outroFile = `journey-${tag}-outro-${stamp}.m4a`;
           await this.putFile(
             `${REPO_AUDIO_DIR}/${outroFile}`,
             await blobToBase64(rec.blob),
-            `Journey (${langLabel}): Outro-Ansprache`,
+            `Journey (${langLabel} · ${dayLabel}): Outro-Ansprache`,
             branch
           );
         }
@@ -608,20 +725,22 @@ const Publisher = {
     }
 
     // 4) Journey-Definition schreiben
-    onProgress(`Veröffentliche Journey (${langLabel}) …`);
+    onProgress(`Veröffentliche Journey (${langLabel} · ${dayLabel}) …`);
     const journey = {
-      version: 1,
+      version: 2,
       updatedAt: new Date().toISOString().slice(0, 10),
+      dayLabel,
       intro,
       iterations,
       outroPauseMinutes: Draft.data.outroPauseMinutes,
       outroFile,
+      outroTitle: (Draft.data.outroTitle || "").trim() || null,
     };
 
     await this.putFile(
-      `${REPO_AUDIO_DIR}/${journeyRepoFilename(lang)}`,
+      `${REPO_AUDIO_DIR}/${journeyRepoFilename(lang, day)}`,
       btoa(unescape(encodeURIComponent(JSON.stringify(journey, null, 2) + "\n"))),
-      `Journey (${langLabel}) aktualisiert (Autoren-Modus)`,
+      `Journey (${langLabel} · ${dayLabel}) aktualisiert (Autoren-Modus)`,
       branch
     );
 
@@ -661,7 +780,7 @@ async function init() {
 
   // Iteration hinzufügen
   $("#btn-add-iteration").addEventListener("click", async () => {
-    Draft.data.iterations.push({ silenceMinutes: 5, audio: null });
+    Draft.data.iterations.push({ title: "", silenceMinutes: 5, audio: null });
     Draft.save();
     await renderAll();
   });
@@ -685,8 +804,9 @@ async function init() {
       await Publisher.publish((msg) => { status.textContent = msg; });
       Draft.clear();
       const langLabel = JOURNEY_LANGS.find((l) => l.code === journeyLang)?.label || journeyLang;
-      status.textContent = `✓ Veröffentlicht! Die ${langLabel}-Journey ist in 1–2 Minuten für alle Nutzer live.`;
+      status.textContent = `✓ Veröffentlicht! Die ${langLabel}-Journey für ${WEEKDAYS[journeyDay - 1]} ist in 1–2 Minuten für alle Nutzer live.`;
       status.classList.add("is-success");
+      renderWeekMatrix();
     } catch (err) {
       console.error(err);
       status.textContent = `Fehler: ${err.message}`;
@@ -696,17 +816,18 @@ async function init() {
     }
   });
 
-  // Änderungen verwerfen (nur aktive Sprache)
+  // Änderungen verwerfen (nur aktiver Tag & Sprache)
   $("#btn-discard").addEventListener("click", async () => {
-    if (!confirm("Alle unveröffentlichten Änderungen dieser Sprache verwerfen?")) return;
+    if (!confirm("Alle unveröffentlichten Änderungen dieses Tages verwerfen?")) return;
     Draft.clear();
-    const published = await loadJourney(journeyLang);
+    const published = await loadJourney(journeyLang, journeyDay, false);
     Draft.data = Draft.fromJourney(published);
+    await renderWeekMatrix();
     await renderAll();
   });
 
-  // Mit der deutschen Journey starten
-  await switchJourneyLang("de");
+  // Mit der deutschen Journey des heutigen Wochentags starten
+  await switchJourney("de", currentJourneyDay());
 }
 
 document.addEventListener("DOMContentLoaded", init);

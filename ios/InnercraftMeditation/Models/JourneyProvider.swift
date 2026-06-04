@@ -19,33 +19,38 @@ struct Journey: Codable, Equatable {
     }
 
     struct Iteration: Codable, Equatable {
+        let title: String?           // eigener Titel des Autors (optional)
         let instructionFile: String?
         let silenceMinutes: Double
     }
 
     let version: Int
     let updatedAt: String?
+    let dayLabel: String?
     let intro: Intro?
     let iterations: [Iteration]
     let outroPauseMinutes: Double
     let outroFile: String?
+    let outroTitle: String?          // eigener Outro-Titel (optional)
 
     /// Standard-Journey, falls die zentrale Definition (noch) nicht erreichbar ist.
     /// Die deutsche Journey enthält die Eingangs-Meditation von Willigis Jäger;
     /// für andere Sprachen beginnt die Journey direkt mit den Iterationen.
     static var fallback: Journey {
         Journey(
-            version: 1,
+            version: 2,
             updatedAt: nil,
+            dayLabel: nil,
             intro: L10n.lang == "de"
                 ? Intro(file: "intro-meditation.m4a", title: "Geführte Meditation (Willigis Jäger)")
                 : nil,
             iterations: [
-                Iteration(instructionFile: nil, silenceMinutes: 5),
-                Iteration(instructionFile: nil, silenceMinutes: 6),
+                Iteration(title: nil, instructionFile: nil, silenceMinutes: 5),
+                Iteration(title: nil, instructionFile: nil, silenceMinutes: 6),
             ],
             outroPauseMinutes: 0,
-            outroFile: nil
+            outroFile: nil,
+            outroTitle: nil
         )
     }
 }
@@ -99,8 +104,17 @@ final class JourneyProvider: ObservableObject {
         await loadIntroDuration()
     }
 
+    /// Lädt die Journey des heutigen Wochentags. Fehlt sie (Datei nicht vorhanden),
+    /// wird auf Tag 1 (die Bestandsdatei) zurückgegriffen.
     private func fetchJourney() async -> Journey? {
-        let url = MeditationConfig.audioBaseURL.appendingPathComponent(MeditationConfig.journeyFilename)
+        let today = L10n.currentJourneyDay
+        if let j = await fetchJourney(day: today) { return j }
+        if today != 1 { return await fetchJourney(day: 1) }
+        return nil
+    }
+
+    private func fetchJourney(day: Int) async -> Journey? {
+        let url = MeditationConfig.audioBaseURL.appendingPathComponent(L10n.journeyFilename(day: day))
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
 
@@ -157,8 +171,9 @@ final class JourneyProvider: ObservableObject {
 
     // MARK: Journey-Cache
 
+    /// Zuletzt geladene Journey (für die Offline-Nutzung), pro Sprache & Tag gecacht
     private var cachedJourneyURL: URL {
-        cacheDirectory.appendingPathComponent(MeditationConfig.journeyFilename)
+        cacheDirectory.appendingPathComponent("cached-\(L10n.journeyFilename(day: L10n.currentJourneyDay))")
     }
 
     private func saveCachedJourney(_ journey: Journey) {

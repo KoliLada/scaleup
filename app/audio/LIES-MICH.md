@@ -1,16 +1,22 @@
 # Audio & Journey der Meditations-App
 
-## Die zentralen Journeys (eine pro Sprache)
+## Die zentralen Journeys (eine pro Sprache & Wochentag)
 
 Der **Autor** legt hier fest, was **alle Nutzer** der App erleben — Anzahl und
-Länge der Iterationen, welche Anweisungen gespielt werden und das Outro.
-**Jede Sprache hat ihre eigene Journey:**
+Länge der Iterationen, eigene Überschriften, welche Anweisungen gespielt werden
+und das Outro. **Jede Sprache und jeder Wochentag haben eine eigene Journey**
+(Tag 1 = Montag … Tag 7 = Sonntag). Der Nutzer bekommt automatisch die Journey
+des heutigen Wochentags; fehlt sie, wird auf Tag 1 zurückgegriffen.
 
-| Sprache | Journey-Datei |
-|---|---|
-| 🇩🇪 Deutsch | `journey.json` |
-| 🇬🇧 Englisch | `journey-en.json` |
-| 🇫🇷 Französisch | `journey-fr.json` |
+| Sprache | Tag 1 (Montag) | Tag N (Di–So) |
+|---|---|---|
+| 🇩🇪 Deutsch | `journey.json` | `journey-day{N}.json` |
+| 🇬🇧 Englisch | `journey-en.json` | `journey-en-day{N}.json` |
+| 🇫🇷 Französisch | `journey-fr.json` | `journey-fr-day{N}.json` |
+
+**Eigene Überschriften:** Jede Iteration, die Eingangs-Meditation und das Outro
+können einen eigenen Titel haben (`title` bzw. `outroTitle`). Ist er gesetzt,
+erscheint er in der App statt „Iteration 1" usw.
 
 Aufbau einer Journey-Datei:
 

@@ -38,8 +38,27 @@ let journey = null;
 let introAvailable = false;
 let introDuration = null;
 
+/** Anzeigename eines Schritts: eigener Titel des Autors, sonst Standard */
+function iterationLabel(iteration, index) {
+  return iteration.title || t("flowIteration", index + 1, !!iteration.instructionFile);
+}
+function introLabel() {
+  return (journey.intro && journey.intro.title) || t("phaseIntroTitle");
+}
+function outroLabel() {
+  return journey.outroTitle || (journey.outroFile ? t("flowDeepGongOutro") : t("flowDeepGong"));
+}
+
 async function initJourney() {
-  journey = await loadJourney(LANG);
+  // Journey des heutigen Wochentags laden (Montag = Tag 1 … Sonntag = Tag 7)
+  journey = await loadJourney(LANG, currentJourneyDay());
+
+  // Tages-Badge anzeigen (z. B. „Heute ist Mittwoch")
+  const badge = $("#day-badge");
+  if (badge) {
+    const weekdays = t("weekdays");
+    badge.textContent = t("dayBadge", weekdays[currentJourneyDay() - 1]);
+  }
 
   // Verfügbarkeit & Dauer der Eingangs-Meditation prüfen
   if (journey.intro) {
@@ -62,7 +81,7 @@ function renderFlow() {
     if (introDuration) totalSeconds += introDuration;
     items.push({
       icon: "◉",
-      label: journey.intro.title,
+      label: introLabel(),
       duration: introDuration ? formatDurationLabel(introDuration) : "",
     });
   }
@@ -72,7 +91,7 @@ function renderFlow() {
     totalSeconds += silence;
     items.push({
       icon: String(index + 1),
-      label: t("flowIteration", index + 1, !!iteration.instructionFile),
+      label: iterationLabel(iteration, index),
       duration: formatDurationLabel(silence),
     });
   });
@@ -81,7 +100,7 @@ function renderFlow() {
     totalSeconds += journey.outroPauseMinutes * 60;
   }
 
-  items.push({ icon: "◎", label: journey.outroFile ? t("flowDeepGongOutro") : t("flowDeepGong"), duration: "" });
+  items.push({ icon: "◎", label: outroLabel(), duration: "" });
   items.push({ icon: "●", label: t("flowFinalGong"), duration: "" });
 
   list.innerHTML = items
@@ -148,21 +167,23 @@ const Session = {
 
     // 1) Eingangs-Meditation, danach ein Gong
     if (journey.intro && introAvailable) {
+      const introTitle = journey.intro.title || t("phaseIntroLabel");
       phases.push({
         type: "audio",
-        label: t("phaseIntroLabel"),
+        label: introTitle,
         title: t("phaseIntroTitle"),
         audio: makeAudio(journey.intro.file),
         durationSeconds: introDuration || null,
       });
-      phases.push(gongPhase(t("phaseIntroLabel")));
+      phases.push(gongPhase(introTitle));
     }
 
     // 2) Iterationen: Anweisung → Gong → Stille → Gong
+    //    Eigener Titel des Autors als Label, sonst „Iteration N von M"
     const total = journey.iterations.length;
     for (let i = 0; i < total; i++) {
       const iteration = journey.iterations[i];
-      const label = t("phaseIterationLabel", i + 1, total);
+      const label = iteration.title || t("phaseIterationLabel", i + 1, total);
 
       if (iteration.instructionFile && (await audioExists(iteration.instructionFile))) {
         phases.push({
@@ -198,9 +219,10 @@ const Session = {
     }
 
     // 4) Tieferer Gong leitet das Outro ein
+    const outroTitle = journey.outroTitle || t("phaseOutro");
     phases.push({
       type: "audio",
-      label: t("phaseOutro"),
+      label: outroTitle,
       title: t("phaseDeepGong"),
       audio: makeAudio(GONG_DEEP_FILE),
       durationSeconds: null,
@@ -210,7 +232,7 @@ const Session = {
     if (journey.outroFile && (await audioExists(journey.outroFile))) {
       phases.push({
         type: "audio",
-        label: t("phaseOutro"),
+        label: outroTitle,
         title: t("phaseOutro"),
         audio: makeAudio(journey.outroFile),
         durationSeconds: null,

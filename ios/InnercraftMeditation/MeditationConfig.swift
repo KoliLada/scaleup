@@ -13,9 +13,8 @@ enum MeditationConfig {
     /// alle Nutzer einer Sprache erleben dieselbe Journey.
     static let audioBaseURL = URL(string: "https://innercraft.com/app/audio/")!
 
-    /// Dateiname der zentralen Journey-Definition (abhängig von der Geräte-Sprache:
-    /// Deutsch → journey.json, Englisch → journey-en.json, Französisch → journey-fr.json).
-    static var journeyFilename: String { L10n.journeyFilename }
+    /// Dateiname der zentralen Journey-Definition (abhängig von Geräte-Sprache
+    /// und Wochentag — der Provider wählt den heutigen Tag).
 
     /// Gong-Dateien im App-Bundle (Resources/)
     static let gongFilename = "gong"
