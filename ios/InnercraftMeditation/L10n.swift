@@ -16,9 +16,17 @@ enum L10n {
         return ["de", "en", "fr"].contains(device) ? String(device) : "de"
     }()
 
-    /// Journey-Datei der aktiven Sprache (relativ zur Audio-Basis-URL)
-    static var journeyFilename: String {
-        lang == "de" ? "journey.json" : "journey-\(lang).json"
+    /// Heutiger Wochentag als 1 (Montag) … 7 (Sonntag)
+    static var currentJourneyDay: Int {
+        // Calendar: 1 = Sonntag … 7 = Samstag → auf Montag=1…Sonntag=7 umrechnen
+        let weekday = Calendar.current.component(.weekday, from: Date())
+        return weekday == 1 ? 7 : weekday - 1
+    }
+
+    /// Journey-Datei der aktiven Sprache & eines Tags (Tag 1 = Bestandsdatei)
+    static func journeyFilename(day: Int = 1) -> String {
+        let base = lang == "de" ? "journey" : "journey-\(lang)"
+        return day > 1 ? "\(base)-day\(day).json" : "\(base).json"
     }
 
     // MARK: - Übersetzungen
@@ -242,6 +250,29 @@ enum L10n {
         case "en": return "\(minutes) min"
         case "fr": return "\(minutes) min"
         default:   return "\(minutes) Min."
+        }
+    }
+
+    // MARK: - Wochentage
+
+    private static let weekdayNames: [String: [String]] = [
+        "de": ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"],
+        "en": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "fr": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
+    ]
+
+    /// Name des heutigen Wochentags in der aktiven Sprache
+    static var todayWeekdayName: String {
+        let names = weekdayNames[lang] ?? weekdayNames["de"]!
+        return names[currentJourneyDay - 1]
+    }
+
+    /// „Heute ist Mittwoch" / „Today is Wednesday" / „Aujourd'hui, c'est mercredi"
+    static var todayBadge: String {
+        switch lang {
+        case "en": return "Today is \(todayWeekdayName)"
+        case "fr": return "Aujourd'hui, c'est \(todayWeekdayName.lowercased())"
+        default:   return "Heute ist \(todayWeekdayName)"
         }
     }
 }

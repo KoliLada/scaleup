@@ -7,7 +7,7 @@
 
 "use strict";
 
-const CACHE_NAME = "innercraft-meditation-v3";
+const CACHE_NAME = "innercraft-meditation-v4";
 
 const PRECACHE_URLS = [
   "./",

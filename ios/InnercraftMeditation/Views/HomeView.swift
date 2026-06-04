@@ -73,6 +73,13 @@ struct HomeView: View {
                 .font(.system(size: 15, weight: .light))
                 .foregroundStyle(Color.icInkSoft)
                 .padding(.top, 6)
+
+            // Tages-Badge (z. B. „Heute ist Mittwoch")
+            Text(L10n.todayBadge)
+                .font(.system(size: 12, weight: .medium))
+                .tracking(2)
+                .foregroundStyle(Color.icBiolume)
+                .padding(.top, 4)
         }
     }
 
@@ -102,14 +109,18 @@ struct HomeView: View {
                     ForEach(Array(provider.journey.iterations.enumerated()), id: \.offset) { index, iteration in
                         flowRow(
                             icon: "\(index + 1)",
-                            label: L10n.iterationFlowLabel(index + 1, hasInstruction: iteration.instructionFile != nil),
+                            label: (iteration.title?.isEmpty == false)
+                                ? iteration.title!
+                                : L10n.iterationFlowLabel(index + 1, hasInstruction: iteration.instructionFile != nil),
                             duration: L10n.minutesShort(Int(iteration.silenceMinutes))
                         )
                         Divider()
                     }
 
                     flowRow(icon: "◎",
-                            label: provider.journey.outroFile != nil ? L10n.t("flowDeepGongOutro") : L10n.t("flowDeepGong"),
+                            label: (provider.journey.outroTitle?.isEmpty == false)
+                                ? provider.journey.outroTitle!
+                                : (provider.journey.outroFile != nil ? L10n.t("flowDeepGongOutro") : L10n.t("flowDeepGong")),
                             duration: nil)
                     Divider()
                     flowRow(icon: "●", label: L10n.t("flowFinalGong"), duration: nil)

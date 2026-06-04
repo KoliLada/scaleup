@@ -48,6 +48,11 @@ Beim ersten Besuch wird die Browser-Sprache erkannt; der Sprachumschalter
 (DE · EN · FR) sitzt oben rechts im Menü. Jede Sprache hat ihre **eigene
 Meditations-Journey** mit eigenen Aufnahmen (verwaltet im Autoren-Modus).
 
+Die Meditations-App bietet zudem **7 Journeys pro Sprache** — eine je Wochentag
+(Mo–So). Der Nutzer bekommt automatisch die Journey des heutigen Tages; der Autor
+pflegt sie als Wochen-Matrix und kann jedem Schritt eine **eigene Überschrift**
+geben.
+
 ## Meditations-App
 
 Die tägliche Innercraft-Meditation gibt es in zwei Varianten — beide mit
