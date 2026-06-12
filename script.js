@@ -104,6 +104,47 @@
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  /* ---- Modal / Popup (Angebots-Details) ---- */
+  var openModalEl = null;
+
+  function openModal(id) {
+    var modal = document.getElementById(id);
+    if (!modal) return;
+    modal.hidden = false;
+    document.body.classList.add('modal-open');
+    openModalEl = modal;
+    var closeBtn = modal.querySelector('.modal-close');
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeModal() {
+    if (!openModalEl) return;
+    openModalEl.hidden = true;
+    document.body.classList.remove('modal-open');
+    openModalEl = null;
+  }
+
+  document.addEventListener('click', function (e) {
+    var opener = e.target.closest('[data-modal-open]');
+    if (opener) {
+      e.preventDefault();
+      openModal(opener.getAttribute('data-modal-open'));
+      return;
+    }
+    // Schließen: X-Button, „Jetzt anfragen"-Link, oder Klick auf den Hintergrund
+    if (e.target.closest('.modal-close') || e.target.closest('[data-modal-close]')) {
+      closeModal();
+      return;
+    }
+    if (e.target.classList && e.target.classList.contains('modal-overlay')) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && openModalEl) closeModal();
+  });
+
   /* ---- Contact form (front-end only stub) ---- */
   var form = document.getElementById('contact-form');
   var status = document.getElementById('form-status');

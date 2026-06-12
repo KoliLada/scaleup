@@ -339,6 +339,130 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
   border-left: 2px solid var(--gold);
 }
 
+/* ---------- Angebots-Buttons (zwei nebeneinander) ---------- */
+.offer-actions { display: flex; gap: 10px; margin-top: auto; }
+.offer-actions .btn { flex: 1; text-align: center; padding-inline: 0; }
+
+/* ---------- Modal / Popup ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4vh 4vw;
+  background: rgba(8, 22, 35, .68);
+  backdrop-filter: blur(4px);
+  animation: modal-fade .3s var(--ease);
+}
+.modal-overlay[hidden] { display: none; }
+@keyframes modal-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  position: relative;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 10px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: 0 30px 80px -20px rgba(8, 22, 35, .7);
+  animation: modal-rise .4s var(--ease);
+}
+@keyframes modal-rise { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.modal-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  margin: 10px 12px -40px 0;
+  width: 40px; height: 40px;
+  border: none;
+  background: rgba(13, 36, 51, .06);
+  border-radius: 50%;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--ink-soft);
+  cursor: pointer;
+  z-index: 2;
+  transition: background .2s var(--ease);
+}
+.modal-close:hover { background: rgba(13, 36, 51, .14); }
+
+.modal-body { padding: clamp(1.8rem, 4vw, 3rem); }
+.modal-body > h2 { margin-bottom: 1rem; }
+.modal-body p { margin: 0 0 1.2rem; font-size: 1.06rem; line-height: 1.7; }
+
+.modal-list {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: grid;
+  gap: .6rem;
+}
+.modal-list li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--forest);
+}
+.modal-list li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: .65em;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--clay);
+}
+
+.modal-subhead {
+  font-size: 1.5rem;
+  margin: 2rem 0 1rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid rgba(22, 43, 54, .12);
+}
+
+.modal-dates {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: grid;
+  gap: 1.1rem;
+}
+.modal-dates li {
+  display: grid;
+  gap: 2px;
+  padding-left: 1rem;
+  border-left: 2px solid var(--sage);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+.md-date {
+  font-family: var(--sans);
+  font-size: .8rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--clay);
+}
+.md-label {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.modal-note {
+  font-size: .95rem !important;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.modal-cta { margin-top: 1rem; }
+
+body.modal-open { overflow: hidden; }
+
 /* ---------- Der Ort (Seminarort-Galerie) ---------- */
 .place-gallery {
   display: grid;
