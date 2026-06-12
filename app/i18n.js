@@ -16,6 +16,7 @@ const I18N = {
     brandTag: "Meditation",
 
     // Home
+    backToWebsite: "← Zur Innercraft-Website",
     eyebrowHome: "Deine tägliche Praxis",
     homeTitle: "Komm zur Ruhe.<br />Werde präsent.",
     homeLead: "Lass dich führen: eine Meditation in einem Fluss — von der geführten Eingangs-Meditation über Impulse und Stille bis zum Gong, der dich in deinen Tag entlässt.",
@@ -78,6 +79,7 @@ const I18N = {
     brandTag: "Meditation",
 
     // Home
+    backToWebsite: "← To the Innercraft website",
     eyebrowHome: "Your daily practice",
     homeTitle: "Come to stillness.<br />Become present.",
     homeLead: "Let yourself be guided: one meditation in one flow — from the guided opening meditation through prompts and silence to the gong that releases you into your day.",
@@ -140,6 +142,7 @@ const I18N = {
     brandTag: "Méditation",
 
     // Accueil
+    backToWebsite: "← Vers le site Innercraft",
     eyebrowHome: "Ta pratique quotidienne",
     homeTitle: "Trouve le calme.<br />Deviens présent·e.",
     homeLead: "Laisse-toi guider : une méditation d'un seul flux — de la méditation d'ouverture guidée, en passant par les impulsions et le silence, jusqu'au gong qui te libère dans ta journée.",

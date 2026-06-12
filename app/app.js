@@ -579,6 +579,9 @@ function registerServiceWorker() {
 
 document.addEventListener("DOMContentLoaded", () => {
   applyTranslations();
+  // „Zurück zur Website"-Link auf die passende Sprachversion zeigen lassen
+  const back = $("#app-back");
+  if (back) back.href = LANG === "de" ? "../" : `../${LANG}/`;
   bindNavigation();
   initJourney();
   registerServiceWorker();
