@@ -9,18 +9,24 @@
       menuOpen: 'Menü öffnen',
       menuClose: 'Menü schließen',
       formMissing: 'Bitte fülle Name und E-Mail aus.',
+      formSending: 'Wird gesendet …',
+      formError: 'Senden hat leider nicht geklappt. Bitte versuche es später noch einmal oder schreib uns direkt an carla@innercraft.com.',
       formThanks: function (name) { return 'Danke, ' + name + '. Deine Nachricht ist angekommen — wir melden uns bald bei dir.'; }
     },
     en: {
       menuOpen: 'Open menu',
       menuClose: 'Close menu',
       formMissing: 'Please fill in your name and email.',
+      formSending: 'Sending …',
+      formError: 'Sorry, sending did not work. Please try again later or write to us directly at carla@innercraft.com.',
       formThanks: function (name) { return 'Thank you, ' + name + '. Your message has arrived — we will get back to you soon.'; }
     },
     fr: {
       menuOpen: 'Ouvrir le menu',
       menuClose: 'Fermer le menu',
       formMissing: 'Merci de renseigner ton nom et ton e-mail.',
+      formSending: 'Envoi en cours …',
+      formError: 'L’envoi n’a malheureusement pas fonctionné. Réessaie plus tard ou écris-nous directement à carla@innercraft.com.',
       formThanks: function (name) { return 'Merci, ' + name + '. Ton message est bien arrivé — nous te répondrons bientôt.'; }
     }
   };
@@ -149,16 +155,57 @@
   var form = document.getElementById('contact-form');
   var status = document.getElementById('form-status');
   if (form) {
+    // Anfragen gehen an carla@innercraft.com (Kopie an nl@innercraft.com),
+    // versendet über FormSubmit (kostenlos, ohne Server). Betreff: ANFRAGE.
+    var FORM_ENDPOINT = 'https://formsubmit.co/ajax/carla@innercraft.com';
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var name = form.querySelector('#name');
       var email = form.querySelector('#email');
+      var interest = form.querySelector('#interest');
+      var message = form.querySelector('#message');
+
       if (!name.value.trim() || !email.value.trim()) {
         status.textContent = T.formMissing;
         return;
       }
-      status.textContent = T.formThanks(name.value.trim().split(' ')[0]);
-      form.reset();
+
+      var submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      status.textContent = T.formSending;
+
+      var payload = {
+        Name: name.value.trim(),
+        'E-Mail': email.value.trim(),
+        Interesse: interest ? interest.value : '',
+        Nachricht: message ? message.value.trim() : '',
+        Sprache: LANG.toUpperCase(),
+        _subject: 'ANFRAGE',
+        _cc: 'nl@innercraft.com',
+        _template: 'table',
+        _captcha: 'false',
+        _replyto: email.value.trim()
+      };
+
+      fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          if (res.ok && (data.success === true || data.success === 'true')) {
+            status.textContent = T.formThanks(name.value.trim().split(' ')[0]);
+            form.reset();
+          } else {
+            status.textContent = T.formError;
+          }
+        });
+      }).catch(function () {
+        status.textContent = T.formError;
+      }).then(function () {
+        if (submitBtn) submitBtn.disabled = false;
+      });
     });
   }
 })();

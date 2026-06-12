@@ -629,6 +629,17 @@ body.modal-open { overflow: hidden; }
 .offer-featured .offer-facts span { color: var(--gold); }
 .offer .btn { margin-top: auto; align-self: flex-start; }
 
+/* „Infos"-Button (btn-outline) auf der dunklen, hervorgehobenen Karte sichtbar machen */
+.offer-featured .btn-outline {
+  color: var(--cream);
+  border-color: rgba(241, 242, 236, .5);
+}
+.offer-featured .btn-outline:hover {
+  background: rgba(241, 242, 236, .12);
+  border-color: var(--cream);
+  color: var(--cream);
+}
+
 /* ---------- Meditations-App ---------- */
 .meditation-mark { display: flex; justify-content: center; margin-bottom: 1.6rem; color: var(--gold); }
 .meditation-actions { margin-top: 2.4rem; }
