@@ -61,6 +61,25 @@
 
       <button class="btn btn-primary btn-big" id="btn-start" disabled data-i18n="btnStart">Meditation beginnen</button>
 
+      <!-- Anmeldung: 7-Tage-Reise freischalten (nur sichtbar, wenn nicht angemeldet) -->
+      <div class="signup-card" id="signup-card" hidden>
+        <svg class="signup-mark" viewBox="0 0 48 64" aria-hidden="true"><use href="#jellyfish"></use></svg>
+        <h2 data-i18n="signupTitle">Schalte die 7-Tage-Reise frei</h2>
+        <p class="signup-text" data-i18n="signupText">
+          Du hörst gerade die tägliche Meditation. Melde dich an und bekomme für
+          jeden Wochentag eine andere geführte Meditation.
+        </p>
+        <form id="signup-form" novalidate>
+          <input type="email" id="signup-email" autocomplete="email" required data-i18n-attr="placeholder:signupEmail" placeholder="Deine E-Mail-Adresse" />
+          <label class="signup-consent">
+            <input type="checkbox" id="signup-consent" required />
+            <span data-i18n="signupConsent">Ich möchte die geführten Meditationen per E-Mail erhalten.</span>
+          </label>
+          <button type="submit" class="btn btn-primary btn-big" data-i18n="signupBtn">Freischalten</button>
+          <p class="signup-status" id="signup-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+
       <!-- Anleitung: als App auf dem iPhone installieren -->
       <div class="install-card" id="install-card">
         <div class="install-head">
