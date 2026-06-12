@@ -17,6 +17,17 @@ const I18N = {
 
     // Home
     backToWebsite: "← Zur Innercraft-Website",
+    // Anmeldung (7-Tage-Reise freischalten)
+    signupTitle: "Schalte die 7-Tage-Reise frei",
+    signupText: "Du hörst gerade die tägliche Meditation. Melde dich an und bekomme für jeden Wochentag eine andere geführte Meditation — wie ein kleines Programm, das dich Schritt für Schritt führt.",
+    signupEmail: "Deine E-Mail-Adresse",
+    signupConsent: "Ich möchte die geführten Meditationen und gelegentlich Neuigkeiten von Innercraft per E-Mail erhalten. Abmeldung jederzeit möglich.",
+    signupBtn: "Freischalten",
+    signupSending: "Wird freigeschaltet …",
+    signupThanks: "Schön, dass du dabei bist! Deine 7-Tage-Reise ist jetzt freigeschaltet.",
+    signupError: "Das hat leider nicht geklappt. Bitte versuche es später noch einmal.",
+    signupConsentMissing: "Bitte E-Mail eingeben und der Zusendung zustimmen.",
+    registeredBadge: "7-Tage-Reise aktiv",
     eyebrowHome: "Deine tägliche Praxis",
     homeTitle: "Komm zur Ruhe.<br />Werde präsent.",
     homeLead: "Lass dich führen: eine Meditation in einem Fluss — von der geführten Eingangs-Meditation über Impulse und Stille bis zum Gong, der dich in deinen Tag entlässt.",
@@ -80,6 +91,16 @@ const I18N = {
 
     // Home
     backToWebsite: "← To the Innercraft website",
+    signupTitle: "Unlock the 7-day journey",
+    signupText: "You're listening to today's meditation. Sign up and receive a different guided meditation for every weekday — like a little programme that guides you step by step.",
+    signupEmail: "Your email address",
+    signupConsent: "I'd like to receive the guided meditations and occasional news from Innercraft by email. You can unsubscribe at any time.",
+    signupBtn: "Unlock",
+    signupSending: "Unlocking …",
+    signupThanks: "Wonderful to have you! Your 7-day journey is now unlocked.",
+    signupError: "Sorry, that didn't work. Please try again later.",
+    signupConsentMissing: "Please enter your email and agree to receive the emails.",
+    registeredBadge: "7-day journey active",
     eyebrowHome: "Your daily practice",
     homeTitle: "Come to stillness.<br />Become present.",
     homeLead: "Let yourself be guided: one meditation in one flow — from the guided opening meditation through prompts and silence to the gong that releases you into your day.",
@@ -143,6 +164,16 @@ const I18N = {
 
     // Accueil
     backToWebsite: "← Vers le site Innercraft",
+    signupTitle: "Débloque le voyage de 7 jours",
+    signupText: "Tu écoutes la méditation du jour. Inscris-toi et reçois une méditation guidée différente pour chaque jour de la semaine — comme un petit programme qui te guide pas à pas.",
+    signupEmail: "Ton adresse e-mail",
+    signupConsent: "Je souhaite recevoir les méditations guidées et occasionnellement des nouvelles d'Innercraft par e-mail. Désinscription possible à tout moment.",
+    signupBtn: "Débloquer",
+    signupSending: "Déblocage …",
+    signupThanks: "Ravis de t'accueillir ! Ton voyage de 7 jours est maintenant débloqué.",
+    signupError: "Désolé, cela n'a pas fonctionné. Réessaie plus tard.",
+    signupConsentMissing: "Merci d'indiquer ton e-mail et d'accepter de recevoir les e-mails.",
+    registeredBadge: "Voyage de 7 jours actif",
     eyebrowHome: "Ta pratique quotidienne",
     homeTitle: "Trouve le calme.<br />Deviens présent·e.",
     homeLead: "Laisse-toi guider : une méditation d'un seul flux — de la méditation d'ouverture guidée, en passant par les impulsions et le silence, jusqu'au gong qui te libère dans ta journée.",
@@ -241,6 +272,14 @@ function applyTranslations() {
 
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     el.innerHTML = t(el.dataset.i18n);
+  });
+
+  // Attribut-Übersetzungen, z. B. data-i18n-attr="placeholder:signupEmail"
+  document.querySelectorAll("[data-i18n-attr]").forEach((el) => {
+    el.dataset.i18nAttr.split(",").forEach((pair) => {
+      const [attr, key] = pair.split(":");
+      if (attr && key) el.setAttribute(attr.trim(), t(key.trim()));
+    });
   });
 
   // Aktive Sprache im Umschalter markieren

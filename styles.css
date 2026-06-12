@@ -644,6 +644,14 @@ body.modal-open { overflow: hidden; }
 .meditation-mark { display: flex; justify-content: center; margin-bottom: 1.6rem; color: var(--gold); }
 .meditation-actions { margin-top: 2.4rem; }
 .meditation-actions .btn { padding: 1.05rem 2.8rem; font-size: 1rem; }
+.meditation-tiers {
+  font-size: 1rem;
+  color: rgba(241, 242, 236, .9);
+  margin-top: 1.4rem;
+  max-width: 560px;
+  margin-inline: auto;
+}
+.meditation-tiers strong { color: var(--biolume); font-weight: 500; }
 .meditation-hint {
   margin-top: 1.8rem;
   font-family: var(--sans);

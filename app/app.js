@@ -38,6 +38,21 @@ let journey = null;
 let introAvailable = false;
 let introDuration = null;
 
+/* ---------- Freischaltung der 7-Tage-Reise ---------- */
+const REGISTERED_KEY = "innercraft-registered";
+
+/** Hat sich der Nutzer angemeldet (= 7-Tage-Reise freigeschaltet)? */
+function isRegistered() {
+  try { return localStorage.getItem(REGISTERED_KEY) === "true"; }
+  catch { return false; }
+}
+
+/** Welcher Journey-Tag wird geladen?
+    Angemeldet → heutiger Wochentag (1–7); sonst immer Tag 1 (feste Tagesmeditation) */
+function activeJourneyDay() {
+  return isRegistered() ? currentJourneyDay() : 1;
+}
+
 /** Anzeigename eines Schritts: eigener Titel des Autors, sonst Standard */
 function iterationLabel(iteration, index) {
   return iteration.title || t("flowIteration", index + 1, !!iteration.instructionFile);
@@ -50,14 +65,22 @@ function outroLabel() {
 }
 
 async function initJourney() {
-  // Journey des heutigen Wochentags laden (Montag = Tag 1 … Sonntag = Tag 7)
-  journey = await loadJourney(LANG, currentJourneyDay());
+  // Angemeldet → Journey des heutigen Wochentags; sonst feste Tagesmeditation (Tag 1)
+  journey = await loadJourney(LANG, activeJourneyDay());
 
-  // Tages-Badge anzeigen (z. B. „Heute ist Mittwoch")
+  // Anmelde-Karte nur zeigen, wenn noch nicht freigeschaltet
+  const signupCard = $("#signup-card");
+  if (signupCard) signupCard.hidden = isRegistered();
+
+  // Tages-Badge: für Angemeldete der Wochentag, sonst der „aktiv"-Hinweis ausblenden
   const badge = $("#day-badge");
   if (badge) {
-    const weekdays = t("weekdays");
-    badge.textContent = t("dayBadge", weekdays[currentJourneyDay() - 1]);
+    if (isRegistered()) {
+      const weekdays = t("weekdays");
+      badge.textContent = t("dayBadge", weekdays[currentJourneyDay() - 1]);
+    } else {
+      badge.textContent = "";
+    }
   }
 
   // Verfügbarkeit & Dauer der Eingangs-Meditation prüfen
@@ -569,6 +592,68 @@ function bindNavigation() {
   });
 }
 
+/* ---------- Anmeldung (7-Tage-Reise freischalten) ---------- */
+
+function bindSignup() {
+  const form = $("#signup-form");
+  if (!form) return;
+
+  // Anmeldungen gehen an Innercraft (wie das Kontaktformular), Betreff MEDITATION-ANMELDUNG
+  const ENDPOINT = "https://formsubmit.co/ajax/carla@innercraft.com";
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = $("#signup-email");
+    const consent = $("#signup-consent");
+    const status = $("#signup-status");
+
+    if (!email.value.trim() || !email.checkValidity() || !consent.checked) {
+      status.textContent = t("signupConsentMissing");
+      status.className = "signup-status is-error";
+      return;
+    }
+
+    const btn = form.querySelector("button[type=submit]");
+    btn.disabled = true;
+    status.className = "signup-status";
+    status.textContent = t("signupSending");
+
+    try {
+      await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          "E-Mail": email.value.trim(),
+          Sprache: LANG.toUpperCase(),
+          Anmeldung: "Meditation 7-Tage-Reise",
+          _subject: "MEDITATION-ANMELDUNG",
+          _cc: "nl@innercraft.com",
+          _template: "table",
+          _captcha: "false",
+        }),
+      });
+    } catch {
+      /* Auch bei Netzproblemen schalten wir lokal frei — die Mail kann erneut gesendet werden */
+    }
+
+    // Lokal freischalten und 7-Tage-Reise aktivieren
+    try {
+      localStorage.setItem(REGISTERED_KEY, "true");
+      localStorage.setItem("innercraft-email", email.value.trim());
+    } catch { /* privater Modus */ }
+
+    status.className = "signup-status is-success";
+    status.textContent = t("signupThanks");
+    btn.disabled = false;
+
+    // Karte ausblenden und Journey des heutigen Wochentags laden
+    setTimeout(async () => {
+      $("#signup-card").hidden = true;
+      await initJourney();
+    }, 1400);
+  });
+}
+
 function registerServiceWorker() {
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("sw.js").catch((err) => {
@@ -583,6 +668,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const back = $("#app-back");
   if (back) back.href = LANG === "de" ? "../" : `../${LANG}/`;
   bindNavigation();
+  bindSignup();
   initJourney();
   registerServiceWorker();
 });
