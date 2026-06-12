@@ -117,6 +117,19 @@ body {
 
 .hidden { display: none !important; }
 
+/* „Zurück zur Website"-Link (oben auf dem Startbildschirm der App) */
+.app-back {
+  display: inline-block;
+  font-family: var(--sans);
+  font-size: .82rem;
+  letter-spacing: .04em;
+  color: var(--ink-soft);
+  text-decoration: none;
+  margin-bottom: 1.2rem;
+  transition: color .2s var(--ease);
+}
+.app-back:active { color: var(--clay); }
+
 /* ---------- Typografie ---------- */
 h1 {
   font-family: var(--serif);
