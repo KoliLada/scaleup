@@ -26,16 +26,16 @@ enum MeditationConfig {
 // MARK: - Innercraft-Tiefwasser-Palette („Die Qualle", passend zur Website)
 
 extension Color {
-    static let icForest = Color(red: 0.051, green: 0.141, blue: 0.200)      // #0d2433 tiefes Wasser
-    static let icForestDeep = Color(red: 0.031, green: 0.086, blue: 0.137)  // #081623 Abgrund
-    static let icMoss = Color(red: 0.114, green: 0.267, blue: 0.349)        // #1d4459 mittleres Wasser
-    static let icSage = Color(red: 0.310, green: 0.490, blue: 0.573)        // #4f7d92 flaches Wasser
-    static let icClay = Color(red: 0.788, green: 0.514, blue: 0.416)        // #c9836a Koralle
-    static let icGold = Color(red: 0.788, green: 0.635, blue: 0.294)        // #c9a24b Lichtstrahl
-    static let icBiolume = Color(red: 0.561, green: 0.878, blue: 0.847)     // #8fe0d8 Biolumineszenz
-    static let icSand = Color(red: 0.886, green: 0.894, blue: 0.863)        // #e2e4dc
-    static let icCream = Color(red: 0.945, green: 0.949, blue: 0.925)       // #f1f2ec
-    static let icPaper = Color(red: 0.976, green: 0.976, blue: 0.957)       // #f9f9f4
-    static let icInk = Color(red: 0.086, green: 0.169, blue: 0.212)         // #162b36 Tiefwasser-Tinte
-    static let icInkSoft = Color(red: 0.282, green: 0.384, blue: 0.439)     // #486270
+    static let icForest = Color(red: 0.110, green: 0.239, blue: 0.188)      // #1c3d30 Dunkelgrün
+    static let icForestDeep = Color(red: 0.071, green: 0.157, blue: 0.118)  // #12281e tiefstes Grün
+    static let icMoss = Color(red: 0.184, green: 0.361, blue: 0.278)        // #2f5c47 mittleres Grün
+    static let icSage = Color(red: 0.373, green: 0.549, blue: 0.439)        // #5f8c70 Salbeigrün
+    static let icClay = Color(red: 0.659, green: 0.224, blue: 0.184)        // #a8392f Krimson
+    static let icGold = Color(red: 0.663, green: 0.831, blue: 0.855)        // #a9d4da Hellblau (Licht)
+    static let icBiolume = Color(red: 0.812, green: 0.902, blue: 0.918)     // #cfe6ea Hellblau (Leuchten)
+    static let icSand = Color(red: 0.875, green: 0.906, blue: 0.839)        // #dfe7d6 helles Salbei
+    static let icCream = Color(red: 0.953, green: 0.945, blue: 0.910)       // #f3f1e8
+    static let icPaper = Color(red: 0.973, green: 0.969, blue: 0.941)       // #f8f7f0
+    static let icInk = Color(red: 0.090, green: 0.184, blue: 0.149)         // #172f26 Grün-Tinte
+    static let icInkSoft = Color(red: 0.298, green: 0.400, blue: 0.337)     // #4c6656
 }
