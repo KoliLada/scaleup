@@ -267,6 +267,7 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
 
 /* Video-Kachel (Welcome-Loop) – ganze Fläche klickbar, öffnet YouTube im Vollbild */
 .film-section { background: var(--forest-deep); padding: clamp(3rem, 7vw, 6rem) 0; }
+.film-container { margin-top: clamp(2rem, 4vw, 3rem); }   /* Kachel unter Überschrift/Text (Programm-Seite) */
 .film-card {
   all: unset; box-sizing: border-box;
   position: relative; display: block; width: 100%; max-width: 1200px; margin-inline: auto;
@@ -284,6 +285,7 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
 .film-text {
   position: absolute; left: clamp(1.2rem, 3vw, 2.3rem); bottom: clamp(1rem, 2.6vw, 2rem); z-index: 1;
   display: flex; flex-direction: column; gap: .25rem; text-align: left; color: var(--cream);
+  max-width: calc(100% - 6.5rem);   /* rechts bleibt Platz für das Play-Symbol */
 }
 .film-title { font-family: var(--serif); font-size: clamp(1.5rem, 3vw, 2.4rem); font-weight: 500; line-height: 1.1; }
 .film-sub { font-family: var(--sans); font-size: clamp(.82rem, 1.3vw, 1.02rem); font-weight: 300; letter-spacing: .02em; opacity: .88; }
@@ -303,6 +305,8 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
 .film-card:focus-visible { outline: 2px solid var(--biolume); outline-offset: 4px; }
 @media (max-width: 700px) {
   .film-card { aspect-ratio: 16 / 10; border-radius: 10px; }
+  .film-title { font-size: 1.35rem; }
+  .film-text { max-width: calc(100% - 5rem); }
   .film-play { width: 44px; height: 44px; }
   .film-play::after { left: 17px; top: 14px; border-width: 8px 0 8px 12px; }
 }

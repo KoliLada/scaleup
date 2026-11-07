@@ -76,15 +76,18 @@
         <p class="eyebrow light reveal">Le processus</p>
         <h2 id="prozess-title" class="light reveal">Comment agit le purpose guiding</h2>
         <p class="section-intro light reveal">Dans cette vidéo, Carla décrit le processus du purpose guiding — comment le voyage commence, ce qui se passe en chemin et comment ce que tu reconnais devient une vocation vécue. (La vidéo est en allemand.)</p>
-        <div class="video-embed video-loop reveal" data-yt="JeDqn7XRBu8">
+      </div>
+      <div class="container film-container">
+        <button class="film-card reveal" type="button" data-yt="JeDqn7XRBu8" aria-label="Vidéo : Introduction au processus du purpose guiding – lire en plein écran avec le son">
           <video autoplay muted loop playsinline preload="metadata" poster="../media/tree-loop-poster.jpg" aria-hidden="true">
             <source src="../media/tree-loop.mp4" type="video/mp4" />
           </video>
-          <button class="video-facade" type="button" aria-label="Le processus du purpose guiding: Lire la vidéo avec le son">
-            <span class="video-play" aria-hidden="true"></span>
-            <span class="video-note">Cliquer pour regarder avec le son</span>
-          </button>
-        </div>
+          <span class="film-text" aria-hidden="true">
+            <span class="film-title">Introduction au processus du purpose guiding</span>
+            <span class="film-sub">avec Carla · avec le son</span>
+          </span>
+          <span class="film-play" aria-hidden="true"></span>
+        </button>
       </div>
     </section>
 
@@ -250,6 +253,12 @@
     </symbol>
   </svg>
 
+
+  <!-- ============ VIDEO IM VOLLBILD (erst nach Klick befüllt) ============ -->
+  <div class="film-overlay" role="dialog" aria-modal="true" aria-label="Vidéo : Introduction au processus du purpose guiding" hidden>
+    <div class="film-bar"><button class="film-close" type="button" aria-label="Fermer la vidéo">✕</button></div>
+    <div class="film-frame"></div>
+  </div>
 
   <script src="../script.js"></script>
 </body>
