@@ -898,6 +898,9 @@ body.modal-open { overflow: hidden; }
   box-shadow: 0 30px 70px -30px rgba(0, 0, 0, .6);
 }
 .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+/* Programm-Video: Baum-Loop im Fenster, Klick startet das YouTube-Video mit Ton */
+.video-loop video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.video-loop .video-facade { background: linear-gradient(180deg, rgba(0, 0, 0, .05) 40%, rgba(0, 0, 0, .4) 100%); }
 .video-facade { all: unset; position: absolute; inset: 0; display: block; cursor: pointer; }
 .video-facade img { width: 100%; height: 100%; object-fit: cover; object-position: center 34%; filter: brightness(.68); transition: transform .7s var(--ease), filter .4s var(--ease); }
 .video-facade:hover img, .video-facade:focus-visible img { transform: scale(1.03); filter: brightness(.58); }
