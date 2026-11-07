@@ -253,57 +253,72 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
     linear-gradient(180deg, #2f5c47 0%, #234a38 38%, #1c3d30 70%, #12281e 100%);
 }
 
-/* Hintergrund: Welcome-Loop (eigene MP4, stumm in Dauerschleife) */
+/* Hintergrund: Baum-Loop (eigene MP4, stumm in Dauerschleife) */
 .hero-loop { position: absolute; inset: 0; overflow: hidden; }
-.hero-loop-video { width: 100%; height: 100%; object-fit: cover; object-position: 55% 50%; display: block; }
+.hero-loop-video { width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; display: block; }
 /* Verlauf über dem Loop, damit der Text lesbar bleibt */
 .hero-loop::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background: linear-gradient(90deg, rgba(18, 40, 32, .78) 0%, rgba(18, 40, 32, .5) 50%, rgba(18, 40, 32, .25) 100%);
 }
 @media (max-width: 700px) {
-  .hero-loop-video { object-position: 60% 50%; }
   .hero-loop::after { background: linear-gradient(180deg, rgba(18, 40, 32, .55) 0%, rgba(18, 40, 32, .72) 100%); }
 }
-/* Nach Klick: YouTube-Video mit Ton auf eigener Ebene */
-.hero-watch {
-  position: absolute; inset: 0; z-index: 3;
-  display: flex; align-items: center; justify-content: center;
-  padding: 92px clamp(1rem, 4vw, 3rem) 5.5rem;
-  background: var(--forest-deep);
+
+/* Video-Kachel (Welcome-Loop) – ganze Fläche klickbar, öffnet YouTube im Vollbild */
+.film-section { background: var(--forest-deep); padding: clamp(3rem, 7vw, 6rem) 0; }
+.film-card {
+  all: unset; box-sizing: border-box;
+  position: relative; display: block; width: 100%; max-width: 1200px; margin-inline: auto;
+  aspect-ratio: 8 / 3;                       /* Format des Loops (1200 × 450) */
+  border-radius: 14px; overflow: hidden; cursor: pointer;
+  background: #000;
+  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, .65);
 }
-.hero-watch[hidden] { display: none; }
-.hero-watch iframe {
-  width: min(100%, calc((100svh - 170px) * 16 / 9));
-  aspect-ratio: 16 / 9; height: auto; border: 0; border-radius: 8px;
-  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .7);
+.film-card video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .9s var(--ease); }
+.film-card:hover video { transform: scale(1.02); }
+.film-card::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(0deg, rgba(0, 0, 0, .55) 0%, rgba(0, 0, 0, 0) 55%);
 }
-.hero.has-video { cursor: pointer; }
-.hero.has-video .hero-content { cursor: auto; }
-.hero .hero-content, .hero .scroll-cue, .hero-jellyfish, .hero-rays, .hero-particles { transition: opacity .7s var(--ease); }
-.hero.is-watching .hero-content,
-.hero.is-watching .scroll-cue,
-.hero.is-watching .hero-jellyfish,
-.hero.is-watching .hero-rays,
-.hero.is-watching .hero-particles { opacity: 0; pointer-events: none; }
-/* Qualle und Lichtstrahlen haben eigene Opacity-Animationen – im Ton-Modus anhalten, sonst bleiben sie sichtbar */
-.hero.is-watching .hero-jellyfish, .hero.is-watching .hero-rays { animation: none; }
-.hero-video-btn {
-  position: absolute; right: clamp(1rem, 3vw, 2.2rem); bottom: 2.2rem; z-index: 4;
-  font-family: var(--sans); font-size: .82rem; letter-spacing: .08em;
-  color: var(--cream); background: rgba(18, 40, 32, .45);
-  border: 1px solid rgba(241, 242, 236, .45); border-radius: 50px;
-  padding: .7em 1.3em; cursor: pointer;
+.film-text {
+  position: absolute; left: clamp(1.2rem, 3vw, 2.3rem); bottom: clamp(1rem, 2.6vw, 2rem); z-index: 1;
+  display: flex; flex-direction: column; gap: .25rem; text-align: left; color: var(--cream);
+}
+.film-title { font-family: var(--serif); font-size: clamp(1.5rem, 3vw, 2.4rem); font-weight: 500; line-height: 1.1; }
+.film-sub { font-family: var(--sans); font-size: clamp(.82rem, 1.3vw, 1.02rem); font-weight: 300; letter-spacing: .02em; opacity: .88; }
+.film-play {
+  position: absolute; right: clamp(1rem, 2.6vw, 2rem); bottom: clamp(1rem, 2.6vw, 2rem); z-index: 1;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(18, 40, 32, .5); border: 1px solid rgba(241, 242, 236, .4);
   backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  transition: background .3s var(--ease), border-color .3s var(--ease);
+  transition: background .3s var(--ease), transform .3s var(--ease), border-color .3s var(--ease);
 }
-.hero-video-btn:hover, .hero-video-btn:focus-visible { background: rgba(18, 40, 32, .7); border-color: var(--cream); }
-.hero-video-btn[hidden] { display: none; }
+.film-play::after {
+  content: ""; position: absolute; left: 21px; top: 17px;
+  border-style: solid; border-width: 9px 0 9px 14px;
+  border-color: transparent transparent transparent var(--cream);
+}
+.film-card:hover .film-play, .film-card:focus-visible .film-play { background: var(--clay); border-color: var(--clay); transform: scale(1.07); }
+.film-card:focus-visible { outline: 2px solid var(--biolume); outline-offset: 4px; }
 @media (max-width: 700px) {
-  .hero-video-btn { bottom: 1.4rem; right: 50%; transform: translateX(50%); white-space: nowrap; }
-  .hero.has-video .hero-content { padding-bottom: 5rem; }   /* Platz für den Knopf unter den Buttons */
-  .hero.has-video .scroll-cue { display: none; }
+  .film-card { aspect-ratio: 16 / 10; border-radius: 10px; }
+  .film-play { width: 44px; height: 44px; }
+  .film-play::after { left: 17px; top: 14px; border-width: 8px 0 8px 12px; }
 }
+
+/* Vollbild-Ebene für das YouTube-Video */
+.film-overlay { position: fixed; inset: 0; z-index: 300; background: #000; display: flex; flex-direction: column; }
+.film-overlay[hidden] { display: none; }
+.film-bar { flex: none; height: 56px; display: flex; align-items: center; justify-content: flex-end; padding: 0 12px; }
+.film-close {
+  width: 42px; height: 42px; border-radius: 50%; cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, .35); background: rgba(255, 255, 255, .08);
+  color: #fff; font-size: 1.1rem; line-height: 1;
+}
+.film-close:hover, .film-close:focus-visible { background: rgba(255, 255, 255, .2); }
+.film-frame { flex: 1; min-height: 0; }
+.film-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
 
 /* Lichtstrahlen, die durchs Wasser brechen */
 .hero-rays {

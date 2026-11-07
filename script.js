@@ -75,54 +75,55 @@
     });
   });
 
-  /* ---- Hero: Welcome-Loop im Hintergrund, YouTube-Video mit Ton nach Klick ----
-     Der Loop (eigene MP4) läuft stumm in Dauerschleife. Klick auf „Mit Ton
-     ansehen“ oder die freie Fläche öffnet das YouTube-Video (mit Steuerung);
-     YouTube wird erst dann geladen. „Schließen“ / Escape: zurück zum Loop. */
-  (function heroVideo() {
-    var hero = document.querySelector('.hero');
-    var watchBox = hero && hero.querySelector('.hero-watch[data-yt]');
-    if (!watchBox) return;
-    var loop = hero.querySelector('.hero-loop-video');
-    var btnWatch = hero.querySelector('[data-hero-video="watch"]');
-    var btnClose = hero.querySelector('[data-hero-video="close"]');
-    var watching = false;
-    hero.classList.add('has-video');
-    if (loop) { var p = loop.play(); if (p && p.catch) p.catch(function () {}); }   // Autoplay blockiert → Standbild bleibt
+  /* ---- Video-Kachel: Klick irgendwo auf die Fläche öffnet das YouTube-Video im Vollbild ----
+     Der Loop läuft stumm in der Kachel. YouTube wird erst beim Klick geladen.
+     Schließen: ✕, Escape oder Vollbild verlassen.                              */
+  (function filmCards() {
+    var overlay = document.querySelector('.film-overlay');
+    var cards = document.querySelectorAll('.film-card[data-yt]');
+    if (!overlay || !cards.length) return;
+    var frame = overlay.querySelector('.film-frame');
+    var btnClose = overlay.querySelector('.film-close');
+    var lastCard = null, wasFullscreen = false;
+    var fsElement = function () { return document.fullscreenElement || document.webkitFullscreenElement; };
+    var playLoop = function (card) { var v = card && card.querySelector('video'); if (v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } };
 
-    function watch() {
-      if (watching) return;
-      watching = true;
+    function open(card) {
+      lastCard = card;
       var iframe = document.createElement('iframe');
-      iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(watchBox.getAttribute('data-yt')) +
-                   '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
-      iframe.title = 'Innercraft – Video';
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(card.getAttribute('data-yt')) +
+                   '?autoplay=1&rel=0&modestbranding=1&playsinline=1&fs=1';
+      iframe.title = card.getAttribute('aria-label') || 'Video';
       iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen';
       iframe.allowFullscreen = true;
       iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-      watchBox.innerHTML = '';
-      watchBox.appendChild(iframe);
-      watchBox.hidden = false;
-      hero.classList.add('is-watching');
-      if (loop) loop.pause();
-      btnWatch.hidden = true; btnClose.hidden = false; btnClose.focus();
+      frame.innerHTML = '';
+      frame.appendChild(iframe);
+      overlay.hidden = false;
+      document.body.classList.add('modal-open');
+      var v = card.querySelector('video'); if (v) v.pause();
+      var req = overlay.requestFullscreen || overlay.webkitRequestFullscreen;   // echtes Vollbild, wo erlaubt
+      if (req) { try { var r = req.call(overlay); if (r && r.catch) r.catch(function () {}); } catch (e) { /* iPhone: Ebene füllt trotzdem den Bildschirm */ } }
+      btnClose.focus();
     }
     function close() {
-      if (!watching) return;
-      watching = false;
-      watchBox.innerHTML = '';            // stoppt das YouTube-Video samt Ton
-      watchBox.hidden = true;
-      hero.classList.remove('is-watching');
-      if (loop) { var p = loop.play(); if (p && p.catch) p.catch(function () {}); }
-      btnClose.hidden = true; btnWatch.hidden = false; btnWatch.focus();
+      if (overlay.hidden) return;
+      frame.innerHTML = '';                 // stoppt das Video samt Ton
+      overlay.hidden = true;
+      document.body.classList.remove('modal-open');
+      if (fsElement()) { var ex = document.exitFullscreen || document.webkitExitFullscreen; if (ex) { var r = ex.call(document); if (r && r.catch) r.catch(function () {}); } }
+      playLoop(lastCard);
+      if (lastCard) lastCard.focus();
     }
-    btnWatch.addEventListener('click', function (e) { e.stopPropagation(); watch(); });
-    btnClose.addEventListener('click', function (e) { e.stopPropagation(); close(); });
-    hero.addEventListener('click', function (e) {
-      if (watching || e.target.closest('a, button, .hero-content, .hero-watch')) return;
-      watch();
+    cards.forEach(function (card) { card.addEventListener('click', function () { open(card); }); });
+    btnClose.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    ['fullscreenchange', 'webkitfullscreenchange'].forEach(function (ev) {
+      document.addEventListener(ev, function () {
+        if (fsElement()) { wasFullscreen = true; return; }
+        if (wasFullscreen) { wasFullscreen = false; close(); }          // Vollbild per Esc verlassen → Video schließen
+      });
     });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && watching) close(); });
   })();
 
   /* ---- Header shadow on scroll ---- */
