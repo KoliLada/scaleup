@@ -75,89 +75,54 @@
     });
   });
 
-  /* ---- Hintergrundvideo im Hero (YouTube) ----
-     Stumm + leicht weich in Dauerschleife. Klick auf „Mit Ton ansehen“ oder die
-     freie Fläche: scharf, von vorne, mit Ton. „Ton aus“ / Escape: zurück.
-     Startet das Video nicht von selbst, erscheint trotzdem der Knopf.
-     Lädt YouTube gar nicht, bleibt die animierte Wasserwelt sichtbar.     */
+  /* ---- Hero: Welcome-Loop im Hintergrund, YouTube-Video mit Ton nach Klick ----
+     Der Loop (eigene MP4) läuft stumm in Dauerschleife. Klick auf „Mit Ton
+     ansehen“ oder die freie Fläche öffnet das YouTube-Video (mit Steuerung);
+     YouTube wird erst dann geladen. „Schließen“ / Escape: zurück zum Loop. */
   (function heroVideo() {
-    var box = document.querySelector('.hero-yt[data-yt]');
-    var hero = box && box.closest('.hero');
-    if (!box || !hero) return;
-    var id = box.getAttribute('data-yt');
+    var hero = document.querySelector('.hero');
+    var watchBox = hero && hero.querySelector('.hero-watch[data-yt]');
+    if (!watchBox) return;
+    var loop = hero.querySelector('.hero-loop-video');
     var btnWatch = hero.querySelector('[data-hero-video="watch"]');
     var btnClose = hero.querySelector('[data-hero-video="close"]');
-    var player = null, usable = false, playing = false, watching = false;
+    var watching = false;
+    hero.classList.add('has-video');
+    if (loop) { var p = loop.play(); if (p && p.catch) p.catch(function () {}); }   // Autoplay blockiert → Standbild bleibt
 
-    function cover() {
-      var f = box.querySelector('iframe'); if (!f) return;
-      var w = hero.offsetWidth, h = hero.offsetHeight, iw, ih;
-      if (w / h > 16 / 9) { iw = w; ih = w * 9 / 16; } else { ih = h; iw = h * 16 / 9; }
-      f.style.width = Math.ceil(iw * 1.2) + 'px';    // leicht vergrößert: YouTube-Ränder bleiben verborgen
-      f.style.height = Math.ceil(ih * 1.2) + 'px';
-    }
-    function enable() {                               // Player bedienbar → Knopf zeigen
-      if (usable) return;
-      usable = true;
-      hero.classList.add('has-video');
-      if (!watching) btnWatch.hidden = false;
-    }
-    function showPlaying() {                          // Video läuft → einblenden
-      playing = true;
-      box.classList.add('is-ready');
-      enable();
-    }
     function watch() {
-      if (!usable) return;
+      if (watching) return;
       watching = true;
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(watchBox.getAttribute('data-yt')) +
+                   '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+      iframe.title = 'Innercraft – Video';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      watchBox.innerHTML = '';
+      watchBox.appendChild(iframe);
+      watchBox.hidden = false;
       hero.classList.add('is-watching');
-      player.seekTo(0, true); player.unMute(); player.setVolume(100); player.playVideo();
+      if (loop) loop.pause();
       btnWatch.hidden = true; btnClose.hidden = false; btnClose.focus();
     }
     function close() {
+      if (!watching) return;
       watching = false;
+      watchBox.innerHTML = '';            // stoppt das YouTube-Video samt Ton
+      watchBox.hidden = true;
       hero.classList.remove('is-watching');
-      player.mute(); player.playVideo();
-      btnClose.hidden = true; btnWatch.hidden = false;
+      if (loop) { var p = loop.play(); if (p && p.catch) p.catch(function () {}); }
+      btnClose.hidden = true; btnWatch.hidden = false; btnWatch.focus();
     }
     btnWatch.addEventListener('click', function (e) { e.stopPropagation(); watch(); });
     btnClose.addEventListener('click', function (e) { e.stopPropagation(); close(); });
     hero.addEventListener('click', function (e) {
-      if (!usable || e.target.closest('a, button, .hero-content')) return;
-      if (!watching) return watch();
-      if (player.getPlayerState() === 1) player.pauseVideo(); else player.playVideo();
+      if (watching || e.target.closest('a, button, .hero-content, .hero-watch')) return;
+      watch();
     });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && watching) close(); });
-    window.addEventListener('resize', cover);
-
-    var prev = window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady = function () {
-      if (typeof prev === 'function') prev();
-      var vars = { autoplay: 1, mute: 1, controls: 0, loop: 1, playlist: id, playsinline: 1,
-                   rel: 0, modestbranding: 1, disablekb: 1, iv_load_policy: 3, fs: 0, enablejsapi: 1 };
-      if (/^https?:$/.test(location.protocol)) vars.origin = location.origin;
-      player = new YT.Player(box.querySelector('.hero-yt-player'), {
-        videoId: id,
-        playerVars: vars,
-        events: {
-          onReady: function (e) {
-            e.target.mute(); e.target.playVideo(); cover();
-            setTimeout(function () {                  // Autoplay blockiert? Dann zumindest per Klick startbar
-              if (!playing) enable();
-            }, 4000);
-          },
-          onStateChange: function (e) {
-            if (e.data === 1 && !playing) showPlaying();
-            if (e.data === 0) e.target.playVideo();   // Sicherheitsnetz für die Dauerschleife
-          }
-        }
-      });
-      cover();
-    };
-    var s = document.createElement('script');
-    s.src = 'https://www.youtube.com/iframe_api';
-    s.async = true;
-    document.head.appendChild(s);
   })();
 
   /* ---- Header shadow on scroll ---- */

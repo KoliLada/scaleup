@@ -58,8 +58,12 @@
       <div class="hero-scene" aria-hidden="true">
         <!-- Monde aquatique animé — sera remplacé par media/hero.mp4 après le tournage -->
         <div class="hero-water"></div>
-        <!-- Hintergrundvideo (YouTube, stumm in Dauerschleife; Klick = scharf mit Ton) -->
-        <div class="hero-yt" data-yt="TySI2h76N6U"><div class="hero-yt-player"></div></div>
+        <!-- Hintergrund: Welcome-Loop (eigene Datei, stumm in Dauerschleife) -->
+        <div class="hero-loop">
+          <video class="hero-loop-video" autoplay muted loop playsinline preload="auto" poster="../media/welcome-loop-poster.jpg">
+            <source src="../media/welcome-loop.mp4" type="video/mp4" />
+          </video>
+        </div>
         <div class="hero-rays"></div>
         <div class="hero-particles">
           <span></span><span></span><span></span><span></span><span></span><span></span>
@@ -88,8 +92,9 @@
         <span></span>
       </a>
 
-      <button class="hero-video-btn" type="button" data-hero-video="watch" hidden>▶ Regarder avec le son</button>
-      <button class="hero-video-btn" type="button" data-hero-video="close" hidden>✕ Couper le son</button>
+      <button class="hero-video-btn" type="button" data-hero-video="watch">▶ Regarder avec le son</button>
+      <button class="hero-video-btn" type="button" data-hero-video="close" hidden>✕ Fermer</button>
+      <div class="hero-watch" data-yt="TySI2h76N6U" hidden></div>
     </section>
 
     <!-- ============ ASPIRATION / QUESTIONS ============ -->
