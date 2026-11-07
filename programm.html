@@ -76,15 +76,18 @@
         <p class="eyebrow light reveal">Der Prozess</p>
         <h2 id="prozess-title" class="light reveal">Wie Purpose Guiding wirkt</h2>
         <p class="section-intro light reveal">In diesem Video beschreibt Carla den Prozess des Purpose Guiding — wie die Reise beginnt, was unterwegs geschieht und wie aus dem Erkannten eine gelebte Berufung wird.</p>
-        <div class="video-embed video-loop reveal" data-yt="JeDqn7XRBu8">
+      </div>
+      <div class="container film-container">
+        <button class="film-card reveal" type="button" data-yt="JeDqn7XRBu8" aria-label="Video: Einfühlung in den Purpose Guiding Prozess – im Vollbild mit Ton abspielen">
           <video autoplay muted loop playsinline preload="metadata" poster="media/tree-loop-poster.jpg" aria-hidden="true">
             <source src="media/tree-loop.mp4" type="video/mp4" />
           </video>
-          <button class="video-facade" type="button" aria-label="Der Prozess des Purpose Guiding: Video mit Ton abspielen">
-            <span class="video-play" aria-hidden="true"></span>
-            <span class="video-note">Klicken für das Video mit Ton</span>
-          </button>
-        </div>
+          <span class="film-text" aria-hidden="true">
+            <span class="film-title">Einfühlung in den Purpose Guiding Prozess</span>
+            <span class="film-sub">mit Carla · mit Ton ansehen</span>
+          </span>
+          <span class="film-play" aria-hidden="true"></span>
+        </button>
       </div>
     </section>
 
@@ -250,6 +253,12 @@
     </symbol>
   </svg>
 
+
+  <!-- ============ VIDEO IM VOLLBILD (erst nach Klick befüllt) ============ -->
+  <div class="film-overlay" role="dialog" aria-modal="true" aria-label="Video: Einfühlung in den Purpose Guiding Prozess" hidden>
+    <div class="film-bar"><button class="film-close" type="button" aria-label="Video schließen">✕</button></div>
+    <div class="film-frame"></div>
+  </div>
 
   <script src="script.js"></script>
 </body>

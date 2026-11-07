@@ -76,15 +76,18 @@
         <p class="eyebrow light reveal">The process</p>
         <h2 id="prozess-title" class="light reveal">How purpose guiding works</h2>
         <p class="section-intro light reveal">In this video, Carla describes the process of purpose guiding — how the journey begins, what happens along the way, and how what you discover becomes a calling you live. (The video is in German.)</p>
-        <div class="video-embed video-loop reveal" data-yt="JeDqn7XRBu8">
+      </div>
+      <div class="container film-container">
+        <button class="film-card reveal" type="button" data-yt="JeDqn7XRBu8" aria-label="Video: An introduction to the purpose guiding process – play full screen with sound">
           <video autoplay muted loop playsinline preload="metadata" poster="../media/tree-loop-poster.jpg" aria-hidden="true">
             <source src="../media/tree-loop.mp4" type="video/mp4" />
           </video>
-          <button class="video-facade" type="button" aria-label="The process of purpose guiding: Play video with sound">
-            <span class="video-play" aria-hidden="true"></span>
-            <span class="video-note">Click to watch with sound</span>
-          </button>
-        </div>
+          <span class="film-text" aria-hidden="true">
+            <span class="film-title">An introduction to the purpose guiding process</span>
+            <span class="film-sub">with Carla · watch with sound</span>
+          </span>
+          <span class="film-play" aria-hidden="true"></span>
+        </button>
       </div>
     </section>
 
@@ -247,6 +250,12 @@
     </symbol>
   </svg>
 
+
+  <!-- ============ VIDEO IM VOLLBILD (erst nach Klick befüllt) ============ -->
+  <div class="film-overlay" role="dialog" aria-modal="true" aria-label="Video: An introduction to the purpose guiding process" hidden>
+    <div class="film-bar"><button class="film-close" type="button" aria-label="Close video">✕</button></div>
+    <div class="film-frame"></div>
+  </div>
 
   <script src="../script.js"></script>
 </body>
