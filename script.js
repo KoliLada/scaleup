@@ -75,6 +75,77 @@
     });
   });
 
+  /* ---- Hintergrundvideo im Hero (YouTube) ----
+     Stumm + weich in Dauerschleife. Klick auf „Mit Ton ansehen“ oder die freie
+     Fläche: scharf, von vorne, mit Ton. „Ton aus“ / Escape: zurück.
+     Lädt YouTube nicht, bleibt die animierte Wasserwelt sichtbar.        */
+  (function heroVideo() {
+    var box = document.querySelector('.hero-yt[data-yt]');
+    var hero = box && box.closest('.hero');
+    if (!box || !hero) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var id = box.getAttribute('data-yt');
+    var btnWatch = hero.querySelector('[data-hero-video="watch"]');
+    var btnClose = hero.querySelector('[data-hero-video="close"]');
+    var player = null, ready = false, watching = false;
+
+    function cover() {
+      var f = box.querySelector('iframe'); if (!f) return;
+      var w = hero.offsetWidth, h = hero.offsetHeight, iw, ih;
+      if (w / h > 16 / 9) { iw = w; ih = w * 9 / 16; } else { ih = h; iw = h * 16 / 9; }
+      f.style.width = Math.ceil(iw * 1.2) + 'px';    // leicht vergrößert: YouTube-Ränder bleiben verborgen
+      f.style.height = Math.ceil(ih * 1.2) + 'px';
+    }
+    function watch() {
+      if (!ready) return;
+      watching = true;
+      hero.classList.add('is-watching');
+      player.seekTo(0, true); player.unMute(); player.setVolume(100); player.playVideo();
+      btnWatch.hidden = true; btnClose.hidden = false; btnClose.focus();
+    }
+    function close() {
+      watching = false;
+      hero.classList.remove('is-watching');
+      player.mute(); player.playVideo();
+      btnClose.hidden = true; btnWatch.hidden = false;
+    }
+    btnWatch.addEventListener('click', function (e) { e.stopPropagation(); watch(); });
+    btnClose.addEventListener('click', function (e) { e.stopPropagation(); close(); });
+    hero.addEventListener('click', function (e) {
+      if (!ready || e.target.closest('a, button, .hero-content')) return;
+      if (!watching) return watch();
+      if (player.getPlayerState() === 1) player.pauseVideo(); else player.playVideo();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && watching) close(); });
+    window.addEventListener('resize', cover);
+
+    var prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function () {
+      if (typeof prev === 'function') prev();
+      player = new YT.Player(box.querySelector('.hero-yt-player'), {
+        host: 'https://www.youtube-nocookie.com',
+        videoId: id,
+        playerVars: { autoplay: 1, mute: 1, controls: 0, loop: 1, playlist: id, playsinline: 1,
+                      rel: 0, modestbranding: 1, disablekb: 1, iv_load_policy: 3, fs: 0 },
+        events: {
+          onReady: function (e) { e.target.mute(); e.target.playVideo(); cover(); },
+          onStateChange: function (e) {
+            if (e.data === 1 && !ready) {          // läuft → einblenden
+              ready = true;
+              box.classList.add('is-ready'); hero.classList.add('has-video');
+              btnWatch.hidden = false;
+            }
+          }
+        }
+      });
+      cover();
+    };
+    var s = document.createElement('script');
+    s.src = 'https://www.youtube.com/iframe_api';
+    s.async = true;
+    document.head.appendChild(s);
+  })();
+
   /* ---- Header shadow on scroll ---- */
   var header = document.querySelector('.site-header');
   var onScroll = function () {
