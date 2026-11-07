@@ -58,10 +58,10 @@
       <div class="hero-scene" aria-hidden="true">
         <!-- Monde aquatique animé — sera remplacé par media/hero.mp4 après le tournage -->
         <div class="hero-water"></div>
-        <!-- Hintergrund: Welcome-Loop (eigene Datei, stumm in Dauerschleife) -->
+        <!-- Hintergrund: Baum-Loop (eigene Datei, stumm in Dauerschleife) -->
         <div class="hero-loop">
-          <video class="hero-loop-video" autoplay muted loop playsinline preload="auto" poster="../media/welcome-loop-poster.jpg">
-            <source src="../media/welcome-loop.mp4" type="video/mp4" />
+          <video class="hero-loop-video" autoplay muted loop playsinline preload="auto" poster="../media/tree-loop-poster.jpg">
+            <source src="../media/tree-loop.mp4" type="video/mp4" />
           </video>
         </div>
         <div class="hero-rays"></div>
@@ -91,10 +91,6 @@
       <a href="#vocation" class="scroll-cue" aria-label="Faire défiler">
         <span></span>
       </a>
-
-      <button class="hero-video-btn" type="button" data-hero-video="watch">▶ Regarder avec le son</button>
-      <button class="hero-video-btn" type="button" data-hero-video="close" hidden>✕ Fermer</button>
-      <div class="hero-watch" data-yt="TySI2h76N6U" hidden></div>
     </section>
 
     <!-- ============ ASPIRATION / QUESTIONS ============ -->
@@ -106,6 +102,22 @@
           <li class="reveal">Es-tu appelé·e par une aspiration intérieure qui ne se tait pas ?</li>
           <li class="reveal">Rêves-tu d'un monde où chacun fait ce pour quoi il est vraiment là ?</li>
         </ul>
+      </div>
+    </section>
+
+    <!-- ============ FILM: Welcome-Loop als Video-Kachel, Klick = YouTube im Vollbild ============ -->
+    <section class="film-section" aria-label="Vidéo : Bienvenue chez Innercraft">
+      <div class="container">
+        <button class="film-card reveal" type="button" data-yt="TySI2h76N6U" aria-label="Vidéo : Bienvenue chez Innercraft – Lire la vidéo en plein écran avec le son">
+          <video autoplay muted loop playsinline preload="metadata" poster="../media/welcome-loop-poster.jpg" aria-hidden="true">
+            <source src="../media/welcome-loop.mp4" type="video/mp4" />
+          </video>
+          <span class="film-text" aria-hidden="true">
+            <span class="film-title">Bienvenue chez Innercraft</span>
+            <span class="film-sub">Un aperçu de notre travail · avec le son</span>
+          </span>
+          <span class="film-play" aria-hidden="true"></span>
+        </button>
       </div>
     </section>
 
@@ -726,6 +738,12 @@
         <a href="#contact" class="btn btn-primary modal-cta" data-modal-close>Demander maintenant</a>
       </div>
     </div>
+  </div>
+
+  <!-- ============ VIDEO IM VOLLBILD (erst nach Klick befüllt) ============ -->
+  <div class="film-overlay" role="dialog" aria-modal="true" aria-label="Vidéo : Bienvenue chez Innercraft" hidden>
+    <div class="film-bar"><button class="film-close" type="button" aria-label="Fermer la vidéo">✕</button></div>
+    <div class="film-frame"></div>
   </div>
 
   <script src="../script.js"></script>
