@@ -256,10 +256,17 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
 /* Hintergrundvideo (YouTube): stumm & weich im Hintergrund, nach Klick scharf mit Ton */
 .hero-yt {
   position: absolute; inset: 0; overflow: hidden;
-  opacity: 0; filter: blur(6px) saturate(.9);
+  opacity: 0; filter: blur(2.5px) saturate(.95);
   transition: opacity 1.4s var(--ease), filter .8s var(--ease);
 }
-.hero-yt.is-ready { opacity: .5; }
+.hero-yt.is-ready { opacity: .85; }
+/* Dezenter Verlauf über dem Video, damit der Text lesbar bleibt (im Ton-Modus aus) */
+.hero-yt::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(18, 40, 32, .72) 0%, rgba(18, 40, 32, .45) 55%, rgba(18, 40, 32, .25) 100%);
+  transition: opacity .8s var(--ease);
+}
+.hero.is-watching .hero-yt::after { opacity: 0; }
 .hero-yt iframe {
   position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
@@ -364,6 +371,7 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
 
 .hero-content { position: relative; z-index: 2; padding-top: 6rem; max-width: 880px; }
 .hero-content h1 { margin: 0 0 1.6rem; text-wrap: balance; }
+.hero-content .eyebrow { color: var(--biolume); }   /* hell: lesbar auf Video und Grün */
 .hero-lead { font-size: clamp(1.15rem, 2vw, 1.4rem); max-width: 620px; color: rgba(241,242,236,.86); margin: 0 0 2.4rem; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; }
 
