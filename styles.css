@@ -161,6 +161,17 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
 .scrolled .brand { color: var(--forest); }
 .brand-mark { color: var(--gold); display: grid; place-items: center; transition: color .4s var(--ease); }
 .scrolled .brand-mark { color: var(--clay); }
+/* Logo (PNG als Maske → nimmt automatisch die Textfarbe an: hell auf Grün, dunkel beim Scrollen) */
+.brand-logo {
+  display: block;
+  height: 56px;
+  aspect-ratio: 1200 / 451;
+  background-color: currentColor;
+  -webkit-mask: url("media/innercraft-logo.png") no-repeat center / contain;
+          mask: url("media/innercraft-logo.png") no-repeat center / contain;
+}
+.brand-logo-footer { height: 66px; margin-bottom: 1.3rem; color: var(--cream); }
+@media (max-width: 600px) { .site-header .brand-logo { height: 44px; } }
 .brand-text { display: flex; flex-direction: column; line-height: 1; }
 .brand-name { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; letter-spacing: .01em; }
 .brand-tag { font-family: var(--sans); font-size: .62rem; letter-spacing: .28em; text-transform: uppercase; opacity: .8; margin-top: 3px; }
