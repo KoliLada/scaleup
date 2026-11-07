@@ -19,9 +19,7 @@
   <link rel="alternate" hreflang="fr" href="../fr/programm.html" />
   <link rel="alternate" hreflang="x-default" href="../programm.html" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../fonts/fonts.css" />
   <link rel="stylesheet" href="../styles.css" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%AA%BC%3C/text%3E%3C/svg%3E" />
 </head>
@@ -33,15 +31,7 @@
   <header class="site-header" id="top">
     <nav class="nav container">
       <a href="./" class="brand" aria-label="Innercraft home">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 48 64" width="30" height="40" role="img" aria-label="Jellyfish — our symbol">
-            <use href="#jellyfish"></use>
-          </svg>
-        </span>
-        <span class="brand-text">
-          <span class="brand-name">Innercraft</span>
-          <span class="brand-tag">Purpose Guiding</span>
-        </span>
+        <span class="brand-logo" aria-hidden="true"></span>
       </a>
 
       <button class="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu">
@@ -74,6 +64,22 @@
         <div class="program-jump reveal">
           <a href="#gruppe" class="btn btn-primary">Group programme</a>
           <a href="#einzel" class="btn btn-ghost">Individual guiding</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VIDEO: DER PROZESS ============ -->
+    <section class="section section-forest" id="prozess" aria-labelledby="prozess-title">
+      <div class="container narrow center">
+        <p class="eyebrow light reveal">The process</p>
+        <h2 id="prozess-title" class="light reveal">How purpose guiding works</h2>
+        <p class="section-intro light reveal">In this video, Nikolai describes the process of purpose guiding — how the journey begins, what happens along the way, and how what you discover becomes a calling you live. (The video is in German.)</p>
+        <div class="video-embed reveal" data-yt="JeDqn7XRBu8">
+          <button class="video-facade" type="button" aria-label="Play video: the process of purpose guiding">
+            <img src="../media/_BEN0893_web.jpg" alt="" loading="lazy" />
+            <span class="video-play" aria-hidden="true"></span>
+            <span class="video-note">Playing the video loads it from YouTube.</span>
+          </button>
         </div>
       </div>
     </section>
@@ -176,10 +182,7 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 48 64" width="36" height="48" aria-hidden="true"><use href="#jellyfish"></use></svg>
-        </span>
-        <p class="footer-name">Innercraft</p>
+        <span class="brand-logo brand-logo-footer" role="img" aria-label="Innercraft · Purpose Guiding"></span>
         <p class="footer-claim">Back to yourself. Back to nature. Back to what makes you truly alive.</p>
       </div>
       <nav class="footer-nav" aria-label="Footer">
