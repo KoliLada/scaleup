@@ -597,7 +597,7 @@ body.modal-open { overflow: hidden; }
 .expect-list p:last-child { border-bottom: 0; padding-bottom: 0; color: var(--gold); font-style: italic; font-family: var(--serif); font-size: 1.5rem; }
 
 /* ---------- Offers ---------- */
-.offers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; align-items: start; }
+.offers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.6rem; align-items: start; max-width: 880px; margin-inline: auto; }
 .offer {
   position: relative;
   background: var(--paper);
