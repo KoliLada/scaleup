@@ -253,29 +253,34 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
     linear-gradient(180deg, #2f5c47 0%, #234a38 38%, #1c3d30 70%, #12281e 100%);
 }
 
-/* Hintergrundvideo (YouTube): stumm & weich im Hintergrund, nach Klick scharf mit Ton */
-.hero-yt {
-  position: absolute; inset: 0; overflow: hidden;
-  opacity: 0; filter: blur(2.5px) saturate(.95);
-  transition: opacity 1.4s var(--ease), filter .8s var(--ease);
-}
-.hero-yt.is-ready { opacity: .85; }
-/* Dezenter Verlauf über dem Video, damit der Text lesbar bleibt (im Ton-Modus aus) */
-.hero-yt::after {
+/* Hintergrund: Welcome-Loop (eigene MP4, stumm in Dauerschleife) */
+.hero-loop { position: absolute; inset: 0; overflow: hidden; }
+.hero-loop-video { width: 100%; height: 100%; object-fit: cover; object-position: 55% 50%; display: block; }
+/* Verlauf über dem Loop, damit der Text lesbar bleibt */
+.hero-loop::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(90deg, rgba(18, 40, 32, .72) 0%, rgba(18, 40, 32, .45) 55%, rgba(18, 40, 32, .25) 100%);
-  transition: opacity .8s var(--ease);
+  background: linear-gradient(90deg, rgba(18, 40, 32, .78) 0%, rgba(18, 40, 32, .5) 50%, rgba(18, 40, 32, .25) 100%);
 }
-.hero.is-watching .hero-yt::after { opacity: 0; }
-.hero-yt iframe {
-  position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  border: 0; pointer-events: none;
+@media (max-width: 700px) {
+  .hero-loop-video { object-position: 60% 50%; }
+  .hero-loop::after { background: linear-gradient(180deg, rgba(18, 40, 32, .55) 0%, rgba(18, 40, 32, .72) 100%); }
+}
+/* Nach Klick: YouTube-Video mit Ton auf eigener Ebene */
+.hero-watch {
+  position: absolute; inset: 0; z-index: 3;
+  display: flex; align-items: center; justify-content: center;
+  padding: 92px clamp(1rem, 4vw, 3rem) 5.5rem;
+  background: var(--forest-deep);
+}
+.hero-watch[hidden] { display: none; }
+.hero-watch iframe {
+  width: min(100%, calc((100svh - 170px) * 16 / 9));
+  aspect-ratio: 16 / 9; height: auto; border: 0; border-radius: 8px;
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .7);
 }
 .hero.has-video { cursor: pointer; }
 .hero.has-video .hero-content { cursor: auto; }
 .hero .hero-content, .hero .scroll-cue, .hero-jellyfish, .hero-rays, .hero-particles { transition: opacity .7s var(--ease); }
-.hero.is-watching .hero-yt { opacity: 1; filter: none; }
 .hero.is-watching .hero-content,
 .hero.is-watching .scroll-cue,
 .hero.is-watching .hero-jellyfish,
