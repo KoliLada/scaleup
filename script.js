@@ -76,18 +76,18 @@
   });
 
   /* ---- Hintergrundvideo im Hero (YouTube) ----
-     Stumm + weich in Dauerschleife. Klick auf „Mit Ton ansehen“ oder die freie
-     Fläche: scharf, von vorne, mit Ton. „Ton aus“ / Escape: zurück.
-     Lädt YouTube nicht, bleibt die animierte Wasserwelt sichtbar.        */
+     Stumm + leicht weich in Dauerschleife. Klick auf „Mit Ton ansehen“ oder die
+     freie Fläche: scharf, von vorne, mit Ton. „Ton aus“ / Escape: zurück.
+     Startet das Video nicht von selbst, erscheint trotzdem der Knopf.
+     Lädt YouTube gar nicht, bleibt die animierte Wasserwelt sichtbar.     */
   (function heroVideo() {
     var box = document.querySelector('.hero-yt[data-yt]');
     var hero = box && box.closest('.hero');
     if (!box || !hero) return;
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var id = box.getAttribute('data-yt');
     var btnWatch = hero.querySelector('[data-hero-video="watch"]');
     var btnClose = hero.querySelector('[data-hero-video="close"]');
-    var player = null, ready = false, watching = false;
+    var player = null, usable = false, playing = false, watching = false;
 
     function cover() {
       var f = box.querySelector('iframe'); if (!f) return;
@@ -96,8 +96,19 @@
       f.style.width = Math.ceil(iw * 1.2) + 'px';    // leicht vergrößert: YouTube-Ränder bleiben verborgen
       f.style.height = Math.ceil(ih * 1.2) + 'px';
     }
+    function enable() {                               // Player bedienbar → Knopf zeigen
+      if (usable) return;
+      usable = true;
+      hero.classList.add('has-video');
+      if (!watching) btnWatch.hidden = false;
+    }
+    function showPlaying() {                          // Video läuft → einblenden
+      playing = true;
+      box.classList.add('is-ready');
+      enable();
+    }
     function watch() {
-      if (!ready) return;
+      if (!usable) return;
       watching = true;
       hero.classList.add('is-watching');
       player.seekTo(0, true); player.unMute(); player.setVolume(100); player.playVideo();
@@ -112,7 +123,7 @@
     btnWatch.addEventListener('click', function (e) { e.stopPropagation(); watch(); });
     btnClose.addEventListener('click', function (e) { e.stopPropagation(); close(); });
     hero.addEventListener('click', function (e) {
-      if (!ready || e.target.closest('a, button, .hero-content')) return;
+      if (!usable || e.target.closest('a, button, .hero-content')) return;
       if (!watching) return watch();
       if (player.getPlayerState() === 1) player.pauseVideo(); else player.playVideo();
     });
@@ -122,19 +133,22 @@
     var prev = window.onYouTubeIframeAPIReady;
     window.onYouTubeIframeAPIReady = function () {
       if (typeof prev === 'function') prev();
+      var vars = { autoplay: 1, mute: 1, controls: 0, loop: 1, playlist: id, playsinline: 1,
+                   rel: 0, modestbranding: 1, disablekb: 1, iv_load_policy: 3, fs: 0, enablejsapi: 1 };
+      if (/^https?:$/.test(location.protocol)) vars.origin = location.origin;
       player = new YT.Player(box.querySelector('.hero-yt-player'), {
-        host: 'https://www.youtube-nocookie.com',
         videoId: id,
-        playerVars: { autoplay: 1, mute: 1, controls: 0, loop: 1, playlist: id, playsinline: 1,
-                      rel: 0, modestbranding: 1, disablekb: 1, iv_load_policy: 3, fs: 0 },
+        playerVars: vars,
         events: {
-          onReady: function (e) { e.target.mute(); e.target.playVideo(); cover(); },
+          onReady: function (e) {
+            e.target.mute(); e.target.playVideo(); cover();
+            setTimeout(function () {                  // Autoplay blockiert? Dann zumindest per Klick startbar
+              if (!playing) enable();
+            }, 4000);
+          },
           onStateChange: function (e) {
-            if (e.data === 1 && !ready) {          // läuft → einblenden
-              ready = true;
-              box.classList.add('is-ready'); hero.classList.add('has-video');
-              btnWatch.hidden = false;
-            }
+            if (e.data === 1 && !playing) showPlaying();
+            if (e.data === 0) e.target.playVideo();   // Sicherheitsnetz für die Dauerschleife
           }
         }
       });
