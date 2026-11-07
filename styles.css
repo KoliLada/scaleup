@@ -150,11 +150,16 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
   transition: background .4s var(--ease), box-shadow .4s var(--ease), padding .4s var(--ease);
   padding: .35rem 0;
 }
-.site-header.scrolled {
+.site-header.scrolled { box-shadow: 0 1px 0 rgba(23,47,38,.08); }
+/* Milchglas-Hintergrund auf eigener Ebene: backdrop-filter direkt am Header würde
+   das mobile Menü (position: fixed) in die Header-Fläche einsperren. */
+.site-header::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background: rgba(250,246,236,.9);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 1px 0 rgba(23,47,38,.08);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  opacity: 0; transition: opacity .4s var(--ease);
 }
+.site-header.scrolled::before { opacity: 1; }
 .nav { display: flex; align-items: center; justify-content: space-between; padding: .8rem 0; }
 
 .brand { display: flex; align-items: center; gap: .7rem; text-decoration: none; color: var(--cream); transition: color .4s var(--ease); }
