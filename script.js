@@ -53,7 +53,8 @@
     var browser = (navigator.language || 'de').slice(0, 2);
     if (browser === 'en' || browser === 'fr') {
       try { localStorage.setItem(LANG_KEY, browser); } catch (e) { /* privater Modus */ }
-      location.replace(browser + '/');
+      var page = location.pathname.split('/').pop();   // z. B. programm.html → en/programm.html
+      location.replace(browser + '/' + page);
     }
   })();
 
