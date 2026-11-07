@@ -58,6 +58,23 @@
     }
   })();
 
+  /* ---- Video: YouTube erst nach Klick laden (Datenschutz) ---- */
+  document.querySelectorAll('.video-embed[data-yt]').forEach(function (box) {
+    var btn = box.querySelector('.video-facade');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(box.getAttribute('data-yt')) +
+                   '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+      iframe.title = btn.getAttribute('aria-label') || 'Video';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      box.innerHTML = '';
+      box.appendChild(iframe);
+    });
+  });
+
   /* ---- Header shadow on scroll ---- */
   var header = document.querySelector('.site-header');
   var onScroll = function () {
