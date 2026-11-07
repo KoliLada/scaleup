@@ -556,6 +556,8 @@ body.modal-open { overflow: hidden; }
   filter: drop-shadow(0 0 28px rgba(207, 230, 234, .45)) drop-shadow(0 0 64px rgba(207, 230, 234, .18));
 }
 .jelly-figure use { animation: jellyPulse 7s ease-in-out infinite; transform-origin: 50% 28%; }
+/* Qualle aus dem Logo (animierte SVG-Datei, Animation steckt in der Datei) */
+.jelly-logo { width: clamp(160px, 20vw, 250px); height: auto; display: block; }
 
 .jelly-prose { max-width: 640px; margin: 0 auto; }
 .jelly-prose p {
