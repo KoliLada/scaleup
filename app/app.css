@@ -1,28 +1,28 @@
 /* ==========================================================================
    Innercraft Meditation — App-Design
-   Tiefwasser-Palette und Typografie der Innercraft-Website („Die Qualle")
+   Styleguide-Palette und Typografie der Innercraft-Website („Die Qualle")
    ========================================================================== */
 
 :root {
-  /* Tiefwasser-Palette (passend zur Website) */
-  --forest:      #0d2433;   /* tiefes Wasser */
-  --forest-deep: #081623;   /* Abgrund */
-  --moss:        #1d4459;   /* mittleres Wasser */
-  --sage:        #4f7d92;   /* flaches Wasser */
-  --clay:        #c9836a;   /* warme Koralle */
-  --clay-soft:   #d9a08b;
-  --gold:        #c9a24b;   /* Lichtstrahl */
-  --biolume:     #8fe0d8;   /* Biolumineszenz */
-  --sand:        #e2e4dc;
-  --cream:       #f1f2ec;
-  --paper:       #f9f9f4;
-  --ink:         #162b36;
-  --ink-soft:    #486270;
+  /* Styleguide-Palette (passend zur Website) */
+  --forest:      #1c3d30;   /* Dunkelgrün */
+  --forest-deep: #12281e;   /* tiefstes Grün */
+  --moss:        #2f5c47;   /* mittleres Grün */
+  --sage:        #5f8c70;   /* Salbeigrün */
+  --clay:        #a8392f;   /* Krimson */
+  --clay-soft:   #c5584c;
+  --gold:        #a9d4da;   /* Hellblau */
+  --biolume:     #cfe6ea;   /* Hellblau Leuchten */
+  --sand:        #dfe7d6;
+  --cream:       #f3f1e8;
+  --paper:       #f8f7f0;
+  --ink:         #172f26;
+  --ink-soft:    #4c6656;
 
   --serif: "Cormorant Garamond", Georgia, serif;
   --sans:  "Jost", -apple-system, "Segoe UI", system-ui, sans-serif;
 
-  --shadow-soft: 0 18px 50px -28px rgba(8, 22, 35, .45);
+  --shadow-soft: 0 18px 50px -28px rgba(18, 40, 32, .45);
   --radius: 6px;
   --ease: cubic-bezier(.22, .61, .36, 1);
 
@@ -208,11 +208,11 @@ code {
 .btn-ghost {
   background: transparent;
   color: var(--forest);
-  border-color: rgba(13, 36, 51, .35);
+  border-color: rgba(28, 61, 48, .35);
 }
-.btn-ghost:active { background: rgba(13, 36, 51, .07); }
+.btn-ghost:active { background: rgba(28, 61, 48, .07); }
 
-.btn-danger { color: var(--clay); border-color: rgba(182, 113, 63, .4); }
+.btn-danger { color: var(--clay); border-color: rgba(168, 57, 47, .4); }
 
 .btn-big {
   display: block;
@@ -240,7 +240,7 @@ code {
 /* ---------- Karten ---------- */
 .card, .flow-card {
   background: var(--cream);
-  border: 1px solid rgba(13, 36, 51, .12);
+  border: 1px solid rgba(28, 61, 48, .12);
   border-radius: var(--radius);
   padding: 20px;
   margin-bottom: 16px;
@@ -258,7 +258,7 @@ code {
   align-items: baseline;
   gap: 12px;
   padding: 9px 0;
-  border-bottom: 1px solid rgba(13, 36, 51, .1);
+  border-bottom: 1px solid rgba(28, 61, 48, .1);
   font-size: .98rem;
 }
 .flow-list li:last-child { border-bottom: none; }
@@ -304,7 +304,7 @@ code {
   width: 40px;
   margin: 0 auto 10px;
   color: var(--biolume);
-  filter: drop-shadow(0 0 16px rgba(143, 224, 216, .4));
+  filter: drop-shadow(0 0 16px rgba(207, 230, 234, .4));
 }
 .signup-card h2 { font-size: 1.4rem; color: var(--cream); margin-bottom: .6rem; }
 .signup-text {
@@ -360,8 +360,8 @@ code {
 .install-card {
   margin-top: 28px;
   padding: 20px;
-  background: rgba(13, 36, 51, .05);
-  border: 1px dashed rgba(13, 36, 51, .25);
+  background: rgba(28, 61, 48, .05);
+  border: 1px dashed rgba(28, 61, 48, .25);
   border-radius: var(--radius);
 }
 
@@ -435,8 +435,8 @@ code {
 }
 
 .notice:not(.notice-warn) {
-  background: rgba(29, 68, 89, .12);
-  border: 1px solid rgba(29, 68, 89, .35);
+  background: rgba(47, 92, 71, .12);
+  border: 1px solid rgba(47, 92, 71, .35);
   color: var(--ink);
 }
 
@@ -453,7 +453,7 @@ code {
   font-size: .88rem;
   padding: 12px 8px;
   background: var(--cream);
-  border: 1px solid rgba(13, 36, 51, .2);
+  border: 1px solid rgba(28, 61, 48, .2);
   border-radius: var(--radius);
   color: var(--ink-soft);
   cursor: pointer;
@@ -474,7 +474,7 @@ code {
 /* Wochen-Matrix (7 Tage) */
 .week-card {
   background: var(--cream);
-  border: 1px solid rgba(13, 36, 51, .12);
+  border: 1px solid rgba(28, 61, 48, .12);
   border-radius: var(--radius);
   padding: 18px;
   margin-bottom: 22px;
@@ -505,7 +505,7 @@ code {
   gap: 6px;
   padding: 10px 2px 8px;
   background: var(--paper);
-  border: 1px solid rgba(13, 36, 51, .15);
+  border: 1px solid rgba(28, 61, 48, .15);
   border-radius: 8px;
   cursor: pointer;
   transition: all .2s var(--ease);
@@ -529,7 +529,7 @@ code {
 }
 .dot-published { background: var(--biolume); }
 .dot-draft     { background: var(--clay); }
-.dot-empty     { background: transparent; border: 1px solid rgba(13, 36, 51, .3); }
+.dot-empty     { background: transparent; border: 1px solid rgba(28, 61, 48, .3); }
 .is-active .dot-empty { border-color: rgba(241, 242, 236, .4); }
 
 .week-hint { margin-top: 14px; margin-bottom: 0; }
@@ -560,7 +560,7 @@ code {
   font-family: var(--serif);
   font-size: 1.1rem;
   padding: 10px 12px;
-  border: 1px solid rgba(13, 36, 51, .25);
+  border: 1px solid rgba(28, 61, 48, .25);
   border-radius: var(--radius);
   background: var(--paper);
   color: var(--ink);
@@ -595,7 +595,7 @@ code {
   appearance: none;
   width: 22px;
   height: 22px;
-  border: 1.5px solid rgba(13, 36, 51, .4);
+  border: 1.5px solid rgba(28, 61, 48, .4);
   border-radius: 6px;
   background: var(--paper);
   cursor: pointer;
@@ -626,7 +626,7 @@ code {
 
 .author-recording {
   padding: 12px 0;
-  border-bottom: 1px solid rgba(13, 36, 51, .1);
+  border-bottom: 1px solid rgba(28, 61, 48, .1);
 }
 
 .author-recording .recording-hint {
@@ -670,7 +670,7 @@ code {
   font-family: var(--sans);
   font-size: .9rem;
   padding: 12px 14px;
-  border: 1px solid rgba(13, 36, 51, .3);
+  border: 1px solid rgba(28, 61, 48, .3);
   border-radius: var(--radius);
   background: var(--paper);
   color: var(--ink);
@@ -704,7 +704,7 @@ code {
   width: 48px;
   height: 28px;
   border-radius: 14px;
-  background: rgba(13, 36, 51, .25);
+  background: rgba(28, 61, 48, .25);
   position: relative;
   transition: background .25s var(--ease);
 }
@@ -729,7 +729,7 @@ code {
 .stepper-btn {
   width: 40px; height: 40px;
   border-radius: 50%;
-  border: 1px solid rgba(13, 36, 51, .3);
+  border: 1px solid rgba(28, 61, 48, .3);
   background: transparent;
   color: var(--forest);
   font-size: 1.3rem;
@@ -737,7 +737,7 @@ code {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.stepper-btn:active { background: rgba(13, 36, 51, .08); }
+.stepper-btn:active { background: rgba(28, 61, 48, .08); }
 
 .stepper-value {
   font-family: var(--sans);
@@ -758,7 +758,7 @@ code {
   width: 64px;
   padding: 9px 10px;
   text-align: center;
-  border: 1px solid rgba(13, 36, 51, .3);
+  border: 1px solid rgba(28, 61, 48, .3);
   border-radius: var(--radius);
   background: var(--paper);
   color: var(--ink);
@@ -773,7 +773,7 @@ code {
 /* ---------- Aufnahmen ---------- */
 .recording-item {
   background: var(--cream);
-  border: 1px solid rgba(13, 36, 51, .12);
+  border: 1px solid rgba(28, 61, 48, .12);
   border-radius: var(--radius);
   padding: 16px 18px;
   margin-bottom: 12px;
@@ -809,14 +809,14 @@ code {
   letter-spacing: .04em;
   padding: 10px 16px;
   border-radius: var(--radius);
-  border: 1px solid rgba(13, 36, 51, .3);
+  border: 1px solid rgba(28, 61, 48, .3);
   background: transparent;
   color: var(--forest);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 
-.rec-btn-record { border-color: rgba(182, 113, 63, .5); color: var(--clay); }
+.rec-btn-record { border-color: rgba(168, 57, 47, .5); color: var(--clay); }
 .rec-btn-record.is-recording {
   background: var(--clay);
   color: var(--cream);
@@ -824,8 +824,8 @@ code {
 }
 
 @keyframes rec-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(182, 113, 63, .4); }
-  50%      { box-shadow: 0 0 0 9px rgba(182, 113, 63, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(168, 57, 47, .4); }
+  50%      { box-shadow: 0 0 0 9px rgba(168, 57, 47, 0); }
 }
 
 .rec-btn:disabled { opacity: .35; pointer-events: none; }
@@ -858,7 +858,7 @@ code {
 
 .session-rings span {
   position: absolute;
-  border: 1px solid rgba(143, 224, 216, .28);
+  border: 1px solid rgba(207, 230, 234, .28);
   border-radius: 50%;
   width: 70vmin; height: 70vmin;
   animation: ring-breathe 9s ease-in-out infinite;
@@ -879,7 +879,7 @@ code {
   width: clamp(70px, 18vw, 110px);
   color: var(--biolume);
   opacity: .4;
-  filter: drop-shadow(0 0 22px rgba(143, 224, 216, .35));
+  filter: drop-shadow(0 0 22px rgba(207, 230, 234, .35));
   z-index: -1;
   pointer-events: none;
   animation: jelly-drift 26s ease-in-out infinite;
@@ -913,7 +913,7 @@ code {
   fill: none;
   stroke-width: 4;
 }
-.ring-bg { stroke: rgba(13, 36, 51, .14); }
+.ring-bg { stroke: rgba(28, 61, 48, .14); }
 .ring-fg {
   stroke: var(--gold);
   stroke-linecap: round;
@@ -959,7 +959,7 @@ code {
   gap: 2px;
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid rgba(13, 36, 51, .14);
+  border-top: 1px solid rgba(28, 61, 48, .14);
   min-width: 40%;
 }
 
@@ -998,7 +998,7 @@ code {
 
 .done-mark svg {
   color: var(--biolume);
-  filter: drop-shadow(0 0 24px rgba(143, 224, 216, .4));
+  filter: drop-shadow(0 0 24px rgba(207, 230, 234, .4));
   margin: 0 auto;
 }
 .done-mark svg use { animation: jelly-pulse 7s ease-in-out infinite; transform-origin: 50% 28%; }
