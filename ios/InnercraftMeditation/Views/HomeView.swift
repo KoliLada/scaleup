@@ -191,78 +191,24 @@ struct HomeView: View {
 
 // MARK: - Die Qualle (Logo)
 
+/// Die Qualle aus dem Innercraft-Logo (Vektorgrafik „Qualle" in Assets.xcassets,
+/// als Vorlage eingefärbt) — pulsiert sanft wie beim Schwimmen.
 struct GongMark: View {
     var color: Color = .icBiolume
 
     @State private var pulse = false
 
     var body: some View {
-        ZStack {
-            JellyfishBell().fill(color)
-            JellyfishTentacles()
-                .stroke(color, style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round))
-        }
-        .shadow(color: color.opacity(0.6), radius: 10)
-        .scaleEffect(x: pulse ? 1.05 : 1.0, y: pulse ? 0.96 : 1.0, anchor: .top)
-        .animation(.easeInOut(duration: 3.5).repeatForever(autoreverses: true), value: pulse)
-        .onAppear { pulse = true }
-    }
-}
-
-/// Massiver Schirm — identisch mit dem SVG-Logo der Website (viewBox 48×64)
-struct JellyfishBell: Shape {
-    func path(in rect: CGRect) -> Path {
-        var p = Path()
-        let sx = rect.width / 48, sy = rect.height / 64
-        func pt(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: rect.minX + x * sx, y: rect.minY + y * sy) }
-
-        p.move(to: pt(7, 25))
-        p.addCurve(to: pt(24, 5), control1: pt(7, 12), control2: pt(14, 5))
-        p.addCurve(to: pt(41, 25), control1: pt(34, 5), control2: pt(41, 12))
-        p.addCurve(to: pt(37, 28.9), control1: pt(41, 27.5), control2: pt(39.5, 28.6))
-        p.addCurve(to: pt(31.5, 28.9), control1: pt(35, 25.5), control2: pt(33.5, 25.5))
-        p.addCurve(to: pt(26, 28.9), control1: pt(29.6, 25.4), control2: pt(27.9, 25.4))
-        p.addCurve(to: pt(22, 28.9), control1: pt(24.1, 25.2), control2: pt(23.9, 25.2))
-        p.addCurve(to: pt(16.5, 28.9), control1: pt(20.1, 25.4), control2: pt(18.4, 25.4))
-        p.addCurve(to: pt(11, 28.9), control1: pt(14.5, 25.5), control2: pt(13, 25.5))
-        p.addCurve(to: pt(7, 25), control1: pt(8.5, 28.6), control2: pt(7, 27.5))
-        p.closeSubpath()
-        return p
-    }
-}
-
-/// Fließende Tentakel-Linien
-struct JellyfishTentacles: Shape {
-    func path(in rect: CGRect) -> Path {
-        var p = Path()
-        let sx = rect.width / 48, sy = rect.height / 64
-        func pt(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: rect.minX + x * sx, y: rect.minY + y * sy) }
-
-        p.move(to: pt(12, 29.5))
-        p.addCurve(to: pt(11.2, 47), control1: pt(10.5, 36), control2: pt(13, 41))
-        p.addCurve(to: pt(10.6, 60), control1: pt(10, 51), control2: pt(12, 55.5))
-
-        p.move(to: pt(17, 29.5))
-        p.addCurve(to: pt(16.6, 50), control1: pt(16, 37), control2: pt(18.4, 43.5))
-        p.addCurve(to: pt(16.4, 62), control1: pt(15.8, 53.5), control2: pt(17.4, 57.5))
-
-        p.move(to: pt(22.5, 29.5))
-        p.addCurve(to: pt(22.6, 53), control1: pt(22.5, 38), control2: pt(21.4, 45.5))
-        p.addCurve(to: pt(22.6, 63.5), control1: pt(23, 57), control2: pt(22.2, 60.5))
-
-        p.move(to: pt(26, 29.5))
-        p.addCurve(to: pt(25.8, 53), control1: pt(26, 38), control2: pt(27, 45.5))
-        p.addCurve(to: pt(25.8, 63.5), control1: pt(25.4, 57), control2: pt(26.2, 60.5))
-
-        p.move(to: pt(31.5, 29.5))
-        p.addCurve(to: pt(31.9, 50), control1: pt(32.5, 37), control2: pt(30.1, 43.5))
-        p.addCurve(to: pt(32.1, 62), control1: pt(32.7, 53.5), control2: pt(31.1, 57.5))
-
-        p.move(to: pt(36.5, 29.5))
-        p.addCurve(to: pt(37.3, 47), control1: pt(38, 36), control2: pt(35.5, 41))
-        p.addCurve(to: pt(37.9, 60), control1: pt(38.5, 51), control2: pt(36.5, 55.5))
-
-        return p
+        Image("Qualle")
+            .renderingMode(.template)
+            .resizable()
+            .scaledToFit()
+            .foregroundStyle(color)
+            .shadow(color: color.opacity(0.6), radius: 10)
+            .scaleEffect(x: pulse ? 1.04 : 1.0, y: pulse ? 0.97 : 1.0, anchor: .top)
+            .animation(.easeInOut(duration: 3.5).repeatForever(autoreverses: true), value: pulse)
+            .onAppear { pulse = true }
+            .accessibilityHidden(true)
     }
 }
 

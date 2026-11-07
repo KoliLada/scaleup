@@ -253,6 +253,46 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
     linear-gradient(180deg, #2f5c47 0%, #234a38 38%, #1c3d30 70%, #12281e 100%);
 }
 
+/* Hintergrundvideo (YouTube): stumm & weich im Hintergrund, nach Klick scharf mit Ton */
+.hero-yt {
+  position: absolute; inset: 0; overflow: hidden;
+  opacity: 0; filter: blur(6px) saturate(.9);
+  transition: opacity 1.4s var(--ease), filter .8s var(--ease);
+}
+.hero-yt.is-ready { opacity: .5; }
+.hero-yt iframe {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border: 0; pointer-events: none;
+}
+.hero.has-video { cursor: pointer; }
+.hero.has-video .hero-content { cursor: auto; }
+.hero .hero-content, .hero .scroll-cue, .hero-jellyfish, .hero-rays, .hero-particles { transition: opacity .7s var(--ease); }
+.hero.is-watching .hero-yt { opacity: 1; filter: none; }
+.hero.is-watching .hero-content,
+.hero.is-watching .scroll-cue,
+.hero.is-watching .hero-jellyfish,
+.hero.is-watching .hero-rays,
+.hero.is-watching .hero-particles { opacity: 0; pointer-events: none; }
+/* Qualle und Lichtstrahlen haben eigene Opacity-Animationen – im Ton-Modus anhalten, sonst bleiben sie sichtbar */
+.hero.is-watching .hero-jellyfish, .hero.is-watching .hero-rays { animation: none; }
+.hero-video-btn {
+  position: absolute; right: clamp(1rem, 3vw, 2.2rem); bottom: 2.2rem; z-index: 4;
+  font-family: var(--sans); font-size: .82rem; letter-spacing: .08em;
+  color: var(--cream); background: rgba(18, 40, 32, .45);
+  border: 1px solid rgba(241, 242, 236, .45); border-radius: 50px;
+  padding: .7em 1.3em; cursor: pointer;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  transition: background .3s var(--ease), border-color .3s var(--ease);
+}
+.hero-video-btn:hover, .hero-video-btn:focus-visible { background: rgba(18, 40, 32, .7); border-color: var(--cream); }
+.hero-video-btn[hidden] { display: none; }
+@media (max-width: 700px) {
+  .hero-video-btn { bottom: 1.4rem; right: 50%; transform: translateX(50%); white-space: nowrap; }
+  .hero.has-video .hero-content { padding-bottom: 5rem; }   /* Platz für den Knopf unter den Buttons */
+  .hero.has-video .scroll-cue { display: none; }
+}
+
 /* Lichtstrahlen, die durchs Wasser brechen */
 .hero-rays {
   position: absolute; inset: -12% -5%;
@@ -516,6 +556,8 @@ body.modal-open { overflow: hidden; }
   filter: drop-shadow(0 0 28px rgba(207, 230, 234, .45)) drop-shadow(0 0 64px rgba(207, 230, 234, .18));
 }
 .jelly-figure use { animation: jellyPulse 7s ease-in-out infinite; transform-origin: 50% 28%; }
+/* Qualle aus dem Logo (animierte SVG-Datei, Animation steckt in der Datei) */
+.jelly-logo { width: clamp(160px, 20vw, 250px); height: auto; display: block; }
 
 .jelly-prose { max-width: 640px; margin: 0 auto; }
 .jelly-prose p {

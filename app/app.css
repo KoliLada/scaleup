@@ -345,6 +345,9 @@ code {
   accent-color: var(--biolume);
 }
 #signup-form .btn-big { margin: 6px 0 0; }
+/* Auf der dunkelgrünen Karte: Krimson statt Grün, sonst verschwindet der Button */
+#signup-form .btn-primary { background: var(--clay); }
+#signup-form .btn-primary:active { background: var(--clay-soft); }
 .signup-status {
   font-family: var(--sans);
   font-size: .82rem;
@@ -997,8 +1000,8 @@ code {
 }
 
 .done-mark svg {
-  color: var(--biolume);
-  filter: drop-shadow(0 0 24px rgba(207, 230, 234, .4));
+  color: var(--moss);
+  filter: drop-shadow(0 0 22px rgba(47, 92, 71, .22));
   margin: 0 auto;
 }
 .done-mark svg use { animation: jelly-pulse 7s ease-in-out infinite; transform-origin: 50% 28%; }
