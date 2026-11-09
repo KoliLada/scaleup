@@ -11,6 +11,7 @@
       formMissing: 'Bitte fülle Name und E-Mail aus.',
       formSending: 'Wird gesendet …',
       formError: 'Senden hat leider nicht geklappt. Bitte versuche es später noch einmal oder schreib uns direkt an carla@innercraft.com.',
+      formMailLink: 'Nachricht per E-Mail senden',
       formThanks: function (name) { return 'Danke, ' + name + '. Deine Nachricht ist angekommen — wir melden uns bald bei dir.'; }
     },
     en: {
@@ -19,6 +20,7 @@
       formMissing: 'Please fill in your name and email.',
       formSending: 'Sending …',
       formError: 'Sorry, sending did not work. Please try again later or write to us directly at carla@innercraft.com.',
+      formMailLink: 'Send message by email',
       formThanks: function (name) { return 'Thank you, ' + name + '. Your message has arrived — we will get back to you soon.'; }
     },
     fr: {
@@ -27,6 +29,7 @@
       formMissing: 'Merci de renseigner ton nom et ton e-mail.',
       formSending: 'Envoi en cours …',
       formError: 'L’envoi n’a malheureusement pas fonctionné. Réessaie plus tard ou écris-nous directement à carla@innercraft.com.',
+      formMailLink: 'Envoyer le message par e-mail',
       formThanks: function (name) { return 'Merci, ' + name + '. Ton message est bien arrivé — nous te répondrons bientôt.'; }
     }
   };
@@ -323,6 +326,20 @@
         _replyto: email.value.trim()
       };
 
+      // Falls der Versand scheitert: fertig ausgefüllte E-Mail anbieten,
+      // damit keine Anfrage verloren geht.
+      function showFallback() {
+        var body = 'Name: ' + payload.Name + '\nE-Mail: ' + payload['E-Mail'] +
+          '\nInteresse: ' + payload.Interesse + '\n\n' + payload.Nachricht;
+        var a = document.createElement('a');
+        a.href = 'mailto:carla@innercraft.com?subject=' + encodeURIComponent('ANFRAGE') +
+          '&body=' + encodeURIComponent(body);
+        a.className = 'form-mail-link';
+        a.textContent = T.formMailLink;
+        status.textContent = T.formError + ' ';
+        status.appendChild(a);
+      }
+
       fetch(FORM_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -333,11 +350,12 @@
             status.textContent = T.formThanks(name.value.trim().split(' ')[0]);
             form.reset();
           } else {
-            status.textContent = T.formError;
+            if (window.console) console.warn('Kontaktformular:', res.status, data && data.message);
+            showFallback();
           }
         });
       }).catch(function () {
-        status.textContent = T.formError;
+        showFallback();
       }).then(function () {
         if (submitBtn) submitBtn.disabled = false;
       });
