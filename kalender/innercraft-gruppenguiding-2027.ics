@@ -1,0 +1,75 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Innercraft//Gruppenguiding//DE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Innercraft Gruppenguiding 2027
+X-WR-TIMEZONE:Europe/Berlin
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270124@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270124
+DTEND;VALUE=DATE:20270125
+SUMMARY:Innercraft Gruppenguiding – Workshop 1
+DESCRIPTION:Den Ruf der Seele hören\; die Reise beginnen — was hält dic
+ h davon ab\, deine wahre Bestimmung zu leben?\n\nGanztägig vor Ort.
+LOCATION:Innercraft Seminarort bei Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270221@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270221
+DTEND;VALUE=DATE:20270222
+SUMMARY:Innercraft Gruppenguiding – Workshop 2
+DESCRIPTION:Mit deinen Beschützern arbeiten und die Ganzheit wiederherstel
+ len.\n\nGanztägig vor Ort.
+LOCATION:Innercraft Seminarort bei Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270321@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270321
+DTEND;VALUE=DATE:20270322
+SUMMARY:Innercraft Gruppenguiding – Workshop 3
+DESCRIPTION:Eintritt in die Imaginalwelt: sich auf den Kompass des Herzens 
+ einstimmen.\n\nGanztägig vor Ort.
+LOCATION:Innercraft Seminarort bei Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270418@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270418
+DTEND;VALUE=DATE:20270419
+SUMMARY:Innercraft Gruppenguiding – Workshop 4
+DESCRIPTION:Naturbasierte Seelenbegegnung: Eintritt in den Kokon der Transf
+ ormation.\n\nGanztägig vor Ort.
+LOCATION:Innercraft Seminarort bei Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270528@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270528
+DTEND;VALUE=DATE:20270531
+SUMMARY:Innercraft Gruppenguiding – Schwellenzeremonie
+DESCRIPTION:SoulQuest von Sonnenaufgang bis Sonnenuntergang (alleiniges Ein
+ tauchen in die Natur)\; Zeit zur Integration und zum Geschichtenerzählen.
+ \n\nGanztägig vor Ort.
+LOCATION:Innercraft Seminarort bei Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270620@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270620
+DTEND;VALUE=DATE:20270621
+SUMMARY:Innercraft Gruppenguiding – Workshop 5
+DESCRIPTION:Deine tiefste Natur verkörpern\; ein Leben im Einklang mit der
+  Seele führen.\n\nGanztägig vor Ort.
+LOCATION:Innercraft Seminarort bei Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR

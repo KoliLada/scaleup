@@ -548,6 +548,10 @@ h3 { font-size: clamp(1.5rem, 2.6vw, 1.9rem); }
   font-style: italic;
 }
 .modal-cta { margin-top: 1rem; }
+/* Link: alle Gruppentermine als Kalenderdatei (.ics) übernehmen */
+.cal-link-wrap { margin: .4rem 0 1.4rem !important; }
+.cal-link { display: inline-flex; align-items: center; gap: .55em; font-size: .78rem; padding: .75em 1.4em; }
+.cal-link svg { flex: none; }
 /* Preis-Block (Gruppenprogramm): groß der Monatspreis, klein die Zahlungsweise */
 .price-card {
   background: var(--paper);

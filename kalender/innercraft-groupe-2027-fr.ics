@@ -1,0 +1,76 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Innercraft//Gruppenguiding//DE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Innercraft accompagnement en groupe 2027
+X-WR-TIMEZONE:Europe/Berlin
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270124@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270124
+DTEND;VALUE=DATE:20270125
+SUMMARY:Innercraft accompagnement en groupe – Atelier 1
+DESCRIPTION:Entendre l'appel de l'âme \; commencer le voyage — qu'est-ce
+  qui t'empêche de vivre ta véritable vocation ?\n\nJournée entière en 
+ présence.
+LOCATION:Lieu de séminaire Innercraft près de Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270221@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270221
+DTEND;VALUE=DATE:20270222
+SUMMARY:Innercraft accompagnement en groupe – Atelier 2
+DESCRIPTION:Travailler avec tes protecteurs et restaurer la plénitude.\n\n
+ Journée entière en présence.
+LOCATION:Lieu de séminaire Innercraft près de Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270321@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270321
+DTEND;VALUE=DATE:20270322
+SUMMARY:Innercraft accompagnement en groupe – Atelier 3
+DESCRIPTION:Entrer dans le monde imaginal : s'accorder à la boussole du c
+ œur.\n\nJournée entière en présence.
+LOCATION:Lieu de séminaire Innercraft près de Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270418@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270418
+DTEND;VALUE=DATE:20270419
+SUMMARY:Innercraft accompagnement en groupe – Atelier 4
+DESCRIPTION:Rencontre de l'âme fondée sur la nature : entrer dans le coco
+ n de la transformation.\n\nJournée entière en présence.
+LOCATION:Lieu de séminaire Innercraft près de Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270528@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270528
+DTEND;VALUE=DATE:20270531
+SUMMARY:Innercraft accompagnement en groupe – Cérémonie du seuil
+DESCRIPTION:SoulQuest du lever au coucher du soleil (immersion solitaire da
+ ns la nature) \; temps d'intégration et de récit.\n\nJournée entière e
+ n présence.
+LOCATION:Lieu de séminaire Innercraft près de Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270620@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270620
+DTEND;VALUE=DATE:20270621
+SUMMARY:Innercraft accompagnement en groupe – Atelier 5
+DESCRIPTION:Incarner ta nature la plus profonde \; mener une vie en accord 
+ avec l'âme.\n\nJournée entière en présence.
+LOCATION:Lieu de séminaire Innercraft près de Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR
