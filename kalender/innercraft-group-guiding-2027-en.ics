@@ -1,0 +1,74 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Innercraft//Gruppenguiding//DE
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Innercraft group guiding 2027
+X-WR-TIMEZONE:Europe/Berlin
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270124@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270124
+DTEND;VALUE=DATE:20270125
+SUMMARY:Innercraft group guiding – Workshop 1
+DESCRIPTION:Hearing the call of the soul\; beginning the journey — what h
+ olds you back from living your true purpose?\n\nFull day in person.
+LOCATION:Innercraft seminar place near Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270221@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270221
+DTEND;VALUE=DATE:20270222
+SUMMARY:Innercraft group guiding – Workshop 2
+DESCRIPTION:Working with your protectors and restoring wholeness.\n\nFull d
+ ay in person.
+LOCATION:Innercraft seminar place near Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270321@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270321
+DTEND;VALUE=DATE:20270322
+SUMMARY:Innercraft group guiding – Workshop 3
+DESCRIPTION:Entering the imaginal world: attuning to the compass of the hea
+ rt.\n\nFull day in person.
+LOCATION:Innercraft seminar place near Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270418@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270418
+DTEND;VALUE=DATE:20270419
+SUMMARY:Innercraft group guiding – Workshop 4
+DESCRIPTION:Nature-based soul encounter: entering the cocoon of transformat
+ ion.\n\nFull day in person.
+LOCATION:Innercraft seminar place near Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270528@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270528
+DTEND;VALUE=DATE:20270531
+SUMMARY:Innercraft group guiding – Threshold ceremony
+DESCRIPTION:SoulQuest from sunrise to sunset (solo immersion in nature)\; t
+ ime for integration and storytelling.\n\nFull day in person.
+LOCATION:Innercraft seminar place near Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:gruppenguiding-2027-20270620@innercraft.com
+DTSTAMP:20261109T120000Z
+DTSTART;VALUE=DATE:20270620
+DTEND;VALUE=DATE:20270621
+SUMMARY:Innercraft group guiding – Workshop 5
+DESCRIPTION:Embodying your deepest nature\; living a life in alignment with
+  the soul.\n\nFull day in person.
+LOCATION:Innercraft seminar place near Rosenheim
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR
