@@ -818,6 +818,48 @@ body.modal-open { overflow: hidden; }
   font-family: var(--serif); font-style: italic; font-size: 1.3rem; line-height: 1.45; color: var(--forest);
 }
 
+/* Testimonials: zwei Hochkant-Clips neben dem Team-Foto (gleiche Höhe) */
+.testimonial-row {
+  display: grid;
+  grid-template-columns: 9fr 10.67fr 9fr;      /* 9:16-Clips + 2:3-Foto → gleiche Höhe */
+  gap: clamp(.8rem, 2vw, 1.4rem);
+  max-width: 1000px;
+  margin: 3rem auto 0;
+  align-items: start;
+}
+.testimonial-head { grid-column: 1 / -1; text-align: center; font-size: clamp(1.5rem, 2.6vw, 1.9rem); color: var(--forest); margin: 0 0 .6rem; }
+.testimonial-clip, .testimonial-photo { position: relative; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-soft); }
+.testimonial-clip { aspect-ratio: 9 / 16; background: var(--forest-deep); }
+.testimonial-photo { margin: 0; aspect-ratio: 2 / 3; }
+.testimonial-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.testimonial-player, .testimonial-clip iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.testimonial-clip iframe { opacity: 0; transition: opacity .8s var(--ease); pointer-events: none; }
+.testimonial-clip.is-ready iframe, .testimonial-clip.is-fallback iframe { opacity: 1; }
+.testimonial-clip.is-fallback iframe { pointer-events: auto; }
+.testimonial-sound {
+  all: unset; box-sizing: border-box; position: absolute; inset: 0; z-index: 1; cursor: pointer;
+  display: flex; align-items: flex-end; justify-content: center; padding-bottom: clamp(.8rem, 2vw, 1.1rem);
+}
+.testimonial-clip.is-fallback .testimonial-sound { display: none; }
+.ts-badge {
+  display: inline-flex; align-items: center; gap: .45em;
+  font-family: var(--sans); font-size: .78rem; letter-spacing: .04em; white-space: nowrap;
+  color: var(--cream); background: rgba(18, 40, 32, .6);
+  border: 1px solid rgba(241, 242, 236, .4); border-radius: 50px; padding: .45em 1em;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  transition: background .3s var(--ease), border-color .3s var(--ease);
+}
+.testimonial-sound:hover .ts-badge, .testimonial-sound:focus-visible .ts-badge { background: var(--clay); border-color: var(--clay); }
+.testimonial-sound:focus-visible { outline: 2px solid var(--biolume); outline-offset: -3px; border-radius: 12px; }
+.ts-badge .ic-sound, .testimonial-clip.is-sound .ts-badge .ic-muted { display: none; }
+.testimonial-clip.is-sound .ts-badge .ic-sound { display: inline; }
+@media (max-width: 700px) {
+  .testimonial-row { grid-template-columns: 1fr 1fr; }
+  .testimonial-photo { grid-column: 1 / -1; order: -2; aspect-ratio: 4 / 5; }
+  .testimonial-head { order: -1; margin-top: 1.4rem; }
+  .ts-badge { font-size: .72rem; padding: .4em .8em; }
+}
+
 /* ---------- Contact form ---------- */
 .contact-form { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 2.8rem; text-align: left; }
 .field { display: flex; flex-direction: column; gap: .4rem; }
