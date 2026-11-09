@@ -126,6 +126,72 @@
     });
   })();
 
+  /* ---- Testimonials: Hochkant-Clips (YouTube), stumm in Dauerschleife ----
+     Klick auf einen Clip schaltet nur den Ton an (von vorne) bzw. wieder aus;
+     der andere Clip verstummt. YouTube lädt erst, wenn der Abschnitt naht.
+     Startet ein Player nicht, wird er durch das normale YouTube-Video ersetzt. */
+  (function testimonials() {
+    var clips = Array.prototype.slice.call(document.querySelectorAll('.testimonial-clip[data-yt]'));
+    if (!clips.length) return;
+    var requested = false;
+    function loadApi(cb) {
+      if (window.YT && window.YT.Player) return cb();
+      var prev = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = function () { if (typeof prev === 'function') prev(); cb(); };
+      if (!requested) {
+        requested = true;
+        var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; s.async = true;
+        document.head.appendChild(s);
+      }
+    }
+    function setSound(clip, on) {
+      clip.classList.toggle('is-sound', on);
+      var btn = clip.querySelector('.testimonial-sound');
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btn.querySelector('.ts-label').textContent = on ? btn.getAttribute('data-off') : btn.getAttribute('data-on');
+    }
+    function fallback(clip) {                          // normales YouTube-Video mit eigener Steuerung
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(clip.getAttribute('data-yt')) + '?autoplay=1&playsinline=1&rel=0';
+      f.allow = 'autoplay; encrypted-media; picture-in-picture'; f.allowFullscreen = true;
+      f.title = clip.querySelector('.testimonial-sound').getAttribute('aria-label');
+      var old = clip.querySelector('.testimonial-player, iframe'); if (old) old.replaceWith(f); else clip.appendChild(f);
+      clip.classList.add('is-fallback');
+    }
+    function init() {
+      clips.forEach(function (clip) {
+        var id = clip.getAttribute('data-yt');
+        var vars = { autoplay: 1, mute: 1, controls: 0, loop: 1, playlist: id, playsinline: 1, rel: 0,
+                     modestbranding: 1, disablekb: 1, iv_load_policy: 3, fs: 0, enablejsapi: 1 };
+        if (/^https?:$/.test(location.protocol)) vars.origin = location.origin;
+        clip._player = new YT.Player(clip.querySelector('.testimonial-player'), {
+          videoId: id, width: '100%', height: '100%', playerVars: vars,
+          events: {
+            onReady: function (e) { e.target.mute(); e.target.playVideo(); clip.classList.add('is-ready'); },
+            onStateChange: function (e) { if (e.data === 0) e.target.playVideo(); }   // Sicherheitsnetz Schleife
+          }
+        });
+      });
+    }
+    clips.forEach(function (clip) {
+      clip.querySelector('.testimonial-sound').addEventListener('click', function () {
+        var pl = clip._player;
+        if (!pl || !clip.classList.contains('is-ready')) { fallback(clip); return; }
+        var on = !clip.classList.contains('is-sound');
+        clips.forEach(function (o) { if (o !== clip && o._player && o.classList.contains('is-sound')) { o._player.mute(); setSound(o, false); } });
+        if (on) { pl.seekTo(0, true); pl.unMute(); pl.setVolume(100); pl.playVideo(); } else { pl.mute(); }
+        setSound(clip, on);
+      });
+    });
+    var row = clips[0].closest('.testimonial-row') || clips[0];
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        if (entries.some(function (e) { return e.isIntersecting; })) { io.disconnect(); loadApi(init); }
+      }, { rootMargin: '400px' });
+      io.observe(row);
+    } else { loadApi(init); }
+  })();
+
   /* ---- Header shadow on scroll ---- */
   var header = document.querySelector('.site-header');
   var onScroll = function () {
