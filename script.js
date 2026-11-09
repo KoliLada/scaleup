@@ -328,7 +328,7 @@
 
       // Falls der Versand scheitert: fertig ausgefüllte E-Mail anbieten,
       // damit keine Anfrage verloren geht.
-      function showFallback() {
+      function showFallback(reason) {
         var body = 'Name: ' + payload.Name + '\nE-Mail: ' + payload['E-Mail'] +
           '\nInteresse: ' + payload.Interesse + '\n\n' + payload.Nachricht;
         var a = document.createElement('a');
@@ -338,6 +338,13 @@
         a.textContent = T.formMailLink;
         status.textContent = T.formError + ' ';
         status.appendChild(a);
+        // Vorübergehend: Antwort des Formulardienstes anzeigen, um den Fehler zu finden.
+        if (reason) {
+          var small = document.createElement('small');
+          small.className = 'form-reason';
+          small.textContent = 'Formulardienst: ' + reason;
+          status.appendChild(small);
+        }
       }
 
       fetch(FORM_ENDPOINT, {
@@ -350,12 +357,13 @@
             status.textContent = T.formThanks(name.value.trim().split(' ')[0]);
             form.reset();
           } else {
-            if (window.console) console.warn('Kontaktformular:', res.status, data && data.message);
-            showFallback();
+            var reason = (data && data.message) ? data.message : ('HTTP ' + res.status);
+            if (window.console) console.warn('Kontaktformular:', reason);
+            showFallback(reason);
           }
         });
-      }).catch(function () {
-        showFallback();
+      }).catch(function (err) {
+        showFallback(err && err.message ? err.message : 'Netzwerkfehler');
       }).then(function () {
         if (submitBtn) submitBtn.disabled = false;
       });
