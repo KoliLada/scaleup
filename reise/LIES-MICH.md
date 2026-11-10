@@ -23,6 +23,11 @@ Adresse: `/reise/` auf der Website · Verwaltung: `/reise/verwaltung.html`
 
 Solange in `config.js` nichts eingetragen ist, läuft alles mit Beispieldaten im eigenen Browser.
 
+## Stand
+
+Eingerichtet am 10. November 2026: Supabase-Projekt `eldumjjgzxzyauoanlvx` (EU, Irland), Datenbank aus `supabase/schema.sql`,
+E-Mail-Bestätigung aus, Verwaltungszugang `carla@innercraft.com`. Die Supabase-Bibliothek liegt lokal in `vendor/`.
+
 ## Einrichten (einmalig, ca. 10 Minuten)
 
 1. Auf https://supabase.com kostenlos registrieren → **New project**

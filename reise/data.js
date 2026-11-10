@@ -312,7 +312,7 @@
   /* ======================================================================
      LIVE-BACKEND (Supabase)
      ====================================================================== */
-  var SB_SRC = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js';
+  var SB_SRC = 'vendor/supabase-2.45.4.js'; // supabase-js 2.45.4 (MIT), lokal abgelegt
   var BUCKET = 'reise';
   var sbPromise = null;
 
