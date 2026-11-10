@@ -1062,3 +1062,38 @@ body.modal-open { overflow: hidden; }
   .reveal { opacity: 1; transform: none; }
   html { scroll-behavior: auto; }
 }
+
+/* ---------- Drei Ebenen: Seele · Geist · Körper ---------- */
+.levels-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; align-items: stretch; }
+@media (max-width: 980px) { .levels-grid { grid-template-columns: 1fr; max-width: 620px; margin-inline: auto; } }
+.level-card {
+  background: var(--paper); border: 1px solid rgba(23,47,38,.1); border-radius: var(--radius); overflow: hidden;
+  display: flex; flex-direction: column;
+  transition: transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s var(--ease);
+}
+.level-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-soft); border-color: var(--sage); }
+.level-photo { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
+.level-body { padding: 1.7rem 1.8rem 2rem; }
+.level-label { font-family: var(--sans); font-size: .74rem; letter-spacing: .2em; text-transform: uppercase; color: var(--clay); margin: 0 0 .7rem; display: flex; align-items: baseline; gap: .6em; }
+.level-num { font-family: var(--serif); font-size: 1.5rem; letter-spacing: 0; color: var(--sage); line-height: 1; }
+.level-card h3 { color: var(--forest); font-size: clamp(1.55rem, 2.2vw, 1.85rem); margin: 0 0 .6rem; }
+.level-lead { font-size: 1.04rem; line-height: 1.55; color: var(--ink-soft); margin: 0 0 1.3rem; }
+.practice-list { list-style: none; margin: 0; padding: 0; }
+.practice-list li { border-top: 1px dashed rgba(23,47,38,.16); padding: 1rem 0 .2rem; }
+.practice-list h4 { font-family: var(--serif); font-weight: 500; font-size: 1.28rem; color: var(--forest); margin: 0 0 .2rem; }
+.practice-list .method-lineage { margin: 0 0 .35rem; }
+.practice-list p:last-child { font-size: 1rem; line-height: 1.5; color: var(--ink-soft); margin: 0 0 .6rem; }
+.circle-card {
+  margin-top: 1.4rem; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); align-items: stretch;
+  background: var(--forest); color: var(--cream); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-soft);
+}
+.circle-photo { width: 100%; height: 100%; min-height: 300px; object-fit: cover; object-position: center 55%; display: block; }
+.circle-body { padding: clamp(1.8rem, 4vw, 3rem); align-self: center; }
+.circle-body .level-label { color: var(--gold); }
+.circle-body h3 { color: var(--cream); font-size: clamp(1.7rem, 2.8vw, 2.3rem); margin: 0 0 .5rem; }
+.circle-body .method-lineage { color: var(--gold); opacity: .85; }
+.circle-body p:last-child { font-size: 1.08rem; line-height: 1.6; color: rgba(243,241,232,.85); margin: 0; }
+@media (max-width: 980px) {
+  .circle-card { grid-template-columns: 1fr; max-width: 620px; margin-inline: auto; }
+  .circle-photo { aspect-ratio: 16 / 10; height: auto; min-height: 0; }
+}
