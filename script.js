@@ -170,8 +170,21 @@
         clip._player = new YT.Player(clip.querySelector('.testimonial-player'), {
           videoId: id, width: '100%', height: '100%', playerVars: vars,
           events: {
-            onReady: function (e) { e.target.mute(); e.target.playVideo(); clip.classList.add('is-ready'); },
-            onStateChange: function (e) { if (e.data === 0) e.target.playVideo(); }   // Sicherheitsnetz Schleife
+            onReady: function (e) {
+              e.target.mute(); e.target.playVideo();
+              // Kurz vor dem Ende neu starten, damit YouTube keinen Abspann („Weitere Videos“) zeigt
+              clip._loop = setInterval(function () {
+                try {
+                  var d = e.target.getDuration(), t = e.target.getCurrentTime();
+                  if (d > 0 && t > d - 0.4) e.target.seekTo(0, true);
+                } catch (err) { /* Player noch nicht bereit */ }
+              }, 250);
+            },
+            onStateChange: function (e) {
+              // Erst sichtbar, wenn das Video wirklich läuft: kein roter Play-Button, kein Ladekreis
+              if (e.data === 1) clip.classList.add('is-ready');
+              if (e.data === 0) { e.target.seekTo(0, true); e.target.playVideo(); }
+            }
           }
         });
       });
