@@ -837,6 +837,8 @@ body.modal-open { overflow: hidden; }
 .testimonial-photo { margin: 0; aspect-ratio: 2 / 3; }
 .testimonial-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .testimonial-player, .testimonial-clip iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+/* Player höher als das Kästchen: YouTube-Titelleiste oben und Logo unten liegen außerhalb des sichtbaren Bereichs */
+.testimonial-clip:not(.is-fallback) iframe { top: calc(-1 * max(64px, 13%)); bottom: auto; height: calc(100% + 2 * max(64px, 13%)); }
 .testimonial-clip iframe { opacity: 0; transition: opacity .8s var(--ease); pointer-events: none; }
 .testimonial-clip.is-ready iframe, .testimonial-clip.is-fallback iframe { opacity: 1; }
 .testimonial-clip.is-fallback iframe { pointer-events: auto; }
