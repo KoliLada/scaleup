@@ -798,7 +798,7 @@ body.modal-open { overflow: hidden; }
 /* Foto in der Angebots-Karte (Gruppenguiding) */
 .offer-photo {
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 2 / 1;
   object-fit: cover;
   border-radius: var(--radius);
   margin-bottom: 1.4rem;
