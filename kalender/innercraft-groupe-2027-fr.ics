@@ -23,10 +23,10 @@ RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270124@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270124T100000
-DTEND;TZID=Europe/Berlin:20270124T170000
+UID:gruppenguiding-2027-20270117-fr@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270117T100000
+DTEND;TZID=Europe/Berlin:20270117T170000
 SUMMARY:Innercraft accompagnement en groupe – Atelier 1
 DESCRIPTION:Entendre l'appel de l'âme \; commencer le voyage — qu'est-ce
   qui t'empêche de vivre ta véritable vocation ?\n\n10 h – 17 h en pré
@@ -35,10 +35,10 @@ LOCATION:Lieu de séminaire Innercraft près de Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270221@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270221T100000
-DTEND;TZID=Europe/Berlin:20270221T170000
+UID:gruppenguiding-2027-20270214-fr@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270214T100000
+DTEND;TZID=Europe/Berlin:20270214T170000
 SUMMARY:Innercraft accompagnement en groupe – Atelier 2
 DESCRIPTION:Travailler avec tes protecteurs et restaurer la plénitude.\n\n
  10 h – 17 h en présence.
@@ -46,10 +46,10 @@ LOCATION:Lieu de séminaire Innercraft près de Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270321@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270321T100000
-DTEND;TZID=Europe/Berlin:20270321T170000
+UID:gruppenguiding-2027-20270313-fr@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270313T100000
+DTEND;TZID=Europe/Berlin:20270313T170000
 SUMMARY:Innercraft accompagnement en groupe – Atelier 3
 DESCRIPTION:Entrer dans le monde imaginal : s'accorder à la boussole du c
  œur.\n\n10 h – 17 h en présence.
@@ -57,10 +57,10 @@ LOCATION:Lieu de séminaire Innercraft près de Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270418@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270418T100000
-DTEND;TZID=Europe/Berlin:20270418T170000
+UID:gruppenguiding-2027-20270411-fr@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270411T100000
+DTEND;TZID=Europe/Berlin:20270411T170000
 SUMMARY:Innercraft accompagnement en groupe – Atelier 4
 DESCRIPTION:Rencontre de l'âme fondée sur la nature : entrer dans le coco
  n de la transformation.\n\n10 h – 17 h en présence.
@@ -68,22 +68,22 @@ LOCATION:Lieu de séminaire Innercraft près de Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270528@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270528T150000
-DTEND;TZID=Europe/Berlin:20270530T110000
+UID:gruppenguiding-2027-20270515-fr@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270515T150000
+DTEND;TZID=Europe/Berlin:20270517T120000
 SUMMARY:Innercraft accompagnement en groupe – Cérémonie du seuil
 DESCRIPTION:SoulQuest du lever au coucher du soleil (immersion solitaire da
- ns la nature) \; temps d'intégration et de récit.\n\nDu ven. 15 h au dim
- . 11 h en présence.
+ ns la nature) \; temps d'intégration et de récit.\n\nDu sam. 15 h au lun
+ . vers 12 h en présence\, repas compris.
 LOCATION:Lieu de séminaire Innercraft près de Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270620@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270620T100000
-DTEND;TZID=Europe/Berlin:20270620T170000
+UID:gruppenguiding-2027-20270613-fr@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270613T100000
+DTEND;TZID=Europe/Berlin:20270613T170000
 SUMMARY:Innercraft accompagnement en groupe – Atelier 5
 DESCRIPTION:Incarner ta nature la plus profonde \; mener une vie en accord 
  avec l'âme.\n\n10 h – 17 h en présence.

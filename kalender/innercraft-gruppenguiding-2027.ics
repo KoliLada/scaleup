@@ -23,10 +23,10 @@ RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270124@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270124T100000
-DTEND;TZID=Europe/Berlin:20270124T170000
+UID:gruppenguiding-2027-20270117@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270117T100000
+DTEND;TZID=Europe/Berlin:20270117T170000
 SUMMARY:Innercraft Gruppenguiding – Workshop 1
 DESCRIPTION:Den Ruf der Seele hören\; die Reise beginnen — was hält dic
  h davon ab\, deine wahre Bestimmung zu leben?\n\n10–17 Uhr vor Ort.
@@ -34,10 +34,10 @@ LOCATION:Innercraft Seminarort bei Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270221@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270221T100000
-DTEND;TZID=Europe/Berlin:20270221T170000
+UID:gruppenguiding-2027-20270214@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270214T100000
+DTEND;TZID=Europe/Berlin:20270214T170000
 SUMMARY:Innercraft Gruppenguiding – Workshop 2
 DESCRIPTION:Mit deinen Beschützern arbeiten und die Ganzheit wiederherstel
  len.\n\n10–17 Uhr vor Ort.
@@ -45,10 +45,10 @@ LOCATION:Innercraft Seminarort bei Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270321@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270321T100000
-DTEND;TZID=Europe/Berlin:20270321T170000
+UID:gruppenguiding-2027-20270313@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270313T100000
+DTEND;TZID=Europe/Berlin:20270313T170000
 SUMMARY:Innercraft Gruppenguiding – Workshop 3
 DESCRIPTION:Eintritt in die Imaginalwelt: sich auf den Kompass des Herzens 
  einstimmen.\n\n10–17 Uhr vor Ort.
@@ -56,10 +56,10 @@ LOCATION:Innercraft Seminarort bei Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270418@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270418T100000
-DTEND;TZID=Europe/Berlin:20270418T170000
+UID:gruppenguiding-2027-20270411@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270411T100000
+DTEND;TZID=Europe/Berlin:20270411T170000
 SUMMARY:Innercraft Gruppenguiding – Workshop 4
 DESCRIPTION:Naturbasierte Seelenbegegnung: Eintritt in den Kokon der Transf
  ormation.\n\n10–17 Uhr vor Ort.
@@ -67,22 +67,22 @@ LOCATION:Innercraft Seminarort bei Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270528@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270528T150000
-DTEND;TZID=Europe/Berlin:20270530T110000
+UID:gruppenguiding-2027-20270515@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270515T150000
+DTEND;TZID=Europe/Berlin:20270517T120000
 SUMMARY:Innercraft Gruppenguiding – Schwellenzeremonie
 DESCRIPTION:SoulQuest von Sonnenaufgang bis Sonnenuntergang (alleiniges Ein
  tauchen in die Natur)\; Zeit zur Integration und zum Geschichtenerzählen.
- \n\nFr. 15 Uhr bis So. 11 Uhr vor Ort.
+ \n\nSa. 15 Uhr bis Mo. ca. 12 Uhr vor Ort\, inkl. Verpflegung.
 LOCATION:Innercraft Seminarort bei Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270620@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270620T100000
-DTEND;TZID=Europe/Berlin:20270620T170000
+UID:gruppenguiding-2027-20270613@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270613T100000
+DTEND;TZID=Europe/Berlin:20270613T170000
 SUMMARY:Innercraft Gruppenguiding – Workshop 5
 DESCRIPTION:Deine tiefste Natur verkörpern\; ein Leben im Einklang mit der
   Seele führen.\n\n10–17 Uhr vor Ort.
