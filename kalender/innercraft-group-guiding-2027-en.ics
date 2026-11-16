@@ -23,10 +23,10 @@ RRULE:FREQ=YEARLY;BYMONTH=10;BYDAY=-1SU
 END:STANDARD
 END:VTIMEZONE
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270124@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270124T100000
-DTEND;TZID=Europe/Berlin:20270124T170000
+UID:gruppenguiding-2027-20270117-en@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270117T100000
+DTEND;TZID=Europe/Berlin:20270117T170000
 SUMMARY:Innercraft group guiding – Workshop 1
 DESCRIPTION:Hearing the call of the soul\; beginning the journey — what h
  olds you back from living your true purpose?\n\n10 am – 5 pm in person.
@@ -34,10 +34,10 @@ LOCATION:Innercraft seminar place near Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270221@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270221T100000
-DTEND;TZID=Europe/Berlin:20270221T170000
+UID:gruppenguiding-2027-20270214-en@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270214T100000
+DTEND;TZID=Europe/Berlin:20270214T170000
 SUMMARY:Innercraft group guiding – Workshop 2
 DESCRIPTION:Working with your protectors and restoring wholeness.\n\n10 am 
  – 5 pm in person.
@@ -45,10 +45,10 @@ LOCATION:Innercraft seminar place near Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270321@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270321T100000
-DTEND;TZID=Europe/Berlin:20270321T170000
+UID:gruppenguiding-2027-20270313-en@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270313T100000
+DTEND;TZID=Europe/Berlin:20270313T170000
 SUMMARY:Innercraft group guiding – Workshop 3
 DESCRIPTION:Entering the imaginal world: attuning to the compass of the hea
  rt.\n\n10 am – 5 pm in person.
@@ -56,10 +56,10 @@ LOCATION:Innercraft seminar place near Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270418@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270418T100000
-DTEND;TZID=Europe/Berlin:20270418T170000
+UID:gruppenguiding-2027-20270411-en@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270411T100000
+DTEND;TZID=Europe/Berlin:20270411T170000
 SUMMARY:Innercraft group guiding – Workshop 4
 DESCRIPTION:Nature-based soul encounter: entering the cocoon of transformat
  ion.\n\n10 am – 5 pm in person.
@@ -67,21 +67,22 @@ LOCATION:Innercraft seminar place near Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270528@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270528T150000
-DTEND;TZID=Europe/Berlin:20270530T110000
+UID:gruppenguiding-2027-20270515-en@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270515T150000
+DTEND;TZID=Europe/Berlin:20270517T120000
 SUMMARY:Innercraft group guiding – Threshold ceremony
 DESCRIPTION:SoulQuest from sunrise to sunset (solo immersion in nature)\; t
- ime for integration and storytelling.\n\nFri 3 pm to Sun 11 am in person.
+ ime for integration and storytelling.\n\nSat 3 pm to Mon approx. 12 noon i
+ n person\, meals included.
 LOCATION:Innercraft seminar place near Rosenheim
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-UID:gruppenguiding-2027-20270620@innercraft.com
-DTSTAMP:20261109T120000Z
-DTSTART;TZID=Europe/Berlin:20270620T100000
-DTEND;TZID=Europe/Berlin:20270620T170000
+UID:gruppenguiding-2027-20270613-en@innercraft.com
+DTSTAMP:20261116T120000Z
+DTSTART;TZID=Europe/Berlin:20270613T100000
+DTEND;TZID=Europe/Berlin:20270613T170000
 SUMMARY:Innercraft group guiding – Workshop 5
 DESCRIPTION:Embodying your deepest nature\; living a life in alignment with
   the soul.\n\n10 am – 5 pm in person.
